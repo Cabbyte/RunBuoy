@@ -69,7 +69,8 @@ enum CapabilityDemoStep: Int, CaseIterable, Identifiable {
     func contentState(
         now: Date,
         createdAt: Date,
-        startedAt: Date
+        startedAt: Date,
+        machineName: String? = nil
     ) -> RunActivityAttributes.ContentState {
         let progress: Double? = switch self {
         case .progress, .warning, .stale, .failed: 0.72
@@ -99,7 +100,7 @@ enum CapabilityDemoStep: Int, CaseIterable, Identifiable {
             createdAt: createdAt,
             startedAt: startedAt,
             updatedAt: now,
-            machineName: String(localized: "demo.local_machine"),
+            machineName: machineName ?? String(localized: "demo.local_machine"),
             endedAt: isTerminal ? now : nil,
             estimatedEndAt: progress != nil && !isTerminal
                 ? now.addingTimeInterval(240)
@@ -219,15 +220,21 @@ final class CapabilityDemoModel {
 
         let now = Date()
         let sessionID = UUID().uuidString
+        let presentation = demoPresentation
         let attributes = RunActivityAttributes(
             runID: UUID().uuidString,
-            title: String(localized: "demo.activity_title"),
-            machineName: String(localized: "demo.local_machine"),
+            title: presentation.title,
+            machineName: presentation.machineName,
             demoSessionID: sessionID
         )
         let step = CapabilityDemoStep.starting
         let content = ActivityContent(
-            state: step.contentState(now: now, createdAt: now, startedAt: now),
+            state: step.contentState(
+                now: now,
+                createdAt: now,
+                startedAt: now,
+                machineName: presentation.machineName
+            ),
             staleDate: now.addingTimeInterval(60)
         )
 
@@ -269,7 +276,8 @@ final class CapabilityDemoModel {
         let state = step.contentState(
             now: now,
             createdAt: previousState.createdAt ?? previousState.startedAt,
-            startedAt: previousState.startedAt
+            startedAt: previousState.startedAt,
+            machineName: previousState.machineName
         )
         let content = ActivityContent(
             state: state,
@@ -369,6 +377,31 @@ final class CapabilityDemoModel {
             return exact
         }
         return activities.first(where: { $0.attributes.isDemo })
+    }
+
+    private var demoPresentation: (title: String, machineName: String) {
+        let arguments = ProcessInfo.processInfo.arguments
+        if let index = arguments.firstIndex(of: "-runbuoy-ui-scenario"),
+           arguments.indices.contains(index + 1) {
+            switch UITestConfiguration.Scenario(rawValue: arguments[index + 1]) {
+            case .showcase:
+                return (
+                    PreviewFixtures.showcasePrimaryRun.title,
+                    PreviewFixtures.showcasePrimaryRun.machineName
+                )
+            case .showcaseEnglish:
+                return (
+                    PreviewFixtures.showcaseEnglishPrimaryRun.title,
+                    PreviewFixtures.showcaseEnglishPrimaryRun.machineName
+                )
+            default:
+                break
+            }
+        }
+        return (
+            String(localized: "demo.activity_title"),
+            String(localized: "demo.local_machine")
+        )
     }
 
     private func removeAllDemoActivities() async {

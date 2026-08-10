@@ -4,6 +4,8 @@ import UIKit
 struct UITestConfiguration {
     enum Scenario: String {
         case loaded
+        case showcase
+        case showcaseEnglish
         case empty
         case offline
         case failed

@@ -131,6 +131,471 @@ enum PreviewFixtures {
         )
     ]
 
+    // App Store screenshots use a dedicated launch scenario so the richer
+    // sample content never changes the fixtures used by the UI test suite.
+    static let showcaseDate = Date()
+
+    static let showcasePrimaryRun = RunSnapshot(
+        id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000101")!,
+        machineID: "showcase_mac_studio",
+        machineName: "工作室 Mac Studio",
+        title: "大模型微调 · 第 8 轮",
+        source: "cli",
+        executionStatus: .running,
+        healthStatus: .healthy,
+        attentionStatus: .none,
+        progress: RunProgress(
+            kind: .determinate,
+            current: 7_800,
+            total: 10_000,
+            fraction: 0.78,
+            unit: "steps",
+            source: "explicit"
+        ),
+        phase: "训练第 8 / 10 个 Epoch",
+        safeMessage: "验证集损失持续下降，预计约 7 分钟后完成。",
+        startedAt: showcaseDate.addingTimeInterval(-47 * 60),
+        updatedAt: showcaseDate.addingTimeInterval(-4),
+        endedAt: nil,
+        estimatedEndAt: showcaseDate.addingTimeInterval(7 * 60),
+        exitCode: nil,
+        safeLogTail: nil,
+        sequence: 86
+    )
+
+    static let showcaseBuildRun = RunSnapshot(
+        id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000102")!,
+        machineID: "showcase_macbook",
+        machineName: "出差 MacBook Pro",
+        title: "iOS Release 构建",
+        source: "cli",
+        executionStatus: .running,
+        healthStatus: .healthy,
+        attentionStatus: .none,
+        progress: RunProgress(
+            kind: .determinate,
+            current: 46,
+            total: 100,
+            fraction: 0.46,
+            unit: "targets",
+            source: "regex"
+        ),
+        phase: "正在编译 RunBuoyApp",
+        safeMessage: "归档构建正在按计划进行。",
+        startedAt: showcaseDate.addingTimeInterval(-14 * 60),
+        updatedAt: showcaseDate.addingTimeInterval(-9),
+        endedAt: nil,
+        estimatedEndAt: showcaseDate.addingTimeInterval(8 * 60),
+        exitCode: nil,
+        safeLogTail: nil,
+        sequence: 31
+    )
+
+    static let showcaseBackupRun = RunSnapshot(
+        id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000103")!,
+        machineID: "showcase_linux",
+        machineName: "GPU 工作站",
+        title: "实验数据增量备份",
+        source: "cli",
+        executionStatus: .running,
+        healthStatus: .healthy,
+        attentionStatus: .none,
+        progress: RunProgress(
+            kind: .determinate,
+            current: 128,
+            total: 400,
+            fraction: 0.32,
+            unit: "GB",
+            source: "explicit"
+        ),
+        phase: "正在校验增量快照",
+        safeMessage: "备份在后台安全运行。",
+        startedAt: showcaseDate.addingTimeInterval(-8 * 60),
+        updatedAt: showcaseDate.addingTimeInterval(-12),
+        endedAt: nil,
+        estimatedEndAt: nil,
+        exitCode: nil,
+        safeLogTail: nil,
+        sequence: 14
+    )
+
+    static let showcaseSucceededRun = RunSnapshot(
+        id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000201")!,
+        machineID: "showcase_mac_studio",
+        machineName: "工作室 Mac Studio",
+        title: "模型评估报告",
+        source: "cli",
+        executionStatus: .succeeded,
+        healthStatus: .healthy,
+        attentionStatus: .none,
+        progress: RunProgress(
+            kind: .determinate,
+            current: 2_400,
+            total: 2_400,
+            fraction: 1,
+            unit: "samples",
+            source: "explicit"
+        ),
+        phase: "评估完成",
+        safeMessage: "全部 2,400 个样本已完成评估。",
+        startedAt: showcaseDate.addingTimeInterval(-38 * 60),
+        updatedAt: showcaseDate.addingTimeInterval(-25 * 60),
+        endedAt: showcaseDate.addingTimeInterval(-25 * 60),
+        estimatedEndAt: nil,
+        exitCode: 0,
+        safeLogTail: nil,
+        sequence: 52
+    )
+
+    static let showcaseDeployRun = RunSnapshot(
+        id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000202")!,
+        machineID: "showcase_macbook",
+        machineName: "出差 MacBook Pro",
+        title: "文档站点部署",
+        source: "webhook",
+        executionStatus: .succeeded,
+        healthStatus: .healthy,
+        attentionStatus: .none,
+        progress: RunProgress(
+            kind: .determinate,
+            current: 100,
+            total: 100,
+            fraction: 1,
+            unit: "%",
+            source: "explicit"
+        ),
+        phase: "部署完成",
+        safeMessage: "文档站点已更新。",
+        startedAt: showcaseDate.addingTimeInterval(-2 * 60 * 60),
+        updatedAt: showcaseDate.addingTimeInterval(-105 * 60),
+        endedAt: showcaseDate.addingTimeInterval(-105 * 60),
+        estimatedEndAt: nil,
+        exitCode: 0,
+        safeLogTail: nil,
+        sequence: 27
+    )
+
+    static let showcaseFailedRun = RunSnapshot(
+        id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000203")!,
+        machineID: "showcase_linux",
+        machineName: "GPU 工作站",
+        title: "夜间基准测试",
+        source: "cli",
+        executionStatus: .failed,
+        healthStatus: .healthy,
+        attentionStatus: .warning,
+        progress: RunProgress(
+            kind: .determinate,
+            current: 18,
+            total: 24,
+            fraction: 0.75,
+            unit: "cases",
+            source: "explicit"
+        ),
+        phase: "GPU 压力测试",
+        safeMessage: "第 19 个测试用例未通过，其余结果已保存。",
+        startedAt: showcaseDate.addingTimeInterval(-4 * 60 * 60),
+        updatedAt: showcaseDate.addingTimeInterval(-3 * 60 * 60 - 42 * 60),
+        endedAt: showcaseDate.addingTimeInterval(-3 * 60 * 60 - 42 * 60),
+        estimatedEndAt: nil,
+        exitCode: 1,
+        safeLogTail: ["benchmark case 19 failed", "results saved safely"],
+        sequence: 39
+    )
+
+    static let showcaseMachines: [MachineSnapshot] = [
+        MachineSnapshot(
+            id: "showcase_mac_studio",
+            displayName: "工作室 Mac Studio",
+            platform: "macOS",
+            architecture: "arm64",
+            cliVersion: "1.4.0",
+            lastSeenAt: showcaseDate.addingTimeInterval(-4),
+            pairedAt: showcaseDate.addingTimeInterval(-31 * 86_400),
+            subscriptionID: "showcase_subscription_1",
+            isSubscribed: true
+        ),
+        MachineSnapshot(
+            id: "showcase_macbook",
+            displayName: "出差 MacBook Pro",
+            platform: "macOS",
+            architecture: "arm64",
+            cliVersion: "1.4.0",
+            lastSeenAt: showcaseDate.addingTimeInterval(-9),
+            pairedAt: showcaseDate.addingTimeInterval(-12 * 86_400),
+            subscriptionID: "showcase_subscription_2",
+            isSubscribed: true
+        ),
+        MachineSnapshot(
+            id: "showcase_linux",
+            displayName: "GPU 工作站",
+            platform: "Linux",
+            architecture: "x86_64",
+            cliVersion: "1.4.0",
+            lastSeenAt: showcaseDate.addingTimeInterval(-12),
+            pairedAt: showcaseDate.addingTimeInterval(-64 * 86_400),
+            subscriptionID: "showcase_subscription_3",
+            isSubscribed: true
+        )
+    ]
+
+    static let showcaseMessages: [RichMessage] = [
+        RichMessage(
+            id: "showcase_message_1",
+            machineID: "showcase_mac_studio",
+            title: "模型检查点已保存",
+            subtitle: "大模型微调",
+            body: "第 7 轮检查点已安全保存，可随时继续训练。",
+            level: "success",
+            fields: [.init(name: "验证损失", value: "0.218")],
+            createdAt: showcaseDate.addingTimeInterval(-18 * 60),
+            expiresAt: nil
+        ),
+        RichMessage(
+            id: "showcase_message_2",
+            machineID: "showcase_linux",
+            title: "基准测试需要关注",
+            subtitle: "GPU 压力测试",
+            body: "第 19 个测试用例未通过，其余结果已保存。",
+            level: "warning",
+            fields: [.init(name: "已完成", value: "18 / 24")],
+            createdAt: showcaseDate.addingTimeInterval(-3 * 60 * 60 - 42 * 60),
+            expiresAt: nil
+        )
+    ]
+
+    static let showcaseEvents: [RunFeedEvent] = [
+        RunFeedEvent(
+            id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000301")!,
+            sequence: 1,
+            type: "run.started",
+            occurredAt: showcasePrimaryRun.startedAt,
+            phase: nil,
+            message: "训练任务已启动",
+            progress: nil
+        ),
+        RunFeedEvent(
+            id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000302")!,
+            sequence: 20,
+            type: "run.phase_changed",
+            occurredAt: showcaseDate.addingTimeInterval(-39 * 60),
+            phase: "数据准备完成",
+            message: nil,
+            progress: nil
+        ),
+        RunFeedEvent(
+            id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000303")!,
+            sequence: 61,
+            type: "run.message",
+            occurredAt: showcaseDate.addingTimeInterval(-18 * 60),
+            phase: "训练第 7 / 10 个 Epoch",
+            message: "验证集损失降至 0.218",
+            progress: nil
+        ),
+        RunFeedEvent(
+            id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000304")!,
+            sequence: 86,
+            type: "run.progress",
+            occurredAt: showcasePrimaryRun.updatedAt,
+            phase: showcasePrimaryRun.phase,
+            message: "训练稳定运行中",
+            progress: showcasePrimaryRun.progress
+        )
+    ]
+
+    static let showcaseSnapshot = CachedSnapshot(
+        runs: [
+            showcasePrimaryRun,
+            showcaseBuildRun,
+            showcaseBackupRun,
+            showcaseSucceededRun,
+            showcaseDeployRun,
+            showcaseFailedRun
+        ],
+        machines: showcaseMachines,
+        messages: showcaseMessages,
+        savedAt: showcaseDate
+    )
+
+    static let showcaseEnglishPrimaryRun = englishShowcaseRun(
+        showcasePrimaryRun,
+        machineName: "Studio Mac Studio",
+        title: "LLM Fine-Tuning · Epoch 8",
+        phase: "Training epoch 8 of 10",
+        safeMessage: "Validation loss is trending down. About 7 minutes remaining."
+    )
+
+    static let showcaseEnglishBuildRun = englishShowcaseRun(
+        showcaseBuildRun,
+        machineName: "Travel MacBook Pro",
+        title: "iOS Release Build",
+        phase: "Compiling RunBuoyApp",
+        safeMessage: "The archive build is progressing on schedule."
+    )
+
+    static let showcaseEnglishBackupRun = englishShowcaseRun(
+        showcaseBackupRun,
+        machineName: "GPU Workstation",
+        title: "Incremental Dataset Backup",
+        phase: "Verifying incremental snapshot",
+        safeMessage: "The backup is running safely in the background."
+    )
+
+    static let showcaseEnglishSucceededRun = englishShowcaseRun(
+        showcaseSucceededRun,
+        machineName: "Studio Mac Studio",
+        title: "Model Evaluation Report",
+        phase: "Evaluation complete",
+        safeMessage: "All 2,400 samples were evaluated successfully."
+    )
+
+    static let showcaseEnglishDeployRun = englishShowcaseRun(
+        showcaseDeployRun,
+        machineName: "Travel MacBook Pro",
+        title: "Documentation Site Deployment",
+        phase: "Deployment complete",
+        safeMessage: "The documentation site is up to date."
+    )
+
+    static let showcaseEnglishFailedRun = englishShowcaseRun(
+        showcaseFailedRun,
+        machineName: "GPU Workstation",
+        title: "Nightly Benchmark Suite",
+        phase: "GPU stress test",
+        safeMessage: "Test case 19 failed. The remaining results were saved."
+    )
+
+    static let showcaseEnglishMachines: [MachineSnapshot] = [
+        englishShowcaseMachine(showcaseMachines[0], displayName: "Studio Mac Studio"),
+        englishShowcaseMachine(showcaseMachines[1], displayName: "Travel MacBook Pro"),
+        englishShowcaseMachine(showcaseMachines[2], displayName: "GPU Workstation")
+    ]
+
+    static let showcaseEnglishMessages: [RichMessage] = [
+        RichMessage(
+            id: "showcase_message_1",
+            machineID: "showcase_mac_studio",
+            title: "Model checkpoint saved",
+            subtitle: "LLM fine-tuning",
+            body: "The epoch 7 checkpoint was saved safely and is ready to resume.",
+            level: "success",
+            fields: [.init(name: "Validation loss", value: "0.218")],
+            createdAt: showcaseDate.addingTimeInterval(-18 * 60),
+            expiresAt: nil
+        ),
+        RichMessage(
+            id: "showcase_message_2",
+            machineID: "showcase_linux",
+            title: "Benchmark needs attention",
+            subtitle: "GPU stress test",
+            body: "Test case 19 failed. The remaining results were saved.",
+            level: "warning",
+            fields: [.init(name: "Completed", value: "18 / 24")],
+            createdAt: showcaseDate.addingTimeInterval(-3 * 60 * 60 - 42 * 60),
+            expiresAt: nil
+        )
+    ]
+
+    static let showcaseEnglishEvents: [RunFeedEvent] = [
+        RunFeedEvent(
+            id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000301")!,
+            sequence: 1,
+            type: "run.started",
+            occurredAt: showcaseEnglishPrimaryRun.startedAt,
+            phase: nil,
+            message: "Training run started",
+            progress: nil
+        ),
+        RunFeedEvent(
+            id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000302")!,
+            sequence: 20,
+            type: "run.phase_changed",
+            occurredAt: showcaseDate.addingTimeInterval(-39 * 60),
+            phase: "Data preparation complete",
+            message: nil,
+            progress: nil
+        ),
+        RunFeedEvent(
+            id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000303")!,
+            sequence: 61,
+            type: "run.message",
+            occurredAt: showcaseDate.addingTimeInterval(-18 * 60),
+            phase: "Training epoch 7 of 10",
+            message: "Validation loss reached 0.218",
+            progress: nil
+        ),
+        RunFeedEvent(
+            id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000304")!,
+            sequence: 86,
+            type: "run.progress",
+            occurredAt: showcaseEnglishPrimaryRun.updatedAt,
+            phase: showcaseEnglishPrimaryRun.phase,
+            message: "Training is running smoothly",
+            progress: showcaseEnglishPrimaryRun.progress
+        )
+    ]
+
+    static let showcaseEnglishSnapshot = CachedSnapshot(
+        runs: [
+            showcaseEnglishPrimaryRun,
+            showcaseEnglishBuildRun,
+            showcaseEnglishBackupRun,
+            showcaseEnglishSucceededRun,
+            showcaseEnglishDeployRun,
+            showcaseEnglishFailedRun
+        ],
+        machines: showcaseEnglishMachines,
+        messages: showcaseEnglishMessages,
+        savedAt: showcaseDate
+    )
+
+    private static func englishShowcaseRun(
+        _ run: RunSnapshot,
+        machineName: String,
+        title: String,
+        phase: String,
+        safeMessage: String
+    ) -> RunSnapshot {
+        RunSnapshot(
+            id: run.id,
+            machineID: run.machineID,
+            machineName: machineName,
+            title: title,
+            source: run.source,
+            executionStatus: run.executionStatus,
+            healthStatus: run.healthStatus,
+            attentionStatus: run.attentionStatus,
+            progress: run.progress,
+            phase: phase,
+            safeMessage: safeMessage,
+            createdAt: run.createdAt,
+            startedAt: run.startedAt,
+            updatedAt: run.updatedAt,
+            endedAt: run.endedAt,
+            estimatedEndAt: run.estimatedEndAt,
+            exitCode: run.exitCode,
+            safeLogTail: run.safeLogTail,
+            sequence: run.sequence
+        )
+    }
+
+    private static func englishShowcaseMachine(
+        _ machine: MachineSnapshot,
+        displayName: String
+    ) -> MachineSnapshot {
+        MachineSnapshot(
+            id: machine.id,
+            displayName: displayName,
+            platform: machine.platform,
+            architecture: machine.architecture,
+            cliVersion: machine.cliVersion,
+            lastSeenAt: machine.lastSeenAt,
+            pairedAt: machine.pairedAt,
+            subscriptionID: machine.subscriptionID,
+            isSubscribed: machine.isSubscribed
+        )
+    }
+
     static let longEnglishDetail = RunDetail(
         run: RunSnapshot(
             id: activeRun.id,
@@ -188,10 +653,24 @@ enum PreviewFixtures {
             savedAt: baseDate
         )
         let snapshot: CachedSnapshot?
+        let apiSnapshot: CachedSnapshot
+        let apiEvents: [RunFeedEvent]
         let initialState: RunBuoyStore.LoadState?
         switch scenario {
         case .loaded:
             snapshot = loadedSnapshot
+            apiSnapshot = loadedSnapshot
+            apiEvents = events
+            initialState = .loaded
+        case .showcase:
+            snapshot = showcaseSnapshot
+            apiSnapshot = showcaseSnapshot
+            apiEvents = showcaseEvents
+            initialState = .loaded
+        case .showcaseEnglish:
+            snapshot = showcaseEnglishSnapshot
+            apiSnapshot = showcaseEnglishSnapshot
+            apiEvents = showcaseEnglishEvents
             initialState = .loaded
         case .empty:
             snapshot = CachedSnapshot(
@@ -200,17 +679,23 @@ enum PreviewFixtures {
                 messages: [],
                 savedAt: baseDate
             )
+            apiSnapshot = loadedSnapshot
+            apiEvents = events
             initialState = .loaded
         case .offline:
             snapshot = loadedSnapshot
+            apiSnapshot = loadedSnapshot
+            apiEvents = events
             initialState = .offline("UI test offline fixture")
         case .failed:
             snapshot = nil
+            apiSnapshot = loadedSnapshot
+            apiEvents = events
             initialState = .failed("UI test failure fixture")
         }
 
         return RunBuoyStore(
-            api: PreviewAPI(snapshot: loadedSnapshot, events: events),
+            api: PreviewAPI(snapshot: apiSnapshot, events: apiEvents),
             identityStore: PreviewIdentityStore(),
             cache: LocalCacheStore(
                 fileURL: FileManager.default.temporaryDirectory
