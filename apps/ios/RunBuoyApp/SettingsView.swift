@@ -1,19 +1,25 @@
 import ActivityKit
 import LocalAuthentication
 import SwiftUI
+import UIKit
+import UserNotifications
 
 struct SettingsView: View {
     @Environment(RunBuoyStore.self) private var store
+    @Environment(\.openURL) private var openURL
+    @Environment(\.scenePhase) private var scenePhase
     @AppStorage("runbuoy.onboarding-complete") private var onboardingComplete = false
     @AppStorage("runbuoy.notifications-enabled") private var notificationsEnabled = true
     @AppStorage("runbuoy.live-activities-enabled") private var liveActivitiesEnabled = true
     @AppStorage("runbuoy.safe-messages-enabled") private var safeMessagesEnabled = true
     @State private var cacheMessage: LocalizedStringKey?
+    @State private var confirmsCacheClear = false
     @State private var confirmsDeviceReset = false
     @State private var confirmsLocalReset = false
     @State private var confirmsWorkspaceDeletion = false
     @State private var isPerformingDestructiveAction = false
     @State private var lifecycleNotice: String?
+    @State private var notificationsSystemDenied = false
     private let ownerAuthorizer: any DeviceOwnerAuthorizing
 
     init(ownerAuthorizer: any DeviceOwnerAuthorizing = LocalDeviceOwnerAuthorizer()) {
@@ -65,6 +71,7 @@ struct SettingsView: View {
 
             Section("settings.notifications") {
                 Toggle("settings.notifications_enabled", isOn: $notificationsEnabled)
+                    .disabled(notificationsSystemDenied)
                     .accessibilityIdentifier("settings.notifications")
                 Toggle("settings.live_activities", isOn: $liveActivitiesEnabled)
                     .disabled(!ActivityAuthorizationInfo().areActivitiesEnabled)
@@ -76,10 +83,17 @@ struct SettingsView: View {
                         .font(.footnote)
                         .foregroundStyle(.primary)
                 }
+                if notificationsSystemDenied {
+                    Label("settings.notifications_system_disabled", systemImage: "bell.slash")
+                        .font(.footnote)
+                        .foregroundStyle(.primary)
+                    Button("settings.open_system_settings", action: openSystemSettings)
+                        .accessibilityIdentifier("settings.openSystemSettings")
+                }
             }
 
             Section("settings.storage") {
-                Button(action: clearCache) {
+                Button(action: requestCacheClear) {
                     Label("settings.clear_cache", systemImage: "trash")
                         .foregroundStyle(.primary)
                 }
@@ -166,6 +180,20 @@ struct SettingsView: View {
         .onChange(of: notificationsEnabled) { _, _ in savePreferences() }
         .onChange(of: liveActivitiesEnabled) { _, _ in savePreferences() }
         .onChange(of: safeMessagesEnabled) { _, _ in savePreferences() }
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            await refreshNotificationAuthorization()
+        }
+        .confirmationDialog(
+            "settings.clear_cache_confirm_title",
+            isPresented: $confirmsCacheClear,
+            titleVisibility: .visible
+        ) {
+            Button("settings.clear_cache_confirm", role: .destructive, action: clearCache)
+            Button("common.cancel", role: .cancel) {}
+        } message: {
+            Text("settings.clear_cache_confirm_message")
+        }
         .confirmationDialog(
             "settings.reset_device_confirm_title",
             isPresented: $confirmsDeviceReset,
@@ -218,6 +246,25 @@ struct SettingsView: View {
             try? await store.clearCache()
             cacheMessage = "settings.cache_cleared"
         }
+    }
+
+    private func requestCacheClear() {
+        cacheMessage = nil
+        if UITestConfiguration.current.isEnabled {
+            clearCache()
+        } else {
+            confirmsCacheClear = true
+        }
+    }
+
+    private func refreshNotificationAuthorization() async {
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+        notificationsSystemDenied = settings.authorizationStatus == .denied
+    }
+
+    private func openSystemSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        openURL(url)
     }
 
     private func performLifecycleAction(_ action: SettingsLifecycleAction) {

@@ -18,7 +18,9 @@ struct OnboardingView: View {
     @State private var sheet: OnboardingSheet?
     @State private var selectedRegion: RunBuoyRegion? = AppConfiguration.selectedRegion()
     @State private var pairingCode: PairingCode?
+    @State private var rawPairingCode = ""
     @State private var pairingSucceeded = false
+    @State private var pairingFailed = false
     @State private var errorMessage: String?
     @State private var isWorking = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -34,30 +36,77 @@ struct OnboardingView: View {
     }
 
     var body: some View {
-        VStack(spacing: 24) {
-            TabView(selection: $page) {
-                ProductIntroduction()
-                    .tag(0)
-                RegionIntroduction(selection: $selectedRegion)
-                    .tag(1)
-                PermissionIntroduction()
-                    .tag(2)
-                PairingIntroduction()
-                    .tag(3)
+        VStack(spacing: 0) {
+            Group {
+                if pairingSucceeded {
+                    OnboardingOutcomePage(
+                        symbol: "checkmark.circle.fill",
+                        title: "onboarding.pairing_success_title",
+                        bodyText: "onboarding.pairing_success_body",
+                        color: .green
+                    )
+                    .accessibilityIdentifier("onboarding.pairing-success")
+                } else if pairingFailed {
+                    OnboardingOutcomePage(
+                        symbol: "exclamationmark.triangle.fill",
+                        title: "onboarding.pairing_failed_title",
+                        bodyText: "onboarding.pairing_failed_body",
+                        color: .orange
+                    )
+                    .accessibilityIdentifier("onboarding.pairing-failure")
+                } else {
+                    onboardingPages
+                }
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
-            .animation(reduceMotion ? nil : .default, value: page)
+            actionArea
+        }
+        .background(Color(uiColor: .systemGroupedBackground))
+        .sheet(item: $sheet) { _ in
+            ScannerSheet(onCode: receiveScannedCode)
+        }
+        .onAppear {
+            receivePendingPairingCode(router.pendingPairingCode)
+        }
+        .onChange(of: router.pendingPairingCode) { _, code in
+            receivePendingPairingCode(code)
+        }
+    }
 
-            if page == 3, let pairingCode {
+    private var onboardingPages: some View {
+        TabView(selection: $page) {
+            ProductIntroduction()
+                .tag(0)
+            RegionIntroduction(selection: $selectedRegion)
+                .tag(1)
+            PermissionIntroduction()
+                .tag(2)
+            PairingIntroduction(
+                rawCode: $rawPairingCode,
+                onValidate: validateEnteredPairingCode
+            )
+            .tag(3)
+        }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .animation(reduceMotion ? nil : .smooth, value: page)
+        .overlay(alignment: .bottom) {
+            HStack(spacing: 7) {
+                ForEach(0..<4, id: \.self) { index in
+                    Capsule()
+                        .fill(index == page ? Color.accentColor : Color.secondary.opacity(0.24))
+                        .frame(width: index == page ? 24 : 7, height: 7)
+                }
+            }
+            .accessibilityHidden(true)
+            .padding(.bottom, 8)
+        }
+    }
+
+    private var actionArea: some View {
+        VStack(spacing: 8) {
+            if page == 3, let pairingCode, !pairingSucceeded, !pairingFailed {
                 PairingIdentityCard(code: pairingCode)
             }
-            if pairingSucceeded {
-                Label("pairing.success", systemImage: "checkmark.circle.fill")
-                    .font(.headline)
-                    .foregroundStyle(.green)
-                    .accessibilityIdentifier("onboarding.pairing-success")
-            }
-            if let errorMessage {
+            if let errorMessage, !pairingFailed {
                 Label(errorMessage, systemImage: "exclamationmark.triangle")
                     .font(.footnote)
                     .foregroundStyle(.red)
@@ -77,40 +126,45 @@ struct OnboardingView: View {
             .controlSize(.large)
             .disabled(isWorking || (page == 1 && selectedRegion == nil))
             .accessibilityIdentifier("onboarding.primary-action")
-            .padding()
+
+            if !pairingSucceeded, !pairingFailed {
+                if page == 2 {
+                    Button("onboarding.not_now") {
+                        Task { await completePermissionStep(requestPermission: false) }
+                    }
+                    .disabled(isWorking)
+                } else if page == 3 {
+                    Button("onboarding.set_up_later", action: finishWithoutPairing)
+                        .disabled(isWorking)
+                }
+            }
         }
-        .background(Color(uiColor: .systemGroupedBackground))
-        .sheet(item: $sheet) { _ in
-            ScannerSheet(onCode: receiveScannedCode)
-        }
-        .onAppear {
-            receivePendingPairingCode(router.pendingPairingCode)
-        }
-        .onChange(of: router.pendingPairingCode) { _, code in
-            receivePendingPairingCode(code)
-        }
+        .padding(.horizontal, 20)
+        .padding(.top, 12)
+        .padding(.bottom, 12)
+        .background(.bar)
     }
 
     private var primaryTitle: LocalizedStringKey {
-        switch page {
+        if pairingSucceeded { return "onboarding.finish" }
+        if pairingFailed { return "common.try_again" }
+        return switch page {
         case 0: "onboarding.continue"
         case 1: "onboarding.confirm_region"
         case 2: "onboarding.enable_notifications"
         default:
-            if pairingSucceeded {
-                "onboarding.finish"
-            } else {
-                pairingCode == nil ? "onboarding.scan_code" : "onboarding.confirm_machine"
-            }
+            pairingCode == nil ? "onboarding.scan_code" : "onboarding.confirm_machine"
         }
     }
 
     private var primarySymbol: String {
-        switch page {
+        if pairingSucceeded { return "arrow.right" }
+        if pairingFailed { return "arrow.clockwise" }
+        return switch page {
         case 0: "arrow.right"
         case 1: "lock.shield"
         case 2: "bell.badge"
-        default: pairingSucceeded ? "checkmark" : (pairingCode == nil ? "qrcode.viewfinder" : "checkmark.shield")
+        default: pairingCode == nil ? "qrcode.viewfinder" : "checkmark.shield"
         }
     }
 
@@ -123,14 +177,30 @@ struct OnboardingView: View {
             let decoded = try PairingCode.decode(value)
             try decoded.requireSelectedRegion()
             pairingCode = decoded
+            rawPairingCode = value
+            pairingFailed = false
             errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 
+    private func validateEnteredPairingCode() {
+        receiveScannedCode(rawPairingCode.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+
     private func advance() async {
         errorMessage = nil
+        if pairingSucceeded {
+            finishOnboarding()
+            return
+        }
+        if pairingFailed {
+            pairingFailed = false
+            pairingCode = nil
+            rawPairingCode = ""
+            return
+        }
         switch page {
         case 0:
             page = 1
@@ -146,27 +216,8 @@ struct OnboardingView: View {
                 errorMessage = error.localizedDescription
             }
         case 2:
-            isWorking = true
-            do {
-                if bypassesSystemPermissions {
-                    _ = try await store.bootstrapDevice()
-                } else {
-                    _ = try await notificationCoordinator.requestAuthorization()
-                    _ = try await store.bootstrapDevice()
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-                page = 3
-            } catch {
-                errorMessage = error.localizedDescription
-            }
-            isWorking = false
+            await completePermissionStep(requestPermission: true)
         default:
-            if pairingSucceeded {
-                router.clearPendingPairing()
-                router.selectedTab = .activeRuns
-                onFinished()
-                return
-            }
             guard let pairingCode else {
                 sheet = .scanner
                 return
@@ -177,9 +228,38 @@ struct OnboardingView: View {
                 pairingSucceeded = true
             } catch {
                 errorMessage = error.localizedDescription
+                pairingFailed = true
             }
             isWorking = false
         }
+    }
+
+    private func completePermissionStep(requestPermission: Bool) async {
+        isWorking = true
+        errorMessage = nil
+        do {
+            if !bypassesSystemPermissions, requestPermission {
+                _ = try await notificationCoordinator.requestAuthorization()
+            }
+            _ = try await store.bootstrapDevice()
+            if !bypassesSystemPermissions, requestPermission {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+            page = 3
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isWorking = false
+    }
+
+    private func finishWithoutPairing() {
+        finishOnboarding()
+    }
+
+    private func finishOnboarding() {
+        router.clearPendingPairing()
+        router.selectedTab = .activeRuns
+        onFinished()
     }
 
     private func receivePendingPairingCode(_ code: PairingCode?) {
@@ -204,13 +284,14 @@ private struct ProductIntroduction: View {
     var body: some View {
         OnboardingPage(
             symbol: "water.waves",
+            kicker: "onboarding.step_1_of_4",
             title: "onboarding.welcome",
             bodyText: "onboarding.welcome_body"
         ) {
-            VStack(alignment: .leading, spacing: 15) {
-                BoundaryRow(symbol: "arrow.right.circle", title: "onboarding.flow_machine")
-                BoundaryRow(symbol: "server.rack", title: "onboarding.flow_server")
-                BoundaryRow(symbol: "iphone", title: "onboarding.flow_phone")
+            VStack(alignment: .leading, spacing: 16) {
+                BoundaryRow(symbol: "waveform.path.ecg", title: "onboarding.benefit_live")
+                BoundaryRow(symbol: "bell.badge", title: "onboarding.benefit_notifications")
+                BoundaryRow(symbol: "lock.shield", title: "onboarding.benefit_private")
             }
         }
         .accessibilityIdentifier("onboarding.page.product")
@@ -221,10 +302,29 @@ private struct PermissionIntroduction: View {
     var body: some View {
         OnboardingPage(
             symbol: "bell.badge.fill",
+            kicker: "onboarding.step_3_of_4",
             title: "onboarding.notifications",
             bodyText: "onboarding.notifications_body"
         ) {
             VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "water.waves")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.tint)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("onboarding.notification_preview_title")
+                            .font(.headline)
+                        Text("onboarding.notification_preview_body")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 0)
+                    Text("onboarding.notification_preview_time")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(14)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                 BoundaryRow(symbol: "waveform.path.ecg", title: "onboarding.live_updates")
                 BoundaryRow(symbol: "lock.fill", title: "onboarding.tokens_private")
             }
@@ -239,6 +339,7 @@ private struct RegionIntroduction: View {
     var body: some View {
         OnboardingPage(
             symbol: "globe.asia.australia.fill",
+            kicker: "onboarding.step_2_of_4",
             title: "onboarding.region",
             bodyText: "onboarding.region_body"
         ) {
@@ -268,14 +369,30 @@ private struct RegionIntroduction: View {
 }
 
 private struct PairingIntroduction: View {
+    @Binding var rawCode: String
+    let onValidate: () -> Void
+
     var body: some View {
         OnboardingPage(
             symbol: "qrcode.viewfinder",
+            kicker: "onboarding.step_4_of_4",
             title: "onboarding.pair",
             bodyText: "onboarding.pair_body"
         ) {
-            Label("onboarding.one_time_code", systemImage: "clock.badge.checkmark")
-                .font(.headline)
+            VStack(alignment: .leading, spacing: 12) {
+                Label("onboarding.one_time_code", systemImage: "clock.badge.checkmark")
+                    .font(.headline)
+                TextField("pairing.code_placeholder", text: $rawCode)
+                    .textFieldStyle(.roundedBorder)
+                    .keyboardType(.asciiCapable)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .submitLabel(.done)
+                    .onSubmit(onValidate)
+                    .accessibilityIdentifier("onboarding.pairing-code")
+                Button("pairing.continue", action: onValidate)
+                    .disabled(rawCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
         }
         .accessibilityIdentifier("onboarding.page.pairing")
     }
@@ -283,17 +400,20 @@ private struct PairingIntroduction: View {
 
 private struct OnboardingPage<Content: View>: View {
     let symbol: String
+    let kicker: LocalizedStringKey
     let title: LocalizedStringKey
     let bodyText: LocalizedStringKey
     let content: Content
 
     init(
         symbol: String,
+        kicker: LocalizedStringKey,
         title: LocalizedStringKey,
         bodyText: LocalizedStringKey,
         @ViewBuilder content: () -> Content
     ) {
         self.symbol = symbol
+        self.kicker = kicker
         self.title = title
         self.bodyText = bodyText
         self.content = content()
@@ -301,10 +421,16 @@ private struct OnboardingPage<Content: View>: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 22) {
+            VStack(spacing: 18) {
+                Text(kicker)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .textCase(.uppercase)
                 Image(systemName: symbol)
-                    .font(.system(size: 58, weight: .semibold))
+                    .font(.system(size: 42, weight: .semibold))
                     .foregroundStyle(.tint)
+                    .frame(width: 82, height: 82)
+                    .background(Color.accentColor.opacity(0.12), in: Circle())
                     .accessibilityHidden(true)
                 Text(title)
                     .font(.largeTitle.bold())
@@ -314,10 +440,34 @@ private struct OnboardingPage<Content: View>: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                 content
+                    .padding(18)
                     .frame(maxWidth: 420, alignment: .leading)
+                    .background(.background, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
             }
-            .padding(28)
+            .frame(maxWidth: 520)
+            .padding(.horizontal, 24)
+            .padding(.top, 24)
+            .padding(.bottom, 40)
+            .frame(maxWidth: .infinity)
         }
+    }
+}
+
+private struct OnboardingOutcomePage: View {
+    let symbol: String
+    let title: LocalizedStringKey
+    let bodyText: LocalizedStringKey
+    let color: Color
+
+    var body: some View {
+        ContentUnavailableView {
+            Label(title, systemImage: symbol)
+                .foregroundStyle(color)
+        } description: {
+            Text(bodyText)
+        }
+        .frame(maxWidth: 520, maxHeight: .infinity)
+        .padding(24)
     }
 }
 

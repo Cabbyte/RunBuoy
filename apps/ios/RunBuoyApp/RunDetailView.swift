@@ -231,10 +231,13 @@ private struct RunOverviewSection: View {
 
     var body: some View {
         Section {
-            VStack(alignment: .leading, spacing: 14) {
-                Text(run.title)
-                    .font(.title2.bold())
-                    .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    StatusBadge(presentation: primaryStatus)
+                    Text(run.title)
+                        .font(.title2.bold())
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     MachineIconImage(machineID: run.machineID)
                         .accessibilityHidden(true)
@@ -242,13 +245,6 @@ private struct RunOverviewSection: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .foregroundStyle(.primary)
-                HStack {
-                    StatusBadge(presentation: run.executionStatus.presentation)
-                    StatusBadge(presentation: run.healthStatus.presentation)
-                }
-                if run.attentionStatus != .none {
-                    StatusBadge(presentation: run.attentionStatus.presentation)
-                }
                 RunProgressView(
                     progress: run.progress,
                     phase: run.phase,
@@ -259,6 +255,16 @@ private struct RunOverviewSection: View {
             }
             .padding(.vertical, 8)
         }
+    }
+
+    private var primaryStatus: StatusPresentation {
+        if run.attentionStatus != .none {
+            return run.attentionStatus.presentation
+        }
+        if run.healthStatus != .healthy {
+            return run.healthStatus.presentation
+        }
+        return run.executionStatus.presentation
     }
 }
 

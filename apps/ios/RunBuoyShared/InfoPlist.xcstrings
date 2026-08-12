@@ -41,6 +41,18 @@
           }
         }
       }
+    },
+    "NSFaceIDUsageDescription" : {
+      "comment" : "Privacy - Face ID Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Confirm identity before resetting this iPhone or deleting RunBuoy data."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -1,123 +1,65 @@
 import SwiftUI
 
-private enum MachinesSheet: Identifiable {
-    case scanner
-    case pairingCode
-    case confirmation(PairingCode)
-
-    var id: String {
-        switch self {
-        case .scanner:
-            "scanner"
-        case .pairingCode:
-            "pairing-code"
-        case .confirmation:
-            "confirmation"
-        }
-    }
-}
-
 struct MachinesView: View {
     @Environment(RunBuoyStore.self) private var store
-    @State private var presentedSheet: MachinesSheet?
-    @State private var queuedPairingCode: PairingCode?
-    @State private var pairingError: String?
+    @Environment(AppRouter.self) private var router
 
     var body: some View {
         List {
-            ForEach(store.machines) { machine in
-                NavigationLink(value: AppRoute.machine(machine.id)) {
-                    MachineRow(machine: machine)
+            if !store.machines.isEmpty {
+                Section {
+                    Text("machines.intro")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+
+                    Button(action: showPairingCode) {
+                        Label("settings.pair_machine", systemImage: "plus")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .labelStyle(.titleAndIcon)
+                    .runBuoyProminentButtonStyle()
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .accessibilityIdentifier("machines.enterPairingCode")
                 }
-                .accessibilityIdentifier("machine.row.\(machine.id)")
+
+                Section {
+                    ForEach(store.machines) { machine in
+                        NavigationLink(value: AppRoute.machine(machine.id)) {
+                            MachineRow(machine: machine)
+                        }
+                        .accessibilityIdentifier("machine.row.\(machine.id)")
+                    }
+                } header: {
+                    Text("machines.paired")
+                } footer: {
+                    Text("machines.footer")
+                }
             }
         }
         .listStyle(.insetGrouped)
         .accessibilityIdentifier("screen.machines")
         .navigationTitle("machines.title")
+        .toolbar(.hidden, for: .tabBar)
         .overlay {
             if store.machines.isEmpty {
-                MachinesEmptyState(isLoading: store.state == .loading)
-                    .allowsHitTesting(false)
+                MachinesEmptyState(
+                    state: store.state,
+                    retry: refresh,
+                    pair: showPairingCode
+                )
             }
         }
         .refreshable { await reload() }
         .task { await loadIfNeeded() }
-        .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                RefreshButton(
-                    isRefreshing: store.isRefreshing,
-                    action: refresh
-                )
-
-                Button(action: showPairingCode) {
-                    Label("pairing.enter_code", systemImage: "keyboard")
-                }
-                .accessibilityIdentifier("machines.enterPairingCode")
-
-                Button(action: showScanner) {
-                    Label("pairing.scan_title", systemImage: "qrcode.viewfinder")
-                }
-                .accessibilityIdentifier("machines.scanPairingCode")
-            }
-        }
-        .sheet(item: $presentedSheet, onDismiss: presentQueuedPairingCode) { sheet in
-            switch sheet {
-            case .scanner:
-                ScannerSheet(onCode: receiveScannedCode)
-            case .pairingCode:
-                PairMachineSheet(allowsCodeEntry: true)
-            case .confirmation(let code):
-                PairMachineSheet(
-                    initialCode: code,
-                    allowsCodeEntry: false
-                )
-            }
-        }
-        .alert(
-            "pairing.invalid_code_title",
-            isPresented: Binding(
-                get: { pairingError != nil },
-                set: { isPresented in
-                    if !isPresented {
-                        pairingError = nil
-                    }
-                }
-            )
-        ) {
-            Button("common.close", role: .cancel) {}
-        } message: {
-            Text(pairingError ?? "")
-        }
-    }
-
-    private func showScanner() {
-        presentedSheet = .scanner
     }
 
     private func showPairingCode() {
-        presentedSheet = .pairingCode
-    }
-
-    private func receiveScannedCode(_ value: String) {
-        do {
-            let decoded = try PairingCode.decode(value)
-            try decoded.requireSelectedRegion()
-            queuedPairingCode = decoded
-            pairingError = nil
-        } catch {
-            queuedPairingCode = nil
-            pairingError = error.localizedDescription
-        }
-    }
-
-    private func presentQueuedPairingCode() {
-        guard let code = queuedPairingCode else { return }
-        queuedPairingCode = nil
-        Task { @MainActor in
-            await Task.yield()
-            presentedSheet = .confirmation(code)
-        }
+        router.settingsPath.append(.pairMachine)
     }
 
     private func refresh() {
@@ -135,50 +77,43 @@ struct MachinesView: View {
 }
 
 private struct MachinesEmptyState: View {
-    let isLoading: Bool
+    let state: RunBuoyStore.LoadState
+    let retry: () -> Void
+    let pair: () -> Void
 
     var body: some View {
         Group {
-            if isLoading {
+            if state == .loading {
                 ProgressView("machines.loading")
+            } else if isFailure {
+                ContentUnavailableView {
+                    Label("machines.unavailable", systemImage: "exclamationmark.icloud")
+                } description: {
+                    Text("runs.pull_to_refresh")
+                } actions: {
+                    Button("common.try_again", action: retry)
+                        .runBuoyProminentButtonStyle()
+                }
             } else {
                 ContentUnavailableView {
                     Label("machines.empty", systemImage: "desktopcomputer.and.macbook")
                 } description: {
                     Text("machines.empty_description")
+                } actions: {
+                    Button("settings.pair_machine", systemImage: "plus", action: pair)
+                        .labelStyle(.titleAndIcon)
+                        .runBuoyProminentButtonStyle()
+                        .buttonBorderShape(.capsule)
+                        .accessibilityIdentifier("machines.enterPairingCode")
                 }
             }
         }
         .padding()
     }
-}
 
-private struct PairMachineSheet: View {
-    @Environment(\.dismiss) private var dismiss
-    var initialCode: PairingCode?
-    let allowsCodeEntry: Bool
-
-    init(
-        initialCode: PairingCode? = nil,
-        allowsCodeEntry: Bool
-    ) {
-        self.initialCode = initialCode
-        self.allowsCodeEntry = allowsCodeEntry
-    }
-
-    var body: some View {
-        NavigationStack {
-            PairMachineView(
-                initialCode: initialCode,
-                allowsCodeEntry: allowsCodeEntry,
-                dismissesOnSuccess: true
-            )
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("common.close", action: dismiss.callAsFunction)
-                    }
-                }
-        }
+    private var isFailure: Bool {
+        if case .failed = state { return true }
+        return false
     }
 }
 
@@ -221,37 +156,59 @@ struct MachineRow: View {
     }
 
     private var machineMetadata: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(machine.displayName)
-                .font(.headline)
-                .lineLimit(nil)
+        HStack(alignment: .top, spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(machine.displayName)
+                    .font(.headline)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: 4) {
+                    Text(machine.platform)
+                    Text("·")
+                        .accessibilityHidden(true)
+                    Text("machines.last_seen_prefix")
+                    Text(
+                        machine.lastSeenAt,
+                        format: .relative(
+                            presentation: .numeric,
+                            unitsStyle: .abbreviated
+                        )
+                    )
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-            Text("\(machine.platform) · \(machine.cliVersion)")
-                .font(.subheadline)
-                .foregroundStyle(.primary)
-                .fixedSize(horizontal: false, vertical: true)
-            Label {
-                Text(machine.lastSeenAt, format: .relative(presentation: .named))
-            } icon: {
-                Image(systemName: machine.isSubscribed ? "bell.fill" : "bell.slash")
             }
-            .labelStyle(MachineMetadataLabelStyle())
-            .font(.caption)
-            .foregroundStyle(.primary)
+            Spacer(minLength: 4)
+            HStack(spacing: 4) {
+                Circle()
+                    .fill(machineStateColor)
+                    .frame(width: 8, height: 8)
+                    .accessibilityHidden(true)
+                Text(machineStateTitle)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(.secondary)
+            }
+            .fixedSize(horizontal: true, vertical: false)
         }
         .fixedSize(horizontal: false, vertical: true)
         .layoutPriority(1)
     }
 
-}
-
-private struct MachineMetadataLabelStyle: LabelStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: 4) {
-            configuration.icon
-            configuration.title
-        }
+    private var isRecentlySeen: Bool {
+        Date().timeIntervalSince(machine.lastSeenAt) < 10 * 60
     }
+
+    private var machineStateTitle: LocalizedStringKey {
+        if !machine.isSubscribed { return "machines.updates_off" }
+        return isRecentlySeen ? "machines.online" : "machines.idle"
+    }
+
+    private var machineStateColor: Color {
+        if !machine.isSubscribed { return .orange }
+        return isRecentlySeen ? .green : .secondary
+    }
+
 }
 
 struct MachineDetailView: View {
@@ -273,6 +230,7 @@ struct MachineDetailView: View {
                 }
             }
         }
+        .toolbar(.hidden, for: .tabBar)
     }
 }
 
@@ -296,7 +254,32 @@ private struct MachineDetailContent: View {
     var body: some View {
         Form {
             Section {
-                LabeledContent("machine.name", value: machine.displayName)
+                VStack(spacing: 10) {
+                    MachineIconImage(machineID: machine.id)
+                        .font(.system(size: 34, weight: .medium))
+                        .foregroundStyle(.tint)
+                        .frame(width: 72, height: 72)
+                        .background(Color.accentColor.opacity(0.12), in: Circle())
+                        .accessibilityHidden(true)
+                    Text(machine.displayName)
+                        .font(.title2.bold())
+                        .multilineTextAlignment(.center)
+                    Label {
+                        Text(machineStateTitle)
+                    } icon: {
+                        Circle()
+                            .fill(machineStateColor)
+                            .frame(width: 8, height: 8)
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .accessibilityElement(children: .combine)
+            }
+
+            Section {
                 LabeledContent("machine.platform", value: machine.platform)
                 if let architecture = machine.architecture {
                     LabeledContent("machine.architecture", value: architecture)
@@ -381,6 +364,20 @@ private struct MachineDetailContent: View {
         } message: {
             Text(pendingAction?.message ?? "")
         }
+    }
+
+    private var isRecentlySeen: Bool {
+        Date().timeIntervalSince(machine.lastSeenAt) < 10 * 60
+    }
+
+    private var machineStateTitle: LocalizedStringKey {
+        if !machine.isSubscribed { return "machines.updates_off" }
+        return isRecentlySeen ? "machines.online" : "machines.idle"
+    }
+
+    private var machineStateColor: Color {
+        if !machine.isSubscribed { return .orange }
+        return isRecentlySeen ? .green : .secondary
     }
 
     private func perform(_ action: MachineLifecycleAction) {

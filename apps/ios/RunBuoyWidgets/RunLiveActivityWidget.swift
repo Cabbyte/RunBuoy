@@ -14,13 +14,18 @@ struct RunLiveActivityWidget: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.center) {
-                    Text(context.attributes.title)
-                        .font(.headline)
-                        .lineLimit(1)
+                    LiveActivityHeader(
+                        attributes: context.attributes,
+                        state: context.state,
+                        isStale: context.isStale
+                    )
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        LiveProgressBar(state: context.state, isStale: context.isStale)
+                    VStack(alignment: .leading, spacing: 8) {
+                        LiveActivityProgressSection(
+                            state: context.state,
+                            isStale: context.isStale
+                        )
                         LiveActivityFooter(
                             attributes: context.attributes,
                             state: context.state,
@@ -31,10 +36,17 @@ struct RunLiveActivityWidget: Widget {
             } compactLeading: {
                 LiveStatusIcon(state: context.state, isStale: context.isStale, size: 18)
             } compactTrailing: {
-                LiveCompactTrailing(state: context.state)
-                    .font(.caption.monospacedDigit().bold())
+                LiveIslandProgress(
+                    state: context.state,
+                    isStale: context.isStale,
+                    size: 24
+                )
             } minimal: {
-                LiveStatusIcon(state: context.state, isStale: context.isStale, size: 16)
+                LiveIslandProgress(
+                    state: context.state,
+                    isStale: context.isStale,
+                    size: 22
+                )
             }
             .widgetURL(deepLink(for: context.attributes))
             .keylineTint(statusStyle(context.state, isStale: context.isStale).color)
@@ -66,10 +78,8 @@ struct RunLockScreenView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(attributes.title)
-                .font(.headline)
-                .lineLimit(1)
-            LiveProgressBar(state: state, isStale: isStale)
+            LiveActivityHeader(attributes: attributes, state: state, isStale: isStale)
+            LiveActivityProgressSection(state: state, isStale: isStale)
             LiveActivityFooter(attributes: attributes, state: state, isStale: isStale)
         }
         .padding()
@@ -78,6 +88,21 @@ struct RunLockScreenView: View {
         .accessibilityValue(
             statusStyle(state, isStale: isStale).accessibilityValue(state: state)
         )
+    }
+}
+
+private struct LiveActivityHeader: View {
+    let attributes: RunActivityAttributes
+    let state: RunActivityAttributes.ContentState
+    let isStale: Bool
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            LiveStatusIcon(state: state, isStale: isStale, size: 17)
+            Text(attributes.title)
+                .font(.headline)
+                .lineLimit(1)
+        }
     }
 }
 
@@ -94,28 +119,50 @@ private struct LiveStatusIcon: View {
     }
 }
 
-private struct LiveCompactTrailing: View {
+private struct LiveIslandProgress: View {
     let state: RunActivityAttributes.ContentState
+    let isStale: Bool
+    let size: CGFloat
 
     var body: some View {
-        if isTerminal(state) {
-            LiveActivityTerminalTime(endedAt: state.completionDate)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-        } else if state.progressKind == "determinate", let progress = state.progress {
-            Text(min(max(progress, 0), 1), format: .percent.precision(.fractionLength(0)))
+        if !isTerminal(state), state.progressKind == "determinate", let progress = state.progress {
+            LiveProgressRing(
+                progress: progress,
+                color: statusStyle(state, isStale: isStale).color,
+                size: size
+            )
         } else {
-            Text(confirmedDuration)
-                .accessibilityLabel("widget.confirmed_elapsed")
+            LiveStatusIcon(
+                state: state,
+                isStale: isStale,
+                size: size * 0.68
+            )
         }
     }
+}
 
-    private var confirmedDuration: String {
-        RunActivityDurationText.string(
-            createdAt: state.createdAt,
-            startedAt: state.startedAt,
-            updatedAt: state.updatedAt
-        )
+private struct LiveProgressRing: View {
+    let progress: Double
+    let color: Color
+    let size: CGFloat
+
+    private var boundedProgress: Double {
+        min(max(progress, 0), 1)
+    }
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(color.opacity(0.25), style: StrokeStyle(lineWidth: 3, lineCap: .round))
+            Circle()
+                .trim(from: 0, to: boundedProgress)
+                .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+        }
+        .frame(width: size, height: size)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("widget.progress")
+        .accessibilityValue(Text(boundedProgress, format: .percent))
     }
 }
 
@@ -126,7 +173,8 @@ private struct LiveActivityFooter: View {
 
     var body: some View {
         HStack(spacing: 6) {
-            LiveStatusIcon(state: state, isStale: isStale, size: 13)
+            Image(systemName: "desktopcomputer")
+                .accessibilityHidden(true)
             Text(state.machineName ?? attributes.machineName)
                 .lineLimit(1)
                 .truncationMode(.tail)
@@ -187,25 +235,54 @@ private struct LiveActivityTerminalTime: View {
     }
 }
 
-private struct LiveProgressBar: View {
+private struct LiveActivityProgressSection: View {
     let state: RunActivityAttributes.ContentState
     let isStale: Bool
 
     var body: some View {
-        if state.progressKind == "determinate", let progress = state.progress {
-            ProgressView(value: min(max(progress, 0), 1))
-                .tint(statusStyle(state, isStale: isStale).color)
-                .accessibilityLabel("widget.progress")
-                .accessibilityValue(Text(progress, format: .percent))
-        } else {
-            HStack(spacing: 7) {
-                Image(systemName: "ellipsis")
-                    .accessibilityHidden(true)
-                Text("progress.indeterminate")
-                    .font(.caption)
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(state.phase ?? statusStyle(state, isStale: isStale).accessibilityValue(state: state))
+                    .font(.subheadline.weight(.medium))
+                    .lineLimit(1)
+                Spacer(minLength: 8)
+                if state.progressKind == "determinate", let progress = state.progress {
+                    Text(min(max(progress, 0), 1), format: .percent.precision(.fractionLength(0)))
+                        .font(.subheadline.monospacedDigit().bold())
+                }
             }
-            .foregroundStyle(.secondary)
+
+            if state.progressKind == "determinate", let progress = state.progress {
+                ProgressView(value: min(max(progress, 0), 1))
+                    .tint(statusStyle(state, isStale: isStale).color)
+                    .accessibilityLabel("widget.progress")
+                    .accessibilityValue(Text(progress, format: .percent))
+            } else if !isTerminal(state) {
+                LiveIndeterminateProgressBar(
+                    color: statusStyle(state, isStale: isStale).color
+                )
+                    .accessibilityLabel("progress.indeterminate")
+            }
         }
+    }
+}
+
+private struct LiveIndeterminateProgressBar: View {
+    let color: Color
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(color.opacity(0.22))
+                Capsule()
+                    .fill(color)
+                    .frame(width: proxy.size.width * 0.34)
+                    .offset(x: proxy.size.width * 0.12)
+            }
+        }
+        .frame(height: 6)
+        .accessibilityElement(children: .ignore)
     }
 }
 
@@ -263,7 +340,11 @@ private func statusStyle(
     case "STARTING":
         return LiveStatusStyle(title: "status.starting", symbol: "hourglass", color: .blue)
     default:
-        return LiveStatusStyle(title: "status.running", symbol: "waveform.path.ecg", color: .blue)
+        return LiveStatusStyle(
+            title: "status.running",
+            symbol: "arrow.trianglehead.2.clockwise.rotate.90",
+            color: .blue
+        )
     }
 }
 

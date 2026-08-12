@@ -8,10 +8,14 @@ enum CapabilityDemoStep: Int, CaseIterable, Identifiable {
     case starting = 1
     case indeterminate
     case progress
+    case uploading
     case warning
+    case actionRequired
     case stale
     case succeeded
     case failed
+    case cancelled
+    case lost
 
     var id: Int { rawValue }
 
@@ -20,10 +24,14 @@ enum CapabilityDemoStep: Int, CaseIterable, Identifiable {
         case .starting: "demo.step.starting"
         case .indeterminate: "demo.step.indeterminate"
         case .progress: "demo.step.progress"
+        case .uploading: "demo.step.uploading"
         case .warning: "demo.step.warning"
+        case .actionRequired: "demo.step.action_required"
         case .stale: "demo.step.stale"
         case .succeeded: "demo.step.succeeded"
         case .failed: "demo.step.failed"
+        case .cancelled: "demo.step.cancelled"
+        case .lost: "demo.step.lost"
         }
     }
 
@@ -32,10 +40,14 @@ enum CapabilityDemoStep: Int, CaseIterable, Identifiable {
         case .starting: "demo.step.starting_explanation"
         case .indeterminate: "demo.step.indeterminate_explanation"
         case .progress: "demo.step.progress_explanation"
+        case .uploading: "demo.step.uploading_explanation"
         case .warning: "demo.step.warning_explanation"
+        case .actionRequired: "demo.step.action_required_explanation"
         case .stale: "demo.step.stale_explanation"
         case .succeeded: "demo.step.succeeded_explanation"
         case .failed: "demo.step.failed_explanation"
+        case .cancelled: "demo.step.cancelled_explanation"
+        case .lost: "demo.step.lost_explanation"
         }
     }
 
@@ -44,10 +56,14 @@ enum CapabilityDemoStep: Int, CaseIterable, Identifiable {
         case .starting: "hourglass"
         case .indeterminate: "ellipsis.circle"
         case .progress: "chart.bar.fill"
+        case .uploading: "arrow.up.circle.fill"
         case .warning: "exclamationmark.triangle.fill"
+        case .actionRequired: "exclamationmark.bubble.fill"
         case .stale: "wifi.slash"
         case .succeeded: "checkmark.circle.fill"
         case .failed: "xmark.octagon.fill"
+        case .cancelled: "minus.circle.fill"
+        case .lost: "questionmark.circle.fill"
         }
     }
 
@@ -55,15 +71,29 @@ enum CapabilityDemoStep: Int, CaseIterable, Identifiable {
         switch self {
         case .starting: .indeterminate
         case .indeterminate: .progress
-        case .progress: .warning
-        case .warning: .stale
+        case .progress: .uploading
+        case .uploading: .warning
+        case .warning: .actionRequired
+        case .actionRequired: .stale
         case .stale: .succeeded
-        case .succeeded, .failed: nil
+        case .succeeded, .failed, .cancelled, .lost: nil
         }
     }
 
     var isTerminal: Bool {
-        self == .succeeded || self == .failed
+        switch self {
+        case .succeeded, .failed, .cancelled, .lost: true
+        default: false
+        }
+    }
+
+    var previewProgress: Double? {
+        switch self {
+        case .progress, .warning, .actionRequired, .stale, .failed, .cancelled, .lost: 0.72
+        case .uploading: 0.92
+        case .succeeded: 1
+        case .starting, .indeterminate: nil
+        }
     }
 
     func contentState(
@@ -72,19 +102,21 @@ enum CapabilityDemoStep: Int, CaseIterable, Identifiable {
         startedAt: Date,
         machineName: String? = nil
     ) -> RunActivityAttributes.ContentState {
-        let progress: Double? = switch self {
-        case .progress, .warning, .stale, .failed: 0.72
-        case .succeeded: 1
-        case .starting, .indeterminate: nil
-        }
+        let progress = previewProgress
         let executionStatus: String = switch self {
         case .starting: "STARTING"
         case .succeeded: "SUCCEEDED"
         case .failed: "FAILED"
+        case .cancelled: "CANCELLED"
+        case .lost: "LOST"
         default: "RUNNING"
         }
         let healthStatus = self == .stale ? "STALE" : "HEALTHY"
-        let attentionStatus = self == .warning ? "WARNING" : "NONE"
+        let attentionStatus = switch self {
+        case .warning: "WARNING"
+        case .actionRequired: "ACTION_REQUIRED"
+        default: "NONE"
+        }
 
         return RunActivityAttributes.ContentState(
             sequence: rawValue,
@@ -113,17 +145,22 @@ enum CapabilityDemoStep: Int, CaseIterable, Identifiable {
         switch state.executionStatus {
         case "SUCCEEDED": return .succeeded
         case "FAILED": return .failed
+        case "CANCELLED": return .cancelled
+        case "LOST": return .lost
         case "STARTING": return .starting
         default: break
         }
         if state.healthStatus == "STALE" || state.healthStatus == "OFFLINE" {
             return .stale
         }
-        if state.attentionStatus == "WARNING" || state.attentionStatus == "ACTION_REQUIRED" {
+        if state.attentionStatus == "ACTION_REQUIRED" {
+            return .actionRequired
+        }
+        if state.attentionStatus == "WARNING" {
             return .warning
         }
         if state.progressKind == "determinate", state.progress != nil {
-            return .progress
+            return (state.progress ?? 0) >= 0.9 ? .uploading : .progress
         }
         return .indeterminate
     }
@@ -133,19 +170,26 @@ enum CapabilityDemoStep: Int, CaseIterable, Identifiable {
         case .starting: String(localized: "demo.phase.starting")
         case .indeterminate: String(localized: "demo.phase.preparing")
         case .progress: String(localized: "demo.phase.processing")
+        case .uploading: String(localized: "demo.phase.uploading")
         case .warning: String(localized: "demo.phase.checking")
+        case .actionRequired: String(localized: "demo.phase.action_required")
         case .stale: String(localized: "demo.phase.waiting")
         case .succeeded: String(localized: "demo.phase.completed")
         case .failed: String(localized: "demo.phase.failed")
+        case .cancelled: String(localized: "demo.phase.cancelled")
+        case .lost: String(localized: "demo.phase.lost")
         }
     }
 
     private var messageText: String? {
         switch self {
         case .warning: String(localized: "demo.message.warning")
+        case .actionRequired: String(localized: "demo.message.action_required")
         case .stale: String(localized: "demo.message.stale")
         case .succeeded: String(localized: "demo.message.succeeded")
         case .failed: String(localized: "demo.message.failed")
+        case .cancelled: String(localized: "demo.message.cancelled")
+        case .lost: String(localized: "demo.message.lost")
         default: nil
         }
     }
@@ -537,10 +581,10 @@ struct CapabilityDemoView: View {
 
         case .active(let step):
             DemoStepRow(step: step)
-            if step == .progress || step == .warning || step == .stale {
-                ProgressView(value: 0.72)
+            if let progress = step.previewProgress {
+                ProgressView(value: progress)
                     .accessibilityLabel("widget.progress")
-                    .accessibilityValue(Text(0.72, format: .percent))
+                    .accessibilityValue(Text(progress, format: .percent))
             }
             if step.next != nil {
                 Button {
@@ -637,9 +681,9 @@ private struct DemoStepRow: View {
 
     private var iconColor: Color {
         switch step {
-        case .warning, .stale: .orange
+        case .warning, .stale, .cancelled, .lost: .orange
+        case .actionRequired, .failed: .red
         case .succeeded: .green
-        case .failed: .red
         default: .blue
         }
     }

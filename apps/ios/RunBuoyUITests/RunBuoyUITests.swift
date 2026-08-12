@@ -178,6 +178,7 @@ final class RunBuoyUITests: XCTestCase {
         element("machines.enterPairingCode").tap()
         let codeField = element("pairing.code")
         XCTAssertTrue(codeField.waitForExistence(timeout: 3))
+        codeField.tap()
         codeField.typeText(Self.pairingURL)
         element("pairing.continue").tap()
 

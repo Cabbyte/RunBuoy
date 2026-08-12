@@ -16,7 +16,7 @@ struct ActiveRunsView: View {
             }
 
             if !store.activeRunModels.isEmpty {
-                Section("runs.active") {
+                Section {
                     ForEach(store.activeRunModels) { model in
                         NavigationLink(value: AppRoute.runDetail(model.id)) {
                             RunRow(model: model, showsLiveTiming: true)
@@ -30,9 +30,10 @@ struct ActiveRunsView: View {
         .accessibilityIdentifier("screen.activeRuns")
         .navigationTitle("runs.active")
         .overlay {
-            if isEmpty, store.state != .loading {
-                ActiveRunsEmptyState(state: store.state)
-                    .allowsHitTesting(false)
+            if store.state == .loading, isEmpty {
+                ProgressView("runs.loading")
+            } else if isEmpty {
+                ActiveRunsEmptyState(state: store.state, retry: refresh)
             }
         }
         .refreshable { await reload() }
@@ -132,6 +133,46 @@ struct RunHistoryView: View {
     }
 
     var body: some View {
+        historyListWithFilter
+        .accessibilityIdentifier("screen.history")
+        .navigationTitle("history.title")
+        .overlay {
+            if store.state == .loading, isEmpty {
+                ProgressView("history.loading")
+            } else if isEmpty {
+                HistoryEmptyState(
+                    state: store.state,
+                    machineID: selectedMachineID,
+                    machineName: selectedMachineName,
+                    retry: refresh
+                )
+            }
+        }
+        .refreshable { await reload() }
+        .task { await loadIfNeeded() }
+        .onChange(of: selectedMachineID) { _, _ in
+            areRunsExpanded = false
+            areMessagesExpanded = false
+        }
+        .onChange(of: machineOptionIDs) { _, availableIDs in
+            guard let selectedMachineID,
+                  !availableIDs.contains(selectedMachineID)
+            else {
+                return
+            }
+            self.selectedMachineID = nil
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                RefreshButton(
+                    isRefreshing: store.isRefreshing,
+                    action: refresh
+                )
+            }
+        }
+    }
+
+    private var historyList: some View {
         List {
             if case .offline(let message) = store.state {
                 OfflineBanner(message: message)
@@ -185,53 +226,41 @@ struct RunHistoryView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .accessibilityIdentifier("screen.history")
-        .navigationTitle("history.title")
-        .navigationBarTitleDisplayMode(.inline)
-        .overlay {
-            if isEmpty, store.state != .loading {
-                HistoryEmptyState(
-                    state: store.state,
-                    machineID: selectedMachineID,
-                    machineName: selectedMachineName
-                )
-                    .allowsHitTesting(false)
-            }
-        }
-        .safeAreaInset(edge: .top, spacing: 0) {
-            if !machineOptions.isEmpty {
-                VStack(spacing: 0) {
+    }
+
+    @ViewBuilder
+    private var historyListWithFilter: some View {
+#if compiler(>=6.2)
+        if #available(iOS 26.0, *), !machineOptions.isEmpty {
+            historyList
+                .safeAreaBar(edge: .top) {
                     HistoryMachineFilterBar(
                         options: machineOptions,
                         selection: $selectedMachineID
                     )
-                    Divider()
                 }
-                .background(.ultraThinMaterial)
+        } else {
+            historyListWithLegacyFilter
+        }
+#else
+        historyListWithLegacyFilter
+#endif
+    }
+
+    private var historyListWithLegacyFilter: some View {
+        historyList
+            .safeAreaInset(edge: .top, spacing: 0) {
+                if !machineOptions.isEmpty {
+                    VStack(spacing: 0) {
+                        HistoryMachineFilterBar(
+                            options: machineOptions,
+                            selection: $selectedMachineID
+                        )
+                        Divider()
+                    }
+                    .background(.ultraThinMaterial)
+                }
             }
-        }
-        .refreshable { await reload() }
-        .task { await loadIfNeeded() }
-        .onChange(of: selectedMachineID) { _, _ in
-            areRunsExpanded = false
-            areMessagesExpanded = false
-        }
-        .onChange(of: machineOptionIDs) { _, availableIDs in
-            guard let selectedMachineID,
-                  !availableIDs.contains(selectedMachineID)
-            else {
-                return
-            }
-            self.selectedMachineID = nil
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                RefreshButton(
-                    isRefreshing: store.isRefreshing,
-                    action: refresh
-                )
-            }
-        }
     }
 
     private func refresh() {
@@ -383,33 +412,53 @@ private struct HistoryMachineFilterBar: View {
 
     var body: some View {
         ScrollView(.horizontal) {
-            HStack(spacing: 8) {
-                filterButton(id: nil) {
-                    Text("history.all")
-                }
-                ForEach(options) { option in
-                    filterButton(id: option.id) {
-                        Label {
-                            Text(option.name)
-                        } icon: {
-                            MachineIconImage(machineID: option.id)
-                        }
-                    }
-                }
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 8)
+            filterGroup
+                .padding(.horizontal)
+                .padding(.vertical, 8)
         }
         .scrollIndicators(.hidden)
         .frame(height: height)
     }
 
+    @ViewBuilder
+    private var filterGroup: some View {
+#if compiler(>=6.2)
+        if #available(iOS 26.0, *) {
+            GlassEffectContainer(spacing: 8) {
+                filterButtons
+            }
+        } else {
+            filterButtons
+        }
+#else
+        filterButtons
+#endif
+    }
+
+    private var filterButtons: some View {
+        HStack(spacing: 8) {
+            filterButton(id: nil) {
+                Text("history.all")
+            }
+            ForEach(options) { option in
+                filterButton(id: option.id) {
+                    Label {
+                        Text(option.name)
+                    } icon: {
+                        MachineIconImage(machineID: option.id)
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
     private func filterButton<Content: View>(
         id: String?,
         @ViewBuilder label: () -> Content
     ) -> some View {
         let isSelected = selection == id
-        return Button {
+        let button = Button {
             selection = id
         } label: {
             label()
@@ -417,54 +466,74 @@ private struct HistoryMachineFilterBar: View {
                 .lineLimit(1)
                 .fixedSize(horizontal: true, vertical: false)
                 .foregroundStyle(Color.primary)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 9)
-                .background {
-                    Capsule()
-                        .fill(
-                            isSelected
-                                ? Color.accentColor.opacity(0.2)
-                                : Color.secondary.opacity(0.16)
-                        )
-                }
-                .overlay {
-                    if isSelected {
-                        Capsule()
-                            .stroke(Color.accentColor, lineWidth: 1)
-                    }
-                }
         }
-        .buttonStyle(.plain)
+
+        Group {
+#if compiler(>=6.2)
+            if #available(iOS 26.0, *) {
+                if isSelected {
+                    button
+                        .buttonStyle(.glassProminent)
+                        .tint(.accentColor)
+                        .buttonBorderShape(.capsule)
+                } else {
+                    button
+                        .buttonStyle(.glass)
+                        .buttonBorderShape(.capsule)
+                }
+            } else {
+                legacyFilterButton(button, isSelected: isSelected)
+            }
+#else
+            legacyFilterButton(button, isSelected: isSelected)
+#endif
+        }
+        .controlSize(.regular)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityIdentifier(
-            id.map { "history.filter.\($0)" } ?? "history.filter.all"
-        )
+        .accessibilityIdentifier(id.map { "history.filter.\($0)" } ?? "history.filter.all")
+    }
+
+    private func legacyFilterButton<ButtonContent: View>(
+        _ button: ButtonContent,
+        isSelected: Bool
+    ) -> some View {
+        button
+            .buttonStyle(.plain)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 9)
+            .contentShape(Capsule())
+            .background {
+                Capsule()
+                    .fill(
+                        isSelected
+                            ? Color.accentColor.opacity(0.2)
+                            : Color.secondary.opacity(0.16)
+                    )
+            }
+            .overlay {
+                if isSelected {
+                    Capsule().stroke(Color.accentColor, lineWidth: 1)
+                }
+            }
     }
 }
 
 private struct ActiveRunsEmptyState: View {
     let state: RunBuoyStore.LoadState
+    let retry: () -> Void
 
     var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: symbol)
-                .font(.largeTitle)
-                .foregroundStyle(.secondary)
-                .accessibilityHidden(true)
-            Text(title)
-                .font(.title3.weight(.semibold))
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
+        ContentUnavailableView {
+            Label(title, systemImage: symbol)
+        } description: {
             Text(description)
-                .font(.subheadline)
-                .foregroundStyle(.primary)
-                .multilineTextAlignment(.center)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
+        } actions: {
+            if state.isFailure {
+                Button("common.try_again", action: retry)
+                    .runBuoyProminentButtonStyle()
+            }
         }
         .padding()
-        .frame(maxWidth: .infinity)
-        .accessibilityElement(children: .combine)
         .accessibilityIdentifier(
             state.isFailure
                 ? "activeRuns.state.failed"
@@ -507,6 +576,7 @@ private struct HistoryEmptyState: View {
     let state: RunBuoyStore.LoadState
     let machineID: String?
     let machineName: String?
+    let retry: () -> Void
 
     var body: some View {
         ContentUnavailableView {
@@ -521,6 +591,11 @@ private struct HistoryEmptyState: View {
             }
         } description: {
             Text(description)
+        } actions: {
+            if isFailure {
+                Button("common.try_again", action: retry)
+                    .runBuoyProminentButtonStyle()
+            }
         }
         .padding()
     }

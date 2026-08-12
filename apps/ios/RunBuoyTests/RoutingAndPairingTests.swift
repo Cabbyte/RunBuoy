@@ -215,6 +215,27 @@ final class RoutingAndPairingTests: XCTestCase {
         XCTAssertEqual(state.progress, 0.72)
         XCTAssertEqual(CapabilityDemoStep.step(for: state), .stale)
     }
+
+    func testDemoTourCoversEveryDesignedLiveActivityState() {
+        let now = Date(timeIntervalSince1970: 1_785_076_800)
+
+        for step in CapabilityDemoStep.allCases {
+            let state = step.contentState(
+                now: now,
+                createdAt: now.addingTimeInterval(-120),
+                startedAt: now.addingTimeInterval(-100)
+            )
+            XCTAssertEqual(
+                CapabilityDemoStep.step(for: state),
+                step,
+                "Expected demo state to round-trip: \(step)"
+            )
+        }
+
+        XCTAssertEqual(CapabilityDemoStep.uploading.previewProgress, 0.92)
+        XCTAssertTrue(CapabilityDemoStep.cancelled.isTerminal)
+        XCTAssertTrue(CapabilityDemoStep.lost.isTerminal)
+    }
 }
 
 @MainActor

@@ -50,21 +50,25 @@ extension ExecutionStatus {
     var presentation: StatusPresentation {
         switch self {
         case .created:
-            StatusPresentation(title: "status.created", symbol: "circle.dotted", color: .secondary)
+            StatusPresentation(title: "status.created", symbol: "circle", color: .secondary)
         case .starting:
             StatusPresentation(title: "status.starting", symbol: "hourglass", color: .blue)
         case .running:
-            StatusPresentation(title: "status.running", symbol: "waveform.path.ecg", color: .blue)
+            StatusPresentation(
+                title: "status.running",
+                symbol: "arrow.trianglehead.2.clockwise.rotate.90",
+                color: .blue
+            )
         case .succeeded:
-            StatusPresentation(title: "status.succeeded", symbol: "checkmark.circle.fill", color: .green)
+            StatusPresentation(title: "status.succeeded", symbol: "checkmark", color: .green)
         case .failed:
-            StatusPresentation(title: "status.failed", symbol: "xmark.octagon.fill", color: .red)
+            StatusPresentation(title: "status.failed", symbol: "xmark", color: .red)
         case .cancelled:
-            StatusPresentation(title: "status.cancelled", symbol: "minus.circle.fill", color: .orange)
+            StatusPresentation(title: "status.cancelled", symbol: "minus", color: .orange)
         case .lost:
-            StatusPresentation(title: "status.lost", symbol: "questionmark.diamond.fill", color: .orange)
+            StatusPresentation(title: "status.lost", symbol: "questionmark", color: .orange)
         case .unknown:
-            StatusPresentation(title: "status.unknown", symbol: "questionmark.circle", color: .secondary)
+            StatusPresentation(title: "status.unknown", symbol: "circle", color: .secondary)
         }
     }
 
@@ -116,33 +120,55 @@ extension AttentionStatus {
 
 struct StatusBadge: View {
     let presentation: StatusPresentation
+    var showsLabel = false
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: presentation.symbol)
-                .accessibilityHidden(true)
-                .foregroundStyle(presentation.color)
-            Text(presentation.title)
-                .foregroundStyle(.primary)
-        }
-        .font(.caption.weight(.semibold))
-        .padding(.horizontal, 9)
-        .padding(.vertical, 5)
-        .background(
-            reduceTransparency
-                ? Color(uiColor: .secondarySystemBackground)
-                : presentation.color.opacity(contrast == .increased ? 0.2 : 0.12),
-            in: Capsule()
-        )
-        .overlay {
-            if contrast == .increased || reduceTransparency {
-                Capsule().stroke(presentation.color, lineWidth: 1)
+        Group {
+            if showsLabel {
+                HStack(spacing: 6) {
+                    symbol
+                    Text(presentation.title)
+                        .foregroundStyle(.primary)
+                }
+                .font(.caption.weight(.semibold))
+                .padding(.horizontal, 9)
+                .padding(.vertical, 5)
+                .background(badgeBackground, in: Capsule())
+                .overlay {
+                    if contrast == .increased || reduceTransparency {
+                        Capsule().stroke(presentation.color, lineWidth: 1)
+                    }
+                }
+            } else {
+                symbol
+                    .font(.caption.weight(.semibold))
+                    .frame(width: 26, height: 26)
+                    .background(badgeBackground, in: Circle())
+                    .overlay {
+                        if contrast == .increased || reduceTransparency {
+                            Circle().stroke(presentation.color, lineWidth: 1)
+                        }
+                    }
             }
         }
         .lineLimit(1)
         .fixedSize(horizontal: true, vertical: false)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(presentation.title)
+    }
+
+    private var symbol: some View {
+        Image(systemName: presentation.symbol)
+            .accessibilityHidden(true)
+            .foregroundStyle(presentation.color)
+    }
+
+    private var badgeBackground: Color {
+        reduceTransparency
+            ? Color(uiColor: .secondarySystemBackground)
+            : presentation.color.opacity(contrast == .increased ? 0.2 : 0.12)
     }
 }
 
@@ -185,30 +211,39 @@ struct RunProgressView: View {
     let showsIndeterminate: Bool
     var emphasis: Emphasis = .compact
     var tint: Color = .accentColor
+    var showsPhase = true
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         VStack(alignment: .leading, spacing: emphasis.spacing) {
             if let fraction = progress?.boundedFraction {
-                determinateContent(fraction: fraction)
+                if emphasis == .prominent {
+                    prominentDeterminateContent(fraction: fraction)
+                } else {
+                    compactDeterminateContent(fraction: fraction)
+                }
             } else if showsIndeterminate {
                 indeterminateContent
-            } else if let phase, !phase.isEmpty {
+            } else if showsPhase, let phase, !phase.isEmpty {
                 phaseLabel(phase)
             }
         }
     }
 
-    private func determinateContent(fraction: Double) -> some View {
+    private func prominentDeterminateContent(fraction: Double) -> some View {
         VStack(alignment: .leading, spacing: emphasis.spacing) {
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: 4) {
-                    progressLabel
+                    if showsPhase {
+                        progressLabel
+                    }
                     percentageLabel(fraction)
                 }
             } else {
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    progressLabel
+                    if showsPhase {
+                        progressLabel
+                    }
                     Spacer(minLength: 8)
                     percentageLabel(fraction)
                 }
@@ -224,13 +259,26 @@ struct RunProgressView: View {
             if let progress,
                let current = progress.current,
                let total = progress.total {
-                let count = "\(current.formatted()) / \(total.formatted())"
-                let value = progress.unit.flatMap { unit in
-                    unit.isEmpty ? nil : "\(count) \(unit)"
-                } ?? count
-                Text(value)
-                .font(.caption)
-                .foregroundStyle(.primary)
+                Text(progressCount(progress, current: current, total: total))
+                    .font(.caption)
+                    .foregroundStyle(.primary)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibleProgressLabel)
+        .accessibilityValue(Text(fraction, format: .percent))
+    }
+
+    private func compactDeterminateContent(fraction: Double) -> some View {
+        VStack(alignment: .leading, spacing: emphasis.spacing) {
+            DeterminateRunProgressBar(
+                fraction: fraction,
+                tint: tint,
+                height: emphasis.barHeight,
+                addsGlow: false
+            )
+            if showsPhase, let phase, !phase.isEmpty {
+                phaseLabel(phase)
             }
         }
         .accessibilityElement(children: .ignore)
@@ -240,7 +288,9 @@ struct RunProgressView: View {
 
     private var indeterminateContent: some View {
         VStack(alignment: .leading, spacing: emphasis.spacing) {
-            progressLabel
+            if showsPhase {
+                progressLabel
+            }
             IndeterminateRunProgressBar(
                 tint: tint,
                 height: emphasis.barHeight
@@ -284,6 +334,17 @@ struct RunProgressView: View {
         let label = String(localized: "run.progress")
         guard let phase, !phase.isEmpty else { return label }
         return "\(label): \(phase)"
+    }
+
+    private func progressCount(
+        _ progress: RunProgress,
+        current: Double,
+        total: Double
+    ) -> String {
+        let count = "\(current.formatted()) / \(total.formatted())"
+        return progress.unit.flatMap { unit in
+            unit.isEmpty ? nil : "\(count) \(unit)"
+        } ?? count
     }
 }
 
@@ -386,31 +447,26 @@ private struct RunRowContent: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 6) {
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: 8) {
-                    runTitle
-                    StatusBadge(presentation: run.executionStatus.presentation)
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        statusBadge
+                        runTitle
+                    }
+                    machineAndProgressSummary
                 }
             } else {
-                HStack(alignment: .firstTextBaseline) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    statusBadge
                     runTitle
-                    Spacer(minLength: 8)
-                    StatusBadge(presentation: run.executionStatus.presentation)
                 }
+                machineAndProgressSummary
             }
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                MachineIconImage(machineID: run.machineID)
-                    .accessibilityHidden(true)
-                Text(run.machineName)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .font(.subheadline)
-            .foregroundStyle(.primary)
             RunProgressView(
                 progress: run.progress,
-                phase: run.phase,
-                showsIndeterminate: run.executionStatus.isActive,
+                phase: showsLiveTiming ? run.phase : nil,
+                showsIndeterminate: showsLiveTiming && run.executionStatus.isActive,
                 tint: run.executionStatus.progressTint
             )
             RunRowMetadataFooter(
@@ -427,6 +483,118 @@ private struct RunRowContent: View {
         Text(run.title)
             .font(.headline)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 2)
+    }
+
+    private var statusBadge: some View {
+        StatusBadge(presentation: rowStatusPresentation)
+    }
+
+    private var rowStatusPresentation: StatusPresentation {
+        if showsLiveTiming {
+            if run.attentionStatus != .none {
+                return run.attentionStatus.presentation
+            }
+            if run.healthStatus != .healthy {
+                return run.healthStatus.presentation
+            }
+        }
+        return run.executionStatus.presentation
+    }
+
+    private var machineAndProgressSummary: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            machineLabel
+                .layoutPriority(2)
+            Spacer(minLength: 4)
+            progressSummary
+        }
+        .font(.subheadline)
+        .foregroundStyle(.primary)
+    }
+
+    private var machineLabel: some View {
+        Label {
+            Text(run.machineName)
+                .lineLimit(1)
+                .truncationMode(.tail)
+        } icon: {
+            MachineIconImage(machineID: run.machineID)
+                .accessibilityHidden(true)
+        }
+        .labelStyle(.titleAndIcon)
+    }
+
+    @ViewBuilder
+    private var progressSummary: some View {
+        if let progress = run.progress,
+           let fraction = progress.boundedFraction {
+            ViewThatFits(in: .horizontal) {
+                if let current = progress.current, let total = progress.total {
+                    progressText(
+                        count: progressCount(progress, current: current, total: total),
+                        fraction: fraction
+                    )
+                    progressText(
+                        count: compactProgressCount(
+                            progress,
+                            current: current,
+                            total: total
+                        ),
+                        fraction: fraction
+                    )
+                }
+                progressText(count: nil, fraction: fraction)
+            }
+            .monospacedDigit()
+            .lineLimit(1)
+            .layoutPriority(1)
+            .accessibilityLabel(fullProgressAccessibilityLabel(progress, fraction: fraction))
+        }
+    }
+
+    private func progressText(count: String?, fraction: Double) -> Text {
+        let percentage = fraction.formatted(.percent.precision(.fractionLength(0)))
+        guard let count else {
+            return Text(percentage).font(.caption.bold())
+        }
+        return Text("\(count) · ").font(.caption)
+            + Text(percentage).font(.caption.bold())
+    }
+
+    private func progressCount(
+        _ progress: RunProgress,
+        current: Double,
+        total: Double
+    ) -> String {
+        let count = "\(current.formatted()) / \(total.formatted())"
+        return progress.unit.flatMap { unit in
+            unit.isEmpty ? nil : "\(count) \(unit)"
+        } ?? count
+    }
+
+    private func compactProgressCount(
+        _ progress: RunProgress,
+        current: Double,
+        total: Double
+    ) -> String {
+        let format = FloatingPointFormatStyle<Double>.number
+            .notation(.compactName)
+            .precision(.fractionLength(0...1))
+        let count = "\(current.formatted(format)) / \(total.formatted(format))"
+        return progress.unit.flatMap { unit in
+            unit.isEmpty ? nil : "\(count) \(unit)"
+        } ?? count
+    }
+
+    private func fullProgressAccessibilityLabel(
+        _ progress: RunProgress,
+        fraction: Double
+    ) -> String {
+        let percentage = fraction.formatted(.percent.precision(.fractionLength(0)))
+        guard let current = progress.current, let total = progress.total else {
+            return percentage
+        }
+        return "\(progressCount(progress, current: current, total: total)), \(percentage)"
     }
 }
 
@@ -468,15 +636,13 @@ private struct RunRowMetadataFooter: View {
 
     private var historyMetadata: some View {
         ViewThatFits(in: .horizontal) {
-            HStack {
-                statusLabels
-                Spacer()
-                updateTime
+            HStack(spacing: 4) {
+                Spacer(minLength: 8)
+                completionTime
             }
 
             VStack(alignment: .leading, spacing: 6) {
-                statusLabels
-                updateTime
+                completionTime
             }
         }
     }
@@ -507,9 +673,15 @@ private struct RunRowMetadataFooter: View {
         }
     }
 
-    private var updateTime: some View {
-        Text(run.updatedAt, format: .relative(presentation: .named))
-            .fixedSize(horizontal: true, vertical: false)
+    private var completionTime: some View {
+        HStack(spacing: 4) {
+            Text("history.completed")
+            Text(
+                run.endedAt ?? run.updatedAt,
+                format: .relative(presentation: .named)
+            )
+        }
+        .fixedSize(horizontal: true, vertical: false)
     }
 
     private var executionTime: some View {
