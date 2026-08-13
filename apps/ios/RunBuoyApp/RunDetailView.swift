@@ -248,9 +248,8 @@ private struct RunOverviewSection: View {
                 RunProgressView(
                     progress: run.progress,
                     phase: run.phase,
-                    showsIndeterminate: run.executionStatus.isActive,
+                    status: run.statusVisualState,
                     emphasis: .prominent,
-                    tint: run.executionStatus.progressTint
                 )
             }
             .padding(.vertical, 8)
@@ -258,13 +257,7 @@ private struct RunOverviewSection: View {
     }
 
     private var primaryStatus: StatusPresentation {
-        if run.attentionStatus != .none {
-            return run.attentionStatus.presentation
-        }
-        if run.healthStatus != .healthy {
-            return run.healthStatus.presentation
-        }
-        return run.executionStatus.presentation
+        StatusPresentation(visualState: run.statusVisualState)
     }
 }
 
