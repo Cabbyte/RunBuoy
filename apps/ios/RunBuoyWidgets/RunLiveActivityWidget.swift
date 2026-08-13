@@ -49,7 +49,7 @@ struct RunLiveActivityWidget: Widget {
                 )
             }
             .widgetURL(deepLink(for: context.attributes))
-            .keylineTint(statusStyle(context.state, isStale: context.isStale).color)
+            .keylineTint(context.state.visualState(isStale: context.isStale).color)
         }
     }
 
@@ -84,9 +84,9 @@ struct RunLockScreenView: View {
         }
         .padding()
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(statusStyle(state, isStale: isStale).title)
+        .accessibilityLabel(state.visualState(isStale: isStale).localizedTitle)
         .accessibilityValue(
-            statusStyle(state, isStale: isStale).accessibilityValue(state: state)
+            state.visualState(isStale: isStale).accessibilityValue(state: state)
         )
     }
 }
@@ -112,10 +112,10 @@ private struct LiveStatusIcon: View {
     let size: CGFloat
 
     var body: some View {
-        Image(systemName: statusStyle(state, isStale: isStale).symbol)
+        Image(systemName: state.visualState(isStale: isStale).symbol)
             .font(.system(size: size, weight: .semibold))
-            .foregroundStyle(statusStyle(state, isStale: isStale).color)
-            .accessibilityLabel(statusStyle(state, isStale: isStale).title)
+            .foregroundStyle(state.visualState(isStale: isStale).color)
+            .accessibilityLabel(state.visualState(isStale: isStale).localizedTitle)
     }
 }
 
@@ -125,11 +125,14 @@ private struct LiveIslandProgress: View {
     let size: CGFloat
 
     var body: some View {
-        if !isTerminal(state), state.progressKind == "determinate", let progress = state.progress {
-            LiveProgressRing(
-                progress: progress,
-                color: statusStyle(state, isStale: isStale).color,
-                size: size
+        let visualState = state.visualState(isStale: isStale)
+        if let progress = state.trustedProgress,
+           visualState.category.canShowProgressRing {
+            SignalBuoyProgressRing(
+                progress: progress.fraction,
+                tone: visualState.tone,
+                allowsLiveEmphasis: visualState.allowsLiveEmphasis,
+                size: size <= RunBuoyMetrics.buoyRingMinimalSize ? .minimal : .compact
             )
         } else {
             LiveStatusIcon(
@@ -138,31 +141,6 @@ private struct LiveIslandProgress: View {
                 size: size * 0.68
             )
         }
-    }
-}
-
-private struct LiveProgressRing: View {
-    let progress: Double
-    let color: Color
-    let size: CGFloat
-
-    private var boundedProgress: Double {
-        min(max(progress, 0), 1)
-    }
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(color.opacity(0.25), style: StrokeStyle(lineWidth: 3, lineCap: .round))
-            Circle()
-                .trim(from: 0, to: boundedProgress)
-                .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                .rotationEffect(.degrees(-90))
-        }
-        .frame(width: size, height: size)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("widget.progress")
-        .accessibilityValue(Text(boundedProgress, format: .percent))
     }
 }
 
@@ -192,7 +170,7 @@ private struct LiveActivityTime: View {
 
     var body: some View {
         Group {
-            if isTerminal(state) {
+            if state.visualState().isTerminal {
                 LiveActivityTerminalTime(endedAt: state.completionDate)
             } else {
                 Text(
@@ -240,26 +218,27 @@ private struct LiveActivityProgressSection: View {
     let isStale: Bool
 
     var body: some View {
+        let visualState = state.visualState(isStale: isStale)
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(state.phase ?? statusStyle(state, isStale: isStale).accessibilityValue(state: state))
+                Text(state.phase ?? String(localized: String.LocalizationValue(visualState.titleKey)))
                     .font(.subheadline.weight(.medium))
                     .lineLimit(1)
                 Spacer(minLength: 8)
-                if state.progressKind == "determinate", let progress = state.progress {
-                    Text(min(max(progress, 0), 1), format: .percent.precision(.fractionLength(0)))
+                if let progress = state.trustedProgress {
+                    Text(progress.fraction, format: .percent.precision(.fractionLength(0)))
                         .font(.subheadline.monospacedDigit().bold())
                 }
             }
 
-            if state.progressKind == "determinate", let progress = state.progress {
-                ProgressView(value: min(max(progress, 0), 1))
-                    .tint(statusStyle(state, isStale: isStale).color)
+            if let progress = state.trustedProgress {
+                ProgressView(value: progress.fraction)
+                    .tint(visualState.color)
                     .accessibilityLabel("widget.progress")
-                    .accessibilityValue(Text(progress, format: .percent))
-            } else if !isTerminal(state) {
+                    .accessibilityValue(Text(progress.fraction, format: .percent))
+            } else if !visualState.isTerminal {
                 LiveIndeterminateProgressBar(
-                    color: statusStyle(state, isStale: isStale).color
+                    color: visualState.color
                 )
                     .accessibilityLabel("progress.indeterminate")
             }
@@ -286,74 +265,12 @@ private struct LiveIndeterminateProgressBar: View {
     }
 }
 
-private struct LiveStatusStyle {
-    let title: LocalizedStringKey
-    let symbol: String
-    let color: Color
-
+private extension RunStatusVisualState {
     func accessibilityValue(state: RunActivityAttributes.ContentState) -> String {
-        if let progress = state.progress, state.progressKind == "determinate" {
-            return progress.formatted(.percent.precision(.fractionLength(0)))
+        if let progress = state.trustedProgress {
+            return progress.fraction.formatted(.percent.precision(.fractionLength(0)))
         }
-        return state.phase ?? state.executionStatus
-    }
-}
-
-private func statusStyle(
-    _ state: RunActivityAttributes.ContentState,
-    isStale: Bool
-) -> LiveStatusStyle {
-    switch state.executionStatus {
-    case "SUCCEEDED":
-        return LiveStatusStyle(title: "status.succeeded", symbol: "checkmark.circle.fill", color: .green)
-    case "FAILED":
-        return LiveStatusStyle(title: "status.failed", symbol: "xmark.octagon.fill", color: .red)
-    case "CANCELLED":
-        return LiveStatusStyle(title: "status.cancelled", symbol: "minus.circle.fill", color: .orange)
-    case "LOST":
-        return LiveStatusStyle(title: "status.lost", symbol: "questionmark.diamond.fill", color: .orange)
-    default:
-        break
-    }
-    if isStale || state.healthStatus == "STALE" || state.healthStatus == "OFFLINE" {
-        return LiveStatusStyle(
-            title: "widget.stale",
-            symbol: "wifi.slash",
-            color: .orange
-        )
-    }
-    if state.attentionStatus == "ACTION_REQUIRED" {
-        return LiveStatusStyle(
-            title: "attention.action_required",
-            symbol: "exclamationmark.bubble.fill",
-            color: .red
-        )
-    }
-    if state.attentionStatus == "WARNING" {
-        return LiveStatusStyle(
-            title: "attention.warning",
-            symbol: "exclamationmark.triangle.fill",
-            color: .orange
-        )
-    }
-    switch state.executionStatus {
-    case "STARTING":
-        return LiveStatusStyle(title: "status.starting", symbol: "hourglass", color: .blue)
-    default:
-        return LiveStatusStyle(
-            title: "status.running",
-            symbol: "arrow.trianglehead.2.clockwise.rotate.90",
-            color: .blue
-        )
-    }
-}
-
-private func isTerminal(_ state: RunActivityAttributes.ContentState) -> Bool {
-    switch state.executionStatus {
-    case "SUCCEEDED", "FAILED", "CANCELLED", "LOST":
-        true
-    default:
-        false
+        return state.phase ?? String(localized: String.LocalizationValue(titleKey))
     }
 }
 
