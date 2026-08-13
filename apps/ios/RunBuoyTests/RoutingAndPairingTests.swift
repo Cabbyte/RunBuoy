@@ -362,3 +362,33 @@ final class HistoryFilteringTests: XCTestCase {
         )
     }
 }
+
+@MainActor
+final class RunDetailSafetyTests: XCTestCase {
+    func testSafeRunSummaryIncludesOnlyApprovedFields() throws {
+        let run = PreviewFixtures.failedRun
+        let summary = SafeRunSummary(run: run).rendered(locale: Locale(identifier: "en_US"))
+
+        XCTAssertTrue(summary.contains(run.title))
+        XCTAssertTrue(summary.contains(run.machineName))
+        XCTAssertTrue(summary.contains(try XCTUnwrap(run.safeMessage)))
+        XCTAssertTrue(summary.contains(try XCTUnwrap(run.phase)))
+        XCTAssertFalse(summary.contains(run.id.uuidString.lowercased()))
+        XCTAssertFalse(summary.contains(run.machineID))
+        XCTAssertFalse(summary.contains(run.source ?? "source-not-present"))
+        for line in run.safeLogTail ?? [] {
+            XCTAssertFalse(summary.contains(line))
+        }
+    }
+
+    func testSafeRunSummaryUsesLocalizedExecutionAndTrustedProgress() throws {
+        let run = PreviewFixtures.activeRun
+        let trusted = try XCTUnwrap(run.progress?.trustedProjection)
+        let summary = SafeRunSummary(run: run).rendered(locale: Locale(identifier: "en_US"))
+
+        XCTAssertTrue(summary.contains(String(localized: "status.running", locale: Locale(identifier: "en_US"))))
+        XCTAssertTrue(summary.contains(trusted.current.formatted(.number.locale(Locale(identifier: "en_US")))))
+        XCTAssertTrue(summary.contains(trusted.total.formatted(.number.locale(Locale(identifier: "en_US")))))
+        XCTAssertFalse(summary.contains(run.id.uuidString))
+    }
+}
