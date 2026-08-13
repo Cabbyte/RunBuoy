@@ -54,6 +54,8 @@ private extension View {
                 PairMachineView()
             case .capabilityDemo:
                 CapabilityDemoView()
+            case .advancedData:
+                AdvancedDataView()
             }
         }
     }

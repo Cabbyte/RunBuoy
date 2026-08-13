@@ -37,11 +37,23 @@
 		A1000000000000000000001C /* CapabilityDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001B /* CapabilityDemoView.swift */; };
 		A1000000000000000000001D /* IOSCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001C /* IOSCompatibility.swift */; };
 		A1000000000000000000001E /* App PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001D /* App PrivacyInfo.xcprivacy */; };
+		A10000000000000000000021 /* RunBuoyTone.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000006 /* RunBuoyTone.swift */; };
+		A10000000000000000000022 /* RunStatusVisualState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000007 /* RunStatusVisualState.swift */; };
+		A10000000000000000000023 /* RunBuoyTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000008 /* RunBuoyTheme.swift */; };
+		A10000000000000000000024 /* RunBuoyMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000009 /* RunBuoyMotion.swift */; };
+		A10000000000000000000025 /* RunBuoyMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2000000000000000000000A /* RunBuoyMetrics.swift */; };
+		A10000000000000000000026 /* SignalBuoyProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2000000000000000000000B /* SignalBuoyProgressRing.swift */; };
 		A20000000000000000000001 /* RunBuoyWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000001 /* RunBuoyWidgets.swift */; };
 		A20000000000000000000002 /* RunLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000002 /* RunLiveActivityWidget.swift */; };
 		A20000000000000000000003 /* RunActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* RunActivityAttributes.swift */; };
 		A20000000000000000000004 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* Localizable.strings */; };
 		A20000000000000000000005 /* Widget PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000005 /* Widget PrivacyInfo.xcprivacy */; };
+		A20000000000000000000006 /* RunBuoyTone.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000006 /* RunBuoyTone.swift */; };
+		A20000000000000000000007 /* RunStatusVisualState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000007 /* RunStatusVisualState.swift */; };
+		A20000000000000000000008 /* RunBuoyTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000008 /* RunBuoyTheme.swift */; };
+		A20000000000000000000009 /* RunBuoyMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000009 /* RunBuoyMotion.swift */; };
+		A2000000000000000000000A /* RunBuoyMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2000000000000000000000A /* RunBuoyMetrics.swift */; };
+		A2000000000000000000000B /* SignalBuoyProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2000000000000000000000B /* SignalBuoyProgressRing.swift */; };
 		A30000000000000000000001 /* FixtureLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40000000000000000000001 /* FixtureLoader.swift */; };
 		A30000000000000000000002 /* ModelDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40000000000000000000002 /* ModelDecodingTests.swift */; };
 		A30000000000000000000003 /* RoutingAndPairingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40000000000000000000003 /* RoutingAndPairingTests.swift */; };
@@ -54,6 +66,7 @@
 		A3000000000000000000000A /* live-content-state.json in Resources */ = {isa = PBXBuildFile; fileRef = B4000000000000000000000A /* live-content-state.json */; };
 		A3000000000000000000000B /* UITestScenarioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4000000000000000000000B /* UITestScenarioTests.swift */; };
 		A3000000000000000000000C /* IOSCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4000000000000000000000C /* IOSCompatibilityTests.swift */; };
+		A3000000000000000000000D /* RunStatusVisualStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4000000000000000000000D /* RunStatusVisualStateTests.swift */; };
 		A40000000000000000000001 /* RunBuoyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000001 /* RunBuoyUITests.swift */; };
 /* End PBXBuildFile section */
 
@@ -129,6 +142,12 @@
 		B20000000000000000000003 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B20000000000000000000004 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B20000000000000000000005 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		B20000000000000000000006 /* RunBuoyTone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBuoyTone.swift; sourceTree = "<group>"; };
+		B20000000000000000000007 /* RunStatusVisualState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunStatusVisualState.swift; sourceTree = "<group>"; };
+		B20000000000000000000008 /* RunBuoyTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBuoyTheme.swift; sourceTree = "<group>"; };
+		B20000000000000000000009 /* RunBuoyMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBuoyMotion.swift; sourceTree = "<group>"; };
+		B2000000000000000000000A /* RunBuoyMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBuoyMetrics.swift; sourceTree = "<group>"; };
+		B2000000000000000000000B /* SignalBuoyProgressRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalBuoyProgressRing.swift; sourceTree = "<group>"; };
 		B30000000000000000000001 /* RunBuoyWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBuoyWidgets.swift; sourceTree = "<group>"; };
 		B30000000000000000000002 /* RunLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLiveActivityWidget.swift; sourceTree = "<group>"; };
 		B30000000000000000000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -146,6 +165,7 @@
 		B4000000000000000000000A /* live-content-state.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-content-state.json"; sourceTree = "<group>"; };
 		B4000000000000000000000B /* UITestScenarioTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestScenarioTests.swift; sourceTree = "<group>"; };
 		B4000000000000000000000C /* IOSCompatibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSCompatibilityTests.swift; sourceTree = "<group>"; };
+		B4000000000000000000000D /* RunStatusVisualStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunStatusVisualStateTests.swift; sourceTree = "<group>"; };
 		B50000000000000000000001 /* RunBuoy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunBuoy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B50000000000000000000002 /* RunBuoyWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RunBuoyWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B50000000000000000000003 /* RunBuoyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunBuoyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -239,6 +259,12 @@
 			isa = PBXGroup;
 			children = (
 				B20000000000000000000001 /* RunActivityAttributes.swift */,
+				B20000000000000000000006 /* RunBuoyTone.swift */,
+				B20000000000000000000007 /* RunStatusVisualState.swift */,
+				B20000000000000000000008 /* RunBuoyTheme.swift */,
+				B20000000000000000000009 /* RunBuoyMotion.swift */,
+				B2000000000000000000000A /* RunBuoyMetrics.swift */,
+				B2000000000000000000000B /* SignalBuoyProgressRing.swift */,
 				B20000000000000000000002 /* Localizable.strings */,
 				B20000000000000000000005 /* InfoPlist.xcstrings */,
 			);
@@ -267,6 +293,7 @@
 				B40000000000000000000005 /* APIClientTests.swift */,
 				B4000000000000000000000B /* UITestScenarioTests.swift */,
 				B4000000000000000000000C /* IOSCompatibilityTests.swift */,
+				B4000000000000000000000D /* RunStatusVisualStateTests.swift */,
 				B00000000000000000000006 /* Fixtures */,
 			);
 			path = RunBuoyTests;
@@ -498,6 +525,12 @@
 				A10000000000000000000013 /* PreviewFixtures.swift in Sources */,
 				A1000000000000000000001B /* UITestConfiguration.swift in Sources */,
 				A10000000000000000000014 /* RunActivityAttributes.swift in Sources */,
+				A10000000000000000000021 /* RunBuoyTone.swift in Sources */,
+				A10000000000000000000022 /* RunStatusVisualState.swift in Sources */,
+				A10000000000000000000023 /* RunBuoyTheme.swift in Sources */,
+				A10000000000000000000024 /* RunBuoyMotion.swift in Sources */,
+				A10000000000000000000025 /* RunBuoyMetrics.swift in Sources */,
+				A10000000000000000000026 /* SignalBuoyProgressRing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -508,6 +541,12 @@
 				A20000000000000000000001 /* RunBuoyWidgets.swift in Sources */,
 				A20000000000000000000002 /* RunLiveActivityWidget.swift in Sources */,
 				A20000000000000000000003 /* RunActivityAttributes.swift in Sources */,
+				A20000000000000000000006 /* RunBuoyTone.swift in Sources */,
+				A20000000000000000000007 /* RunStatusVisualState.swift in Sources */,
+				A20000000000000000000008 /* RunBuoyTheme.swift in Sources */,
+				A20000000000000000000009 /* RunBuoyMotion.swift in Sources */,
+				A2000000000000000000000A /* RunBuoyMetrics.swift in Sources */,
+				A2000000000000000000000B /* SignalBuoyProgressRing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,6 +561,7 @@
 				A30000000000000000000005 /* APIClientTests.swift in Sources */,
 				A3000000000000000000000B /* UITestScenarioTests.swift in Sources */,
 				A3000000000000000000000C /* IOSCompatibilityTests.swift in Sources */,
+				A3000000000000000000000D /* RunStatusVisualStateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

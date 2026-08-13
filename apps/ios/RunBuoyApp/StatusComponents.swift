@@ -41,136 +41,123 @@ struct RefreshButton: View {
 }
 
 struct StatusPresentation {
-    let title: LocalizedStringKey
-    let symbol: String
-    let color: Color
+    let visualState: RunStatusVisualState
+
+    var title: LocalizedStringKey { visualState.localizedTitle }
+    var symbol: String { visualState.symbol }
+    var tone: RunBuoyTone { visualState.tone }
+    var color: Color { visualState.color }
 }
 
 extension ExecutionStatus {
     var presentation: StatusPresentation {
-        switch self {
-        case .created:
-            StatusPresentation(title: "status.created", symbol: "circle", color: .secondary)
-        case .starting:
-            StatusPresentation(title: "status.starting", symbol: "hourglass", color: .blue)
-        case .running:
-            StatusPresentation(
-                title: "status.running",
-                symbol: "arrow.trianglehead.2.clockwise.rotate.90",
-                color: .blue
-            )
-        case .succeeded:
-            StatusPresentation(title: "status.succeeded", symbol: "checkmark", color: .green)
-        case .failed:
-            StatusPresentation(title: "status.failed", symbol: "xmark", color: .red)
-        case .cancelled:
-            StatusPresentation(title: "status.cancelled", symbol: "minus", color: .orange)
-        case .lost:
-            StatusPresentation(title: "status.lost", symbol: "questionmark", color: .orange)
-        case .unknown:
-            StatusPresentation(title: "status.unknown", symbol: "circle", color: .secondary)
-        }
+        StatusPresentation(visualState: .execution(rawValue))
     }
 
     var progressTint: Color {
-        switch self {
-        case .succeeded:
-            .green
-        case .failed:
-            .red
-        case .cancelled, .lost:
-            .orange
-        case .created, .starting, .running, .unknown:
-            .accentColor
-        }
+        presentation.color
     }
 }
 
 extension HealthStatus {
     var presentation: StatusPresentation {
-        switch self {
-        case .healthy:
-            StatusPresentation(title: "health.healthy", symbol: "checkmark.shield", color: .green)
-        case .stale:
-            StatusPresentation(title: "health.stale", symbol: "clock.badge.exclamationmark", color: .orange)
-        case .offline:
-            StatusPresentation(title: "health.offline", symbol: "wifi.slash", color: .secondary)
-        case .unknown:
-            StatusPresentation(title: "status.unknown", symbol: "questionmark.circle", color: .secondary)
-        }
+        StatusPresentation(visualState: .health(rawValue))
     }
 }
 
 extension AttentionStatus {
     var presentation: StatusPresentation {
-        switch self {
-        case .none:
-            StatusPresentation(title: "attention.none", symbol: "checkmark", color: .secondary)
-        case .information:
-            StatusPresentation(title: "attention.information", symbol: "info.circle.fill", color: .blue)
-        case .warning:
-            StatusPresentation(title: "attention.warning", symbol: "exclamationmark.triangle.fill", color: .orange)
-        case .actionRequired:
-            StatusPresentation(title: "attention.action_required", symbol: "exclamationmark.bubble.fill", color: .red)
-        case .unknown:
-            StatusPresentation(title: "status.unknown", symbol: "questionmark.circle", color: .secondary)
-        }
+        StatusPresentation(visualState: .attention(rawValue))
     }
 }
 
-struct StatusBadge: View {
-    let presentation: StatusPresentation
+extension RunSnapshot {
+    var visualState: RunStatusVisualState {
+        RunStatusVisualState.resolve(
+            executionStatus: executionStatus.rawValue,
+            healthStatus: healthStatus.rawValue,
+            attentionStatus: attentionStatus.rawValue
+        )
+    }
+}
+
+extension RunProgress {
+    var trustedProjection: TrustedRunProgress? {
+        TrustedRunProgress(
+            kind: kind.rawValue,
+            current: current,
+            total: total,
+            fraction: fraction,
+            unit: unit
+        )
+    }
+}
+
+struct RunStatusBadge: View {
+    let state: RunStatusVisualState
     var showsLabel = false
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
 
+    init(state: RunStatusVisualState, showsLabel: Bool = false) {
+        self.state = state
+        self.showsLabel = showsLabel
+    }
+
+    init(presentation: StatusPresentation, showsLabel: Bool = false) {
+        self.init(state: presentation.visualState, showsLabel: showsLabel)
+    }
+
     var body: some View {
         Group {
             if showsLabel {
-                HStack(spacing: 6) {
+                HStack(spacing: RunBuoyMetrics.badgeSpacing) {
                     symbol
-                    Text(presentation.title)
+                    Text(state.localizedTitle)
                         .foregroundStyle(.primary)
                 }
                 .font(.caption.weight(.semibold))
-                .padding(.horizontal, 9)
-                .padding(.vertical, 5)
+                .padding(.horizontal, RunBuoyMetrics.badgeHorizontalPadding)
+                .padding(.vertical, RunBuoyMetrics.badgeVerticalPadding)
                 .background(badgeBackground, in: Capsule())
                 .overlay {
                     if contrast == .increased || reduceTransparency {
-                        Capsule().stroke(presentation.color, lineWidth: 1)
+                        Capsule().stroke(state.color, lineWidth: RunBuoyMetrics.semanticStrokeWidth)
                     }
                 }
             } else {
                 symbol
                     .font(.caption.weight(.semibold))
-                    .frame(width: 26, height: 26)
+                    .frame(width: RunBuoyMetrics.badgeIconSize, height: RunBuoyMetrics.badgeIconSize)
                     .background(badgeBackground, in: Circle())
                     .overlay {
                         if contrast == .increased || reduceTransparency {
-                            Circle().stroke(presentation.color, lineWidth: 1)
+                            Circle().stroke(state.color, lineWidth: RunBuoyMetrics.semanticStrokeWidth)
                         }
                     }
             }
         }
-        .lineLimit(1)
-        .fixedSize(horizontal: true, vertical: false)
+        .fixedSize(horizontal: false, vertical: true)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(presentation.title)
+        .accessibilityLabel(state.localizedTitle)
     }
 
     private var symbol: some View {
-        Image(systemName: presentation.symbol)
+        Image(systemName: state.symbol)
             .accessibilityHidden(true)
-            .foregroundStyle(presentation.color)
+            .foregroundStyle(state.color)
     }
 
     private var badgeBackground: Color {
-        reduceTransparency
-            ? Color(uiColor: .secondarySystemBackground)
-            : presentation.color.opacity(contrast == .increased ? 0.2 : 0.12)
+        RunBuoyTheme.badgeBackground(
+            for: state.tone,
+            increasedContrast: contrast == .increased,
+            reduceTransparency: reduceTransparency
+        )
     }
 }
+
+typealias StatusBadge = RunStatusBadge
 
 struct RunProgressView: View {
     enum Emphasis: Equatable {
@@ -179,15 +166,15 @@ struct RunProgressView: View {
 
         var barHeight: CGFloat {
             switch self {
-            case .compact: 9
-            case .prominent: 14
+            case .compact: RunBuoyMetrics.compactProgressHeight
+            case .prominent: RunBuoyMetrics.prominentProgressHeight
             }
         }
 
         var spacing: CGFloat {
             switch self {
-            case .compact: 7
-            case .prominent: 10
+            case .compact: RunBuoyMetrics.compactProgressSpacing
+            case .prominent: RunBuoyMetrics.prominentProgressSpacing
             }
         }
 
@@ -212,15 +199,50 @@ struct RunProgressView: View {
     var emphasis: Emphasis = .compact
     var tint: Color = .accentColor
     var showsPhase = true
+    var visualState: RunStatusVisualState?
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    init(
+        progress: RunProgress?,
+        phase: String?,
+        showsIndeterminate: Bool,
+        emphasis: Emphasis = .compact,
+        tint: Color = .accentColor,
+        showsPhase: Bool = true
+    ) {
+        self.progress = progress
+        self.phase = phase
+        self.showsIndeterminate = showsIndeterminate
+        self.emphasis = emphasis
+        self.tint = tint
+        self.showsPhase = showsPhase
+        visualState = nil
+    }
+
+    init(
+        progress: RunProgress?,
+        phase: String?,
+        visualState: RunStatusVisualState,
+        showsIndeterminate: Bool,
+        emphasis: Emphasis = .compact,
+        showsPhase: Bool = true
+    ) {
+        self.progress = progress
+        self.phase = phase
+        self.showsIndeterminate = showsIndeterminate
+        self.emphasis = emphasis
+        tint = visualState.color
+        self.showsPhase = showsPhase
+        self.visualState = visualState
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: emphasis.spacing) {
-            if let fraction = progress?.boundedFraction {
+            if let projection = progress?.trustedProjection {
                 if emphasis == .prominent {
-                    prominentDeterminateContent(fraction: fraction)
+                    prominentDeterminateContent(projection: projection)
                 } else {
-                    compactDeterminateContent(fraction: fraction)
+                    compactDeterminateContent(projection: projection)
                 }
             } else if showsIndeterminate {
                 indeterminateContent
@@ -230,14 +252,14 @@ struct RunProgressView: View {
         }
     }
 
-    private func prominentDeterminateContent(fraction: Double) -> some View {
+    private func prominentDeterminateContent(projection: TrustedRunProgress) -> some View {
         VStack(alignment: .leading, spacing: emphasis.spacing) {
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: 4) {
                     if showsPhase {
                         progressLabel
                     }
-                    percentageLabel(fraction)
+                    percentageLabel(projection.fraction)
                 }
             } else {
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
@@ -245,35 +267,33 @@ struct RunProgressView: View {
                         progressLabel
                     }
                     Spacer(minLength: 8)
-                    percentageLabel(fraction)
+                    percentageLabel(projection.fraction)
                 }
             }
 
             DeterminateRunProgressBar(
-                fraction: fraction,
-                tint: tint,
+                fraction: projection.fraction,
+                tone: visualState?.tone,
+                legacyTint: tint,
                 height: emphasis.barHeight,
-                addsGlow: emphasis == .prominent
+                addsGlow: emphasis == .prominent && visualState?.allowsLiveEmphasis == true
             )
 
-            if let progress,
-               let current = progress.current,
-               let total = progress.total {
-                Text(progressCount(progress, current: current, total: total))
+            Text(progressCount(projection))
                     .font(.caption)
                     .foregroundStyle(.primary)
-            }
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibleProgressLabel)
-        .accessibilityValue(Text(fraction, format: .percent))
+        .accessibilityValue(Text(projection.fraction, format: .percent))
     }
 
-    private func compactDeterminateContent(fraction: Double) -> some View {
+    private func compactDeterminateContent(projection: TrustedRunProgress) -> some View {
         VStack(alignment: .leading, spacing: emphasis.spacing) {
             DeterminateRunProgressBar(
-                fraction: fraction,
-                tint: tint,
+                fraction: projection.fraction,
+                tone: visualState?.tone,
+                legacyTint: tint,
                 height: emphasis.barHeight,
                 addsGlow: false
             )
@@ -283,7 +303,7 @@ struct RunProgressView: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibleProgressLabel)
-        .accessibilityValue(Text(fraction, format: .percent))
+        .accessibilityValue(Text(projection.fraction, format: .percent))
     }
 
     private var indeterminateContent: some View {
@@ -292,7 +312,8 @@ struct RunProgressView: View {
                 progressLabel
             }
             IndeterminateRunProgressBar(
-                tint: tint,
+                tone: visualState?.tone,
+                legacyTint: tint,
                 height: emphasis.barHeight
             )
         }
@@ -311,10 +332,19 @@ struct RunProgressView: View {
         }
     }
 
+    @ViewBuilder
     private func phaseLabel(_ phase: String) -> some View {
+        if emphasis == .prominent {
+            phaseText(phase)
+        } else {
+            phaseText(phase)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+        }
+    }
+
+    private func phaseText(_ phase: String) -> some View {
         Text(phase)
             .font(emphasis.phaseFont)
-            .lineLimit(emphasis == .prominent ? 3 : 2)
             .accessibilityLabel(String(localized: "run.phase"))
             .accessibilityValue(phase)
     }
@@ -336,73 +366,88 @@ struct RunProgressView: View {
         return "\(label): \(phase)"
     }
 
-    private func progressCount(
-        _ progress: RunProgress,
-        current: Double,
-        total: Double
-    ) -> String {
-        let count = "\(current.formatted()) / \(total.formatted())"
+    private func progressCount(_ progress: TrustedRunProgress) -> String {
+        let count = "\(progress.current.formatted()) / \(progress.total.formatted())"
         return progress.unit.flatMap { unit in
             unit.isEmpty ? nil : "\(count) \(unit)"
         } ?? count
     }
 }
 
-private struct DeterminateRunProgressBar: View {
+struct DeterminateRunProgressBar: View {
     let fraction: Double
-    let tint: Color
+    var tone: RunBuoyTone?
+    var legacyTint: Color = .accentColor
     let height: CGFloat
     let addsGlow: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
+
+    private var color: Color { tone?.color ?? legacyTint }
+    private var effectiveGlow: Bool {
+        addsGlow && !reduceTransparency && contrast != .increased
+    }
 
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(tint.opacity(contrast == .increased ? 0.28 : 0.15))
+                    .fill(
+                        tone.map {
+                            RunBuoyTheme.progressTrack(
+                                for: $0,
+                                increasedContrast: contrast == .increased
+                            )
+                        } ?? color.opacity(contrast == .increased ? 0.28 : 0.15)
+                    )
                 Capsule()
                     .fill(
-                        LinearGradient(
-                            colors: [tint.opacity(0.78), tint],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
+                        tone.map(RunBuoyTheme.progressGradient(for:))
+                            ?? LinearGradient(
+                                colors: [color.opacity(0.78), color],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
                     )
-                    .frame(width: proxy.size.width * fraction)
+                    .frame(width: proxy.size.width * min(max(fraction, 0), 1))
                     .shadow(
-                        color: addsGlow ? tint.opacity(0.34) : .clear,
-                        radius: addsGlow ? 6 : 0,
-                        y: 1
+                        color: effectiveGlow ? RunBuoyTheme.brandLive.opacity(RunBuoyMetrics.progressGlowOpacity) : .clear,
+                        radius: effectiveGlow ? RunBuoyMetrics.progressGlowRadius : 0,
+                        y: effectiveGlow ? 1 : 0
                     )
             }
         }
         .frame(height: height)
-        .animation(reduceMotion ? nil : .smooth(duration: 0.4), value: fraction)
+        .animation(RunBuoyMotion.progress(reduceMotion: reduceMotion), value: fraction)
         .accessibilityHidden(true)
     }
 }
 
 private struct IndeterminateRunProgressBar: View {
-    let tint: Color
+    let tone: RunBuoyTone?
+    let legacyTint: Color
     let height: CGFloat
     @State private var isAnimating = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorSchemeContrast) private var contrast
+
+    private var color: Color { tone?.color ?? legacyTint }
 
     var body: some View {
         GeometryReader { proxy in
             let segmentWidth = proxy.size.width * 0.36
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(tint.opacity(contrast == .increased ? 0.28 : 0.15))
+                    .fill(color.opacity(contrast == .increased ? 0.28 : 0.15))
                 Capsule()
                     .fill(
-                        LinearGradient(
-                            colors: [tint.opacity(0.62), tint],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
+                        tone.map(RunBuoyTheme.progressGradient(for:))
+                            ?? LinearGradient(
+                                colors: [color.opacity(0.62), color],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
                     )
                     .frame(width: segmentWidth)
                     .offset(
@@ -466,8 +511,9 @@ private struct RunRowContent: View {
             RunProgressView(
                 progress: run.progress,
                 phase: showsLiveTiming ? run.phase : nil,
+                visualState: run.visualState,
                 showsIndeterminate: showsLiveTiming && run.executionStatus.isActive,
-                tint: run.executionStatus.progressTint
+                emphasis: .compact
             )
             RunRowMetadataFooter(
                 run: run,
@@ -486,19 +532,7 @@ private struct RunRowContent: View {
     }
 
     private var statusBadge: some View {
-        StatusBadge(presentation: rowStatusPresentation)
-    }
-
-    private var rowStatusPresentation: StatusPresentation {
-        if showsLiveTiming {
-            if run.attentionStatus != .none {
-                return run.attentionStatus.presentation
-            }
-            if run.healthStatus != .healthy {
-                return run.healthStatus.presentation
-            }
-        }
-        return run.executionStatus.presentation
+        RunStatusBadge(state: run.visualState)
     }
 
     private var machineAndProgressSummary: some View {
@@ -527,28 +561,16 @@ private struct RunRowContent: View {
     @ViewBuilder
     private var progressSummary: some View {
         if let progress = run.progress,
-           let fraction = progress.boundedFraction {
+           let projection = progress.trustedProjection {
             ViewThatFits(in: .horizontal) {
-                if let current = progress.current, let total = progress.total {
-                    progressText(
-                        count: progressCount(progress, current: current, total: total),
-                        fraction: fraction
-                    )
-                    progressText(
-                        count: compactProgressCount(
-                            progress,
-                            current: current,
-                            total: total
-                        ),
-                        fraction: fraction
-                    )
-                }
-                progressText(count: nil, fraction: fraction)
+                progressText(count: progressCount(projection), fraction: projection.fraction)
+                progressText(count: compactProgressCount(projection), fraction: projection.fraction)
+                progressText(count: nil, fraction: projection.fraction)
             }
             .monospacedDigit()
             .lineLimit(1)
             .layoutPriority(1)
-            .accessibilityLabel(fullProgressAccessibilityLabel(progress, fraction: fraction))
+            .accessibilityLabel(fullProgressAccessibilityLabel(projection))
         }
     }
 
@@ -562,39 +584,31 @@ private struct RunRowContent: View {
     }
 
     private func progressCount(
-        _ progress: RunProgress,
-        current: Double,
-        total: Double
+        _ progress: TrustedRunProgress
     ) -> String {
-        let count = "\(current.formatted()) / \(total.formatted())"
+        let count = "\(progress.current.formatted()) / \(progress.total.formatted())"
         return progress.unit.flatMap { unit in
             unit.isEmpty ? nil : "\(count) \(unit)"
         } ?? count
     }
 
     private func compactProgressCount(
-        _ progress: RunProgress,
-        current: Double,
-        total: Double
+        _ progress: TrustedRunProgress
     ) -> String {
         let format = FloatingPointFormatStyle<Double>.number
             .notation(.compactName)
             .precision(.fractionLength(0...1))
-        let count = "\(current.formatted(format)) / \(total.formatted(format))"
+        let count = "\(progress.current.formatted(format)) / \(progress.total.formatted(format))"
         return progress.unit.flatMap { unit in
             unit.isEmpty ? nil : "\(count) \(unit)"
         } ?? count
     }
 
     private func fullProgressAccessibilityLabel(
-        _ progress: RunProgress,
-        fraction: Double
+        _ progress: TrustedRunProgress
     ) -> String {
-        let percentage = fraction.formatted(.percent.precision(.fractionLength(0)))
-        guard let current = progress.current, let total = progress.total else {
-            return percentage
-        }
-        return "\(progressCount(progress, current: current, total: total)), \(percentage)"
+        let percentage = progress.fraction.formatted(.percent.precision(.fractionLength(0)))
+        return "\(progressCount(progress)), \(percentage)"
     }
 }
 
@@ -741,13 +755,17 @@ struct OfflineBanner: View {
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            reduceTransparency ? Color(uiColor: .secondarySystemBackground) : .orange.opacity(0.12),
-            in: RoundedRectangle(cornerRadius: 12)
+            RunBuoyTheme.badgeBackground(
+                for: .warning,
+                increasedContrast: contrast == .increased,
+                reduceTransparency: reduceTransparency
+            ),
+            in: RoundedRectangle(cornerRadius: RunBuoyMetrics.compactCardRadius)
         )
         .overlay {
             if reduceTransparency || contrast == .increased {
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(.orange, lineWidth: 1)
+                RoundedRectangle(cornerRadius: RunBuoyMetrics.compactCardRadius)
+                    .stroke(RunBuoyTheme.warning, lineWidth: RunBuoyMetrics.semanticStrokeWidth)
             }
         }
         .accessibilityElement(children: .combine)
@@ -756,7 +774,7 @@ struct OfflineBanner: View {
 
     private var offlineIcon: some View {
         Image(systemName: "wifi.slash")
-            .foregroundStyle(.orange)
+            .foregroundStyle(RunBuoyTheme.warning)
             .accessibilityHidden(true)
     }
 

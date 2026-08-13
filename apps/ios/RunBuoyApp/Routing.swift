@@ -16,6 +16,7 @@ enum AppRoute: Hashable {
     case machine(String)
     case pairMachine
     case capabilityDemo
+    case advancedData
 }
 
 @MainActor
