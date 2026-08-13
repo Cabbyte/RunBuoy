@@ -1,49 +1,135 @@
 import Foundation
 import SwiftUI
 
+enum ActiveRunsPresentation {
+    @MainActor
+    static func ordered(_ models: [RunSummaryModel]) -> [RunSummaryModel] {
+        models.sorted { isOrderedBefore($0.snapshot, $1.snapshot) }
+    }
+
+    static func orderedSnapshots(_ runs: [RunSnapshot]) -> [RunSnapshot] {
+        runs.sorted(by: isOrderedBefore)
+    }
+
+    static func summary(for runs: [RunSnapshot]) -> ActiveRunSystemSummary? {
+        guard let lastConfirmed = runs.map(\.updatedAt).max() else { return nil }
+        return ActiveRunSystemSummary(
+            activeCount: runs.count,
+            needsAttentionCount: runs.filter(needsAttention).count,
+            lastConfirmed: lastConfirmed
+        )
+    }
+
+    private static func isOrderedBefore(_ lhs: RunSnapshot, _ rhs: RunSnapshot) -> Bool {
+        let lhsRank = priorityRank(lhs)
+        let rhsRank = priorityRank(rhs)
+        if lhsRank != rhsRank { return lhsRank < rhsRank }
+        if lhs.updatedAt != rhs.updatedAt { return lhs.updatedAt > rhs.updatedAt }
+        return lhs.id.uuidString < rhs.id.uuidString
+    }
+
+    private static func priorityRank(_ run: RunSnapshot) -> Int {
+        if run.attentionStatus == .actionRequired { return 0 }
+        if run.attentionStatus == .warning { return 1 }
+        if run.healthStatus != .healthy { return 2 }
+        if run.executionStatus.isActive { return 3 }
+        return 4
+    }
+
+    private static func needsAttention(_ run: RunSnapshot) -> Bool {
+        run.healthStatus != .healthy
+            || run.attentionStatus == .warning
+            || run.attentionStatus == .actionRequired
+    }
+}
+
+struct ActiveRunSystemSummary: Equatable {
+    let activeCount: Int
+    let needsAttentionCount: Int
+    let lastConfirmed: Date
+
+    var allHealthy: Bool { needsAttentionCount == 0 }
+}
+
 struct ActiveRunsView: View {
     @Environment(RunBuoyStore.self) private var store
 
-    private var isEmpty: Bool {
-        store.activeRunModels.isEmpty
+    private var orderedModels: [RunSummaryModel] {
+        ActiveRunsPresentation.ordered(store.activeRunModels)
+    }
+
+    private var isEmpty: Bool { orderedModels.isEmpty }
+
+    private var isOfflineCached: Bool {
+        if case .offline = store.state { return true }
+        return false
     }
 
     var body: some View {
-        List {
-            if case .offline(let message) = store.state {
-                OfflineBanner(message: message)
-                    .listRowSeparator(.hidden)
-            }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 16) {
+                if case .offline(let message) = store.state {
+                    OfflineBanner(message: message)
+                }
 
-            if !store.activeRunModels.isEmpty {
-                Section {
-                    ForEach(store.activeRunModels) { model in
-                        NavigationLink(value: AppRoute.runDetail(model.id)) {
-                            RunRow(model: model, showsLiveTiming: true)
-                        }
-                        .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
-                    }
+                if store.state == .loading, isEmpty {
+                    ActiveRunsLoadingSkeleton()
+                } else if isEmpty {
+                    ActiveRunsEmptyState(state: store.state, retry: refresh)
+                        .frame(maxWidth: .infinity, minHeight: 420)
+                } else {
+                    activeContent
                 }
             }
+            .padding(.horizontal)
+            .padding(.bottom, 24)
         }
-        .listStyle(.insetGrouped)
+        .background(RunBuoyTheme.canvas)
         .accessibilityIdentifier("screen.activeRuns")
         .navigationTitle("runs.active")
-        .overlay {
-            if store.state == .loading, isEmpty {
-                ProgressView("runs.loading")
-            } else if isEmpty {
-                ActiveRunsEmptyState(state: store.state, retry: refresh)
-            }
-        }
         .refreshable { await reload() }
         .task { await loadIfNeeded() }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                RefreshButton(
-                    isRefreshing: store.isRefreshing,
-                    action: refresh
+    }
+
+    @ViewBuilder
+    private var activeContent: some View {
+        if let summary = ActiveRunsPresentation.summary(for: orderedModels.map(\.snapshot)) {
+            ActiveRunsSystemSummaryCard(
+                summary: summary,
+                runs: orderedModels.map(\.snapshot),
+                isOfflineCached: isOfflineCached
+            )
+            .accessibilityIdentifier("activeRuns.systemSummary")
+        }
+
+        if let hero = orderedModels.first {
+            NavigationLink(value: AppRoute.runDetail(hero.id)) {
+                ActiveRunHeroCard(
+                    run: hero.snapshot,
+                    isOfflineCached: isOfflineCached
                 )
+                .accessibilityIdentifier("activeRuns.hero")
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("run.row.\(hero.id.uuidString.lowercased())")
+        }
+
+        if orderedModels.count > 1 {
+            Text("active.also_active")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
+                .padding(.top, 4)
+
+            ForEach(orderedModels.dropFirst()) { model in
+                NavigationLink(value: AppRoute.runDetail(model.id)) {
+                    ActiveCompactRunCard(
+                        run: model.snapshot,
+                        isOfflineCached: isOfflineCached
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
             }
         }
     }
@@ -59,6 +145,338 @@ struct ActiveRunsView: View {
 
     private func reload() async {
         await store.refresh()
+    }
+}
+
+private struct ActiveRunsSystemSummaryCard: View {
+    let summary: ActiveRunSystemSummary
+    let runs: [RunSnapshot]
+    let isOfflineCached: Bool
+
+    private var tone: RunBuoyTone {
+        if isOfflineCached { return .warning }
+        if runs.contains(where: { $0.attentionStatus == .actionRequired }) { return .critical }
+        if !summary.allHealthy { return .warning }
+        return .live
+    }
+
+    private var symbol: String {
+        if isOfflineCached { return "wifi.slash" }
+        if tone == .critical { return "exclamationmark.bubble.fill" }
+        if tone == .warning { return "exclamationmark.triangle.fill" }
+        return "waveform.path.ecg"
+    }
+
+    private var headline: String {
+        if summary.allHealthy {
+            return String(
+                format: String(localized: "active.summary.all_healthy"),
+                locale: .autoupdatingCurrent,
+                summary.activeCount
+            )
+        }
+        return String(
+            format: String(localized: "active.summary.needs_attention"),
+            locale: .autoupdatingCurrent,
+            summary.activeCount,
+            summary.needsAttentionCount
+        )
+    }
+
+    var body: some View {
+        SignalCardSurface(tone: tone, usesLiveSurface: tone == .live) {
+            HStack(spacing: 12) {
+                Image(systemName: symbol)
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(tone.color)
+                    .frame(width: 22)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(headline)
+                        .font(.callout.weight(.semibold))
+                    HStack(spacing: 4) {
+                        Text("active.summary.last_confirmed")
+                        Text(summary.lastConfirmed, format: .relative(presentation: .named))
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
+private struct ActiveRunHeroCard: View {
+    let run: RunSnapshot
+    let isOfflineCached: Bool
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var visualState: RunStatusVisualState {
+        run.listVisualState(isOfflineCached: isOfflineCached)
+    }
+
+    var body: some View {
+        SignalCardSurface(
+            tone: visualState.tone,
+            usesLiveSurface: visualState.allowsLiveEmphasis
+        ) {
+            VStack(alignment: .leading, spacing: 14) {
+                header
+                machine
+                RunProgressView(
+                    progress: run.progress,
+                    phase: run.phase,
+                    visualState: visualState,
+                    showsIndeterminate: run.executionStatus.isActive && !isOfflineCached,
+                    emphasis: .prominent
+                )
+                metadata
+            }
+        }
+        .contentShape(RoundedRectangle(cornerRadius: 22))
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private var header: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 8) {
+                RunStatusBadge(state: visualState, showsLabel: true)
+                title
+            }
+        } else {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                RunStatusBadge(state: visualState, showsLabel: true)
+                title
+            }
+        }
+    }
+
+    private var title: some View {
+        Text(run.title)
+            .font(.headline)
+            .lineLimit(dynamicTypeSize.isAccessibilitySize ? 4 : 3)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var machine: some View {
+        Label {
+            Text(run.machineName)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
+                .truncationMode(.tail)
+        } icon: {
+            MachineIconImage(machineID: run.machineID)
+                .accessibilityHidden(true)
+        }
+        .font(.subheadline)
+    }
+
+    private var metadata: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 16) {
+                confirmedRuntime
+                Spacer(minLength: 8)
+                lastConfirmed
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                confirmedRuntime
+                lastConfirmed
+            }
+        }
+        .font(.caption)
+    }
+
+    private var confirmedRuntime: some View {
+        Label {
+            HStack(spacing: 4) {
+                Text("run.execution_time")
+                    .foregroundStyle(.secondary)
+                Text(RunDurationText.string(from: run.startedAt, to: run.updatedAt))
+                    .fontWeight(.semibold)
+                    .monospacedDigit()
+            }
+        } icon: {
+            Image(systemName: "timer")
+                .foregroundStyle(.secondary)
+        }
+        .fixedSize(horizontal: true, vertical: false)
+        .accessibilityIdentifier("run.timing.execution")
+    }
+
+    private var lastConfirmed: some View {
+        Label {
+            HStack(spacing: 4) {
+                Text("active.summary.last_confirmed")
+                    .foregroundStyle(.secondary)
+                Text(run.updatedAt, format: .relative(presentation: .named))
+                    .fontWeight(.semibold)
+                    .monospacedDigit()
+            }
+        } icon: {
+            Image(systemName: "waveform.path.ecg")
+                .foregroundStyle(visualState.color)
+        }
+        .fixedSize(horizontal: true, vertical: false)
+        .accessibilityIdentifier("run.timing.heartbeat")
+    }
+}
+
+private struct ActiveCompactRunCard: View {
+    let run: RunSnapshot
+    let isOfflineCached: Bool
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var visualState: RunStatusVisualState {
+        run.listVisualState(isOfflineCached: isOfflineCached)
+    }
+
+    var body: some View {
+        SignalCardSurface(tone: visualState.tone) {
+            VStack(alignment: .leading, spacing: 8) {
+                header
+                machineAndProgress
+                progress
+                lastConfirmed
+            }
+        }
+        .contentShape(RoundedRectangle(cornerRadius: RunBuoyMetrics.compactCardRadius))
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private var header: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 6) {
+                RunStatusBadge(state: visualState)
+                title
+            }
+        } else {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                RunStatusBadge(state: visualState)
+                title
+            }
+        }
+    }
+
+    private var title: some View {
+        Text(run.title)
+            .font(.headline)
+            .lineLimit(dynamicTypeSize.isAccessibilitySize ? 4 : 2)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var machineAndProgress: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                machine
+                Spacer(minLength: 8)
+                trustedProgressSummary
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                machine
+                trustedProgressSummary
+            }
+        }
+    }
+
+    private var machine: some View {
+        Label {
+            Text(run.machineName)
+                .lineLimit(1)
+                .truncationMode(.tail)
+        } icon: {
+            MachineIconImage(machineID: run.machineID)
+                .accessibilityHidden(true)
+        }
+        .font(.subheadline)
+    }
+
+    @ViewBuilder
+    private var trustedProgressSummary: some View {
+        if let projection = run.progress?.trustedProjection {
+            Text(RunListProgressText.summary(projection))
+                .font(.caption)
+                .monospacedDigit()
+                .lineLimit(1)
+        }
+    }
+
+    @ViewBuilder
+    private var progress: some View {
+        if let projection = run.progress?.trustedProjection {
+            DeterminateRunProgressBar(
+                fraction: projection.fraction,
+                tone: visualState.tone,
+                height: RunBuoyMetrics.compactProgressHeight,
+                addsGlow: false
+            )
+            if let phase = run.phase, !phase.isEmpty {
+                Text(phase)
+                    .font(.footnote)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 2)
+            }
+        } else {
+            RunProgressView(
+                progress: run.progress,
+                phase: run.phase,
+                visualState: visualState,
+                showsIndeterminate: run.executionStatus.isActive && !isOfflineCached,
+                emphasis: .compact
+            )
+        }
+    }
+
+    private var lastConfirmed: some View {
+        Label {
+            HStack(spacing: 4) {
+                Text("active.summary.last_confirmed")
+                    .foregroundStyle(.secondary)
+                Text(run.updatedAt, format: .relative(presentation: .named))
+                    .fontWeight(.semibold)
+            }
+        } icon: {
+            Image(systemName: "waveform.path.ecg")
+                .foregroundStyle(visualState.color)
+        }
+        .font(.caption)
+    }
+}
+
+private struct ActiveRunsLoadingSkeleton: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            RunSkeletonCard(lineCount: 2)
+            RunSkeletonCard(lineCount: 5, isHero: true)
+            RunSkeletonCard(lineCount: 4)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("runs.loading")
+        .accessibilityIdentifier("activeRuns.loading")
+    }
+}
+
+private struct RunSkeletonCard: View {
+    let lineCount: Int
+    var isHero = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ForEach(0..<lineCount, id: \.self) { index in
+                Capsule()
+                    .fill(index == 0 ? RunBuoyTheme.separator : RunBuoyTheme.inactive.opacity(0.13))
+                    .frame(maxWidth: index.isMultiple(of: 3) ? 210 : .infinity)
+                    .frame(height: index == lineCount - 1 && isHero ? 14 : 12)
+            }
+        }
+        .padding(isHero ? 20 : 16)
+        .background(RunBuoyTheme.surface, in: RoundedRectangle(cornerRadius: isHero ? 22 : 16))
+        .overlay {
+            RoundedRectangle(cornerRadius: isHero ? 22 : 16)
+                .stroke(RunBuoyTheme.separator, lineWidth: 1)
+        }
+        .accessibilityHidden(true)
     }
 }
 
@@ -81,9 +499,7 @@ struct RunHistoryView: View {
         )
     }
 
-    private var machineOptionIDs: [String] {
-        machineOptions.map(\.id)
-    }
+    private var machineOptionIDs: [String] { machineOptions.map(\.id) }
 
     private var selectedMachineName: String? {
         guard let selectedMachineID else { return nil }
@@ -133,21 +549,41 @@ struct RunHistoryView: View {
     }
 
     var body: some View {
-        historyListWithFilter
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 12) {
+                if case .offline(let message) = store.state {
+                    OfflineBanner(message: message)
+                        .padding(.horizontal)
+                }
+
+                if !machineOptions.isEmpty {
+                    HistoryMachineFilterBar(
+                        options: machineOptions,
+                        selection: $selectedMachineID
+                    )
+                }
+
+                if store.state == .loading, isEmpty {
+                    HistoryLoadingSkeleton()
+                        .padding(.horizontal)
+                } else if isEmpty {
+                    HistoryEmptyState(
+                        state: store.state,
+                        machineID: selectedMachineID,
+                        machineName: selectedMachineName,
+                        retry: refresh
+                    )
+                    .frame(maxWidth: .infinity, minHeight: 380)
+                    .padding(.horizontal)
+                } else {
+                    historyContent
+                }
+            }
+            .padding(.bottom, 24)
+        }
+        .background(RunBuoyTheme.canvas)
         .accessibilityIdentifier("screen.history")
         .navigationTitle("history.title")
-        .overlay {
-            if store.state == .loading, isEmpty {
-                ProgressView("history.loading")
-            } else if isEmpty {
-                HistoryEmptyState(
-                    state: store.state,
-                    machineID: selectedMachineID,
-                    machineName: selectedMachineName,
-                    retry: refresh
-                )
-            }
-        }
         .refreshable { await reload() }
         .task { await loadIfNeeded() }
         .onChange(of: selectedMachineID) { _, _ in
@@ -155,112 +591,64 @@ struct RunHistoryView: View {
             areMessagesExpanded = false
         }
         .onChange(of: machineOptionIDs) { _, availableIDs in
-            guard let selectedMachineID,
-                  !availableIDs.contains(selectedMachineID)
-            else {
-                return
-            }
+            guard let selectedMachineID, !availableIDs.contains(selectedMachineID) else { return }
             self.selectedMachineID = nil
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                RefreshButton(
-                    isRefreshing: store.isRefreshing,
-                    action: refresh
-                )
-            }
-        }
-    }
-
-    private var historyList: some View {
-        List {
-            if case .offline(let message) = store.state {
-                OfflineBanner(message: message)
-                    .listRowSeparator(.hidden)
-            }
-
-            if !filteredRunModels.isEmpty || store.canLoadMoreRuns(machineID: selectedMachineID) {
-                Section("runs.recent") {
-                    ForEach(visibleRunModels) { model in
-                        NavigationLink(value: AppRoute.runDetail(model.id)) {
-                            RunRow(model: model)
-                        }
-                        .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
-                    }
-                    HistoryExpansionButton(
-                        totalCount: filteredRunModels.count,
-                        isExpanded: $areRunsExpanded
-                    )
-                    if store.canLoadMoreRuns(machineID: selectedMachineID) {
-                        HistoryLoadMoreButton(
-                            isLoading: store.isLoadingMoreRuns,
-                            accessibilityID: "history.runs.loadMore"
-                        ) {
-                            await store.loadMoreHistoryRuns(machineID: selectedMachineID)
-                            areRunsExpanded = true
-                        }
-                    }
-                }
-            }
-
-            if !filteredMessages.isEmpty || store.canLoadMoreMessages(machineID: selectedMachineID) {
-                Section("runs.messages") {
-                    ForEach(visibleMessages) { message in
-                        RichMessageRow(message: message)
-                            .accessibilityIdentifier("history.message.\(message.id)")
-                    }
-                    HistoryExpansionButton(
-                        totalCount: filteredMessages.count,
-                        isExpanded: $areMessagesExpanded
-                    )
-                    if store.canLoadMoreMessages(machineID: selectedMachineID) {
-                        HistoryLoadMoreButton(
-                            isLoading: store.isLoadingMoreMessages,
-                            accessibilityID: "history.messages.loadMore"
-                        ) {
-                            await store.loadMoreHistoryMessages(machineID: selectedMachineID)
-                            areMessagesExpanded = true
-                        }
-                    }
-                }
-            }
-        }
-        .listStyle(.insetGrouped)
     }
 
     @ViewBuilder
-    private var historyListWithFilter: some View {
-#if compiler(>=6.2)
-        if #available(iOS 26.0, *), !machineOptions.isEmpty {
-            historyList
-                .safeAreaBar(edge: .top) {
-                    HistoryMachineFilterBar(
-                        options: machineOptions,
-                        selection: $selectedMachineID
-                    )
-                }
-        } else {
-            historyListWithLegacyFilter
-        }
-#else
-        historyListWithLegacyFilter
-#endif
-    }
-
-    private var historyListWithLegacyFilter: some View {
-        historyList
-            .safeAreaInset(edge: .top, spacing: 0) {
-                if !machineOptions.isEmpty {
-                    VStack(spacing: 0) {
-                        HistoryMachineFilterBar(
-                            options: machineOptions,
-                            selection: $selectedMachineID
-                        )
-                        Divider()
+    private var historyContent: some View {
+        if !filteredRunModels.isEmpty || store.canLoadMoreRuns(machineID: selectedMachineID) {
+            HistorySectionHeader("runs.recent")
+            VStack(spacing: 8) {
+                ForEach(visibleRunModels) { model in
+                    NavigationLink(value: AppRoute.runDetail(model.id)) {
+                        HistoryRunCard(run: model.snapshot)
                     }
-                    .background(.ultraThinMaterial)
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
+                }
+                HistoryExpansionButton(
+                    totalCount: filteredRunModels.count,
+                    isExpanded: $areRunsExpanded
+                )
+                if store.canLoadMoreRuns(machineID: selectedMachineID) {
+                    HistoryLoadMoreButton(
+                        isLoading: store.isLoadingMoreRuns,
+                        accessibilityID: "history.runs.loadMore"
+                    ) {
+                        await store.loadMoreHistoryRuns(machineID: selectedMachineID)
+                        areRunsExpanded = true
+                    }
                 }
             }
+            .padding(.horizontal)
+        }
+
+        if !filteredMessages.isEmpty || store.canLoadMoreMessages(machineID: selectedMachineID) {
+            HistorySectionHeader("runs.messages")
+                .padding(.top, 4)
+            VStack(spacing: 8) {
+                ForEach(visibleMessages) { message in
+                    RichMessageHistoricalCard(message: message)
+                        .accessibilityIdentifier("history.message.\(message.id)")
+                }
+                HistoryExpansionButton(
+                    totalCount: filteredMessages.count,
+                    isExpanded: $areMessagesExpanded
+                )
+                if store.canLoadMoreMessages(machineID: selectedMachineID) {
+                    HistoryLoadMoreButton(
+                        isLoading: store.isLoadingMoreMessages,
+                        accessibilityID: "history.messages.loadMore"
+                    ) {
+                        await store.loadMoreHistoryMessages(machineID: selectedMachineID)
+                        areMessagesExpanded = true
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
     }
 
     private func refresh() {
@@ -277,6 +665,308 @@ struct RunHistoryView: View {
     }
 }
 
+private struct HistorySectionHeader: View {
+    let key: LocalizedStringKey
+
+    init(_ key: LocalizedStringKey) {
+        self.key = key
+    }
+
+    var body: some View {
+        Text(key)
+            .font(.footnote.weight(.semibold))
+            .foregroundStyle(.secondary)
+            .textCase(.uppercase)
+            .padding(.horizontal, 24)
+    }
+}
+
+private struct HistoryRunCard: View {
+    let run: RunSnapshot
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var visualState: RunStatusVisualState { run.visualState }
+
+    var body: some View {
+        SignalCardSurface(tone: visualState.tone) {
+            VStack(alignment: .leading, spacing: 8) {
+                header
+                machineAndProgress
+                if let projection = run.progress?.trustedProjection {
+                    DeterminateRunProgressBar(
+                        fraction: projection.fraction,
+                        tone: visualState.tone,
+                        height: RunBuoyMetrics.compactProgressHeight,
+                        addsGlow: false
+                    )
+                }
+                footer
+            }
+        }
+        .contentShape(RoundedRectangle(cornerRadius: RunBuoyMetrics.compactCardRadius))
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private var header: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 6) {
+                RunStatusBadge(state: visualState)
+                title
+            }
+        } else {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                RunStatusBadge(state: visualState)
+                title
+            }
+        }
+    }
+
+    private var title: some View {
+        Text(run.title)
+            .font(.headline)
+            .lineLimit(dynamicTypeSize.isAccessibilitySize ? 4 : 2)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var machineAndProgress: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                machine
+                Spacer(minLength: 8)
+                trustedProgressSummary
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                machine
+                trustedProgressSummary
+            }
+        }
+    }
+
+    private var machine: some View {
+        Label {
+            Text(run.machineName)
+                .lineLimit(1)
+                .truncationMode(.tail)
+        } icon: {
+            MachineIconImage(machineID: run.machineID)
+                .accessibilityHidden(true)
+        }
+        .font(.subheadline)
+    }
+
+    @ViewBuilder
+    private var trustedProgressSummary: some View {
+        if let projection = run.progress?.trustedProjection {
+            Text(RunListProgressText.summary(projection))
+                .font(.caption)
+                .monospacedDigit()
+                .lineLimit(1)
+        }
+    }
+
+    private var footer: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 8) {
+                statusLabel
+                Spacer(minLength: 8)
+                completionLabel
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                statusLabel
+                completionLabel
+            }
+        }
+        .font(.caption)
+    }
+
+    private var statusLabel: some View {
+        Label {
+            Text(visualState.localizedTitle)
+        } icon: {
+            Image(systemName: visualState.symbol)
+        }
+        .foregroundStyle(visualState.color)
+    }
+
+    private var completionLabel: some View {
+        HStack(spacing: 4) {
+            Text("run.updated")
+            Text(run.endedAt ?? run.updatedAt, format: .relative(presentation: .named))
+        }
+        .foregroundStyle(.secondary)
+    }
+}
+
+private struct HistoryMachineFilterBar: View {
+    let options: [HistoryMachineOption]
+    @Binding var selection: String?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    var body: some View {
+        ScrollView(.horizontal) {
+            HStack(spacing: 8) {
+                filterButton(id: nil, name: String(localized: "history.all"), showsMachine: false)
+                ForEach(options) { option in
+                    filterButton(id: option.id, name: option.name, showsMachine: true)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+        .scrollIndicators(.hidden)
+        .overlay(alignment: .bottom) { Divider() }
+    }
+
+    private func filterButton(id: String?, name: String, showsMachine: Bool) -> some View {
+        let isSelected = selection == id
+        return Button {
+            withAnimation(RunBuoyMotion.selection(reduceMotion: reduceMotion)) {
+                selection = id
+            }
+        } label: {
+            HStack(spacing: 6) {
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .font(.caption.weight(.bold))
+                        .accessibilityHidden(true)
+                } else if showsMachine, let id {
+                    MachineIconImage(machineID: id)
+                        .font(.subheadline)
+                        .accessibilityHidden(true)
+                }
+                Text(name)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .frame(maxWidth: 180)
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(isSelected ? RunBuoyTheme.brandPrimary : Color.secondary)
+            .padding(.horizontal, 14)
+            .frame(minHeight: RunBuoyMetrics.minimumTarget)
+            .background(
+                isSelected
+                    ? RunBuoyTheme.brandPrimary.opacity(contrast == .increased ? 0.22 : 0.14)
+                    : (reduceTransparency ? RunBuoyTheme.surface : RunBuoyTheme.surface.opacity(0.92)),
+                in: Capsule()
+            )
+            .overlay {
+                Capsule().stroke(
+                    isSelected ? RunBuoyTheme.brandPrimary : RunBuoyTheme.separator,
+                    lineWidth: isSelected || contrast == .increased ? 1.5 : 1
+                )
+            }
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .accessibilityIdentifier(id.map { "history.filter.\($0)" } ?? "history.filter.all")
+    }
+}
+
+private struct RichMessageHistoricalCard: View {
+    let message: RichMessage
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var presentation: RichMessagePresentation {
+        RichMessagePresentation(level: message.level)
+    }
+
+    var body: some View {
+        SignalCardSurface(tone: presentation.tone) {
+            VStack(alignment: .leading, spacing: 7) {
+                header
+                if let subtitle = message.subtitle, !subtitle.isEmpty {
+                    Text(subtitle)
+                        .font(.subheadline.weight(.medium))
+                }
+                Text(message.body)
+                    .font(.body)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .textSelection(.enabled)
+                ForEach(message.fields) { field in
+                    ViewThatFits(in: .horizontal) {
+                        HStack(alignment: .firstTextBaseline, spacing: 12) {
+                            Text(field.name)
+                            Spacer(minLength: 8)
+                            Text(field.value)
+                                .multilineTextAlignment(.trailing)
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(field.name)
+                            Text(field.value).fontWeight(.semibold)
+                        }
+                    }
+                    .font(dynamicTypeSize.isAccessibilitySize ? .subheadline : .caption)
+                }
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private var header: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            HStack(alignment: .top, spacing: 8) {
+                messageSymbol
+                VStack(alignment: .leading, spacing: 2) {
+                    messageTitle
+                    relativeTime
+                }
+            }
+        } else {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                messageSymbol
+                messageTitle
+                Spacer(minLength: 8)
+                relativeTime
+            }
+        }
+    }
+
+    private var messageSymbol: some View {
+        Image(systemName: presentation.symbol)
+            .foregroundStyle(presentation.tone.color)
+            .accessibilityHidden(true)
+    }
+
+    private var messageTitle: some View {
+        Text(message.title)
+            .font(.headline)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var relativeTime: some View {
+        Text(message.createdAt, format: .relative(presentation: .named))
+            .font(.caption)
+            .foregroundStyle(.secondary)
+    }
+}
+
+private struct RichMessagePresentation {
+    let tone: RunBuoyTone
+    let symbol: String
+
+    init(level: String) {
+        switch level.lowercased() {
+        case "success":
+            tone = .success
+            symbol = "checkmark.circle.fill"
+        case "warning":
+            tone = .warning
+            symbol = "exclamationmark.triangle.fill"
+        case "critical", "error", "failure":
+            tone = .critical
+            symbol = "xmark.octagon.fill"
+        default:
+            tone = .live
+            symbol = "info.circle.fill"
+        }
+    }
+}
+
 private struct HistoryLoadMoreButton: View {
     let isLoading: Bool
     let accessibilityID: String
@@ -288,15 +978,15 @@ private struct HistoryLoadMoreButton: View {
         } label: {
             HStack(spacing: 8) {
                 if isLoading {
-                    ProgressView()
-                        .controlSize(.small)
+                    ProgressView().controlSize(.small)
                 }
                 Text(isLoading ? "history.loading_more" : "history.load_more")
                     .font(.subheadline.weight(.semibold))
             }
-            .frame(maxWidth: .infinity, alignment: .center)
+            .frame(maxWidth: .infinity, minHeight: RunBuoyMetrics.minimumTarget)
             .contentShape(Rectangle())
         }
+        .buttonStyle(.bordered)
         .disabled(isLoading)
         .accessibilityIdentifier(accessibilityID)
     }
@@ -332,30 +1022,24 @@ private struct HistoryExpansionButton: View {
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                 }
                 .font(.subheadline.weight(.semibold))
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxWidth: .infinity, minHeight: RunBuoyMetrics.minimumTarget)
                 .contentShape(Rectangle())
             }
+            .buttonStyle(.bordered)
             .accessibilityLabel(label)
             .accessibilityIdentifier(
-                isExpanded
-                    ? "history.expansion.collapse"
-                    : "history.expansion.expand"
+                isExpanded ? "history.expansion.collapse" : "history.expansion.expand"
             )
         }
     }
 
     private var label: String {
-        if isExpanded {
-            return String(localized: "history.show_less")
-        }
-        return String(
-            format: String(localized: "history.show_remaining"),
-            remainingCount
-        )
+        if isExpanded { return String(localized: "history.show_less") }
+        return String(format: String(localized: "history.show_remaining"), remainingCount)
     }
 
     private func toggleExpansion() {
-        withAnimation(reduceMotion ? nil : .smooth(duration: 0.25)) {
+        withAnimation(RunBuoyMotion.stateChange(reduceMotion: reduceMotion)) {
             isExpanded.toggle()
         }
     }
@@ -371,7 +1055,6 @@ struct HistoryMachineOption: Identifiable, Hashable {
         messages: [RichMessage]
     ) -> [HistoryMachineOption] {
         var serverNamesByID: [String: String] = [:]
-
         for message in messages {
             guard let machineID = message.machineID, !machineID.isEmpty else { continue }
             serverNamesByID[machineID] = serverNamesByID[machineID] ?? machineID
@@ -382,17 +1065,11 @@ struct HistoryMachineOption: Identifiable, Hashable {
         for machine in machines {
             serverNamesByID[machine.id] = machine.displayName
         }
-
-        return serverNamesByID.map { machineID, serverName in
-            HistoryMachineOption(id: machineID, name: serverName)
-        }
-        .sorted { lhs, rhs in
-            let comparison = lhs.name.localizedStandardCompare(rhs.name)
-            if comparison == .orderedSame {
-                return lhs.id < rhs.id
+        return serverNamesByID.map { HistoryMachineOption(id: $0.key, name: $0.value) }
+            .sorted { lhs, rhs in
+                let comparison = lhs.name.localizedStandardCompare(rhs.name)
+                return comparison == .orderedSame ? lhs.id < rhs.id : comparison == .orderedAscending
             }
-            return comparison == .orderedAscending
-        }
     }
 }
 
@@ -402,119 +1079,6 @@ struct HistoryContentFilter: Equatable {
     func includes(machineID candidateMachineID: String?) -> Bool {
         guard let machineID else { return true }
         return candidateMachineID == machineID
-    }
-}
-
-private struct HistoryMachineFilterBar: View {
-    let options: [HistoryMachineOption]
-    @Binding var selection: String?
-    @ScaledMetric(relativeTo: .subheadline) private var height = 54
-
-    var body: some View {
-        ScrollView(.horizontal) {
-            filterGroup
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-        }
-        .scrollIndicators(.hidden)
-        .frame(height: height)
-    }
-
-    @ViewBuilder
-    private var filterGroup: some View {
-#if compiler(>=6.2)
-        if #available(iOS 26.0, *) {
-            GlassEffectContainer(spacing: 8) {
-                filterButtons
-            }
-        } else {
-            filterButtons
-        }
-#else
-        filterButtons
-#endif
-    }
-
-    private var filterButtons: some View {
-        HStack(spacing: 8) {
-            filterButton(id: nil) {
-                Text("history.all")
-            }
-            ForEach(options) { option in
-                filterButton(id: option.id) {
-                    Label {
-                        Text(option.name)
-                    } icon: {
-                        MachineIconImage(machineID: option.id)
-                    }
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func filterButton<Content: View>(
-        id: String?,
-        @ViewBuilder label: () -> Content
-    ) -> some View {
-        let isSelected = selection == id
-        let button = Button {
-            selection = id
-        } label: {
-            label()
-                .font(.subheadline.weight(.semibold))
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
-                .foregroundStyle(Color.primary)
-        }
-
-        Group {
-#if compiler(>=6.2)
-            if #available(iOS 26.0, *) {
-                if isSelected {
-                    button
-                        .buttonStyle(.glassProminent)
-                        .tint(.accentColor)
-                        .buttonBorderShape(.capsule)
-                } else {
-                    button
-                        .buttonStyle(.glass)
-                        .buttonBorderShape(.capsule)
-                }
-            } else {
-                legacyFilterButton(button, isSelected: isSelected)
-            }
-#else
-            legacyFilterButton(button, isSelected: isSelected)
-#endif
-        }
-        .controlSize(.regular)
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityIdentifier(id.map { "history.filter.\($0)" } ?? "history.filter.all")
-    }
-
-    private func legacyFilterButton<ButtonContent: View>(
-        _ button: ButtonContent,
-        isSelected: Bool
-    ) -> some View {
-        button
-            .buttonStyle(.plain)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 9)
-            .contentShape(Capsule())
-            .background {
-                Capsule()
-                    .fill(
-                        isSelected
-                            ? Color.accentColor.opacity(0.2)
-                            : Color.secondary.opacity(0.16)
-                    )
-            }
-            .overlay {
-                if isSelected {
-                    Capsule().stroke(Color.accentColor, lineWidth: 1)
-                }
-            }
     }
 }
 
@@ -534,41 +1098,19 @@ private struct ActiveRunsEmptyState: View {
             }
         }
         .padding()
-        .accessibilityIdentifier(
-            state.isFailure
-                ? "activeRuns.state.failed"
-                : "activeRuns.state.empty"
-        )
+        .accessibilityIdentifier(state.isFailure ? "activeRuns.state.failed" : "activeRuns.state.empty")
     }
 
     private var title: LocalizedStringKey {
-        if case .failed = state {
-            return "runs.unavailable"
-        }
-        return "runs.active_empty"
+        state.isFailure ? "runs.unavailable" : "runs.active_empty"
     }
 
     private var description: LocalizedStringKey {
-        if case .failed = state {
-            return "runs.pull_to_refresh"
-        }
-        return "runs.active_empty_description"
+        state.isFailure ? "runs.pull_to_refresh" : "runs.active_empty_description"
     }
 
     private var symbol: String {
-        if case .failed = state {
-            return "exclamationmark.icloud"
-        }
-        return "checkmark.circle"
-    }
-}
-
-private extension RunBuoyStore.LoadState {
-    var isFailure: Bool {
-        if case .failed = self {
-            return true
-        }
-        return false
+        state.isFailure ? "exclamationmark.icloud" : "checkmark.circle"
     }
 }
 
@@ -583,16 +1125,16 @@ private struct HistoryEmptyState: View {
             Label {
                 Text(title)
             } icon: {
-                if let machineID, !isFailure {
+                if let machineID, !state.isFailure {
                     MachineIconImage(machineID: machineID)
                 } else {
-                    Image(systemName: symbol)
+                    Image(systemName: state.isFailure ? "exclamationmark.icloud" : "clock.arrow.circlepath")
                 }
             }
         } description: {
             Text(description)
         } actions: {
-            if isFailure {
+            if state.isFailure {
                 Button("common.try_again", action: retry)
                     .runBuoyProminentButtonStyle()
             }
@@ -601,97 +1143,94 @@ private struct HistoryEmptyState: View {
     }
 
     private var title: String {
-        if case .failed = state {
-            return String(localized: "runs.unavailable")
-        }
+        if state.isFailure { return String(localized: "runs.unavailable") }
         if let machineName {
-            return String(
-                format: String(localized: "history.filtered_empty"),
-                machineName
-            )
+            return String(format: String(localized: "history.filtered_empty"), machineName)
         }
         return String(localized: "history.empty")
     }
 
     private var description: String {
-        if case .failed = state {
-            return String(localized: "runs.pull_to_refresh")
+        if state.isFailure { return String(localized: "runs.pull_to_refresh") }
+        if machineName == nil {
+            return String(localized: "history.empty_description")
         }
-        if machineName != nil {
-            return String(localized: "history.filtered_empty_description")
-        }
-        return String(localized: "history.empty_description")
-    }
-
-    private var symbol: String {
-        if isFailure {
-            return "exclamationmark.icloud"
-        }
-        return "clock.arrow.circlepath"
-    }
-
-    private var isFailure: Bool {
-        if case .failed = state {
-            return true
-        }
-        return false
+        return String(localized: "history.filtered_empty_description")
     }
 }
 
-struct RichMessageRow: View {
-    let message: RichMessage
+private struct HistoryLoadingSkeleton: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            RunSkeletonCard(lineCount: 4)
+            RunSkeletonCard(lineCount: 4)
+            RunSkeletonCard(lineCount: 5)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("history.loading")
+    }
+}
+
+private struct SignalCardSurface<Content: View>: View {
+    let tone: RunBuoyTone
+    let usesLiveSurface: Bool
+    let content: Content
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    init(
+        tone: RunBuoyTone,
+        usesLiveSurface: Bool = false,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.tone = tone
+        self.usesLiveSurface = usesLiveSurface
+        self.content = content()
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            HStack {
-                Image(systemName: messageSymbol)
-                    .foregroundStyle(messageColor)
-                    .accessibilityHidden(true)
-                Text(message.title)
-                    .font(.headline)
-                Spacer()
-                Text(message.createdAt, format: .relative(presentation: .named))
-                    .font(.caption)
-                    .foregroundStyle(.primary)
+        content
+            .padding(usesLiveSurface ? 20 : 14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                usesLiveSurface ? RunBuoyTheme.liveSurface : RunBuoyTheme.surface,
+                in: RoundedRectangle(cornerRadius: usesLiveSurface ? 22 : 16)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: usesLiveSurface ? 22 : 16)
+                    .stroke(
+                        usesLiveSurface
+                            ? RunBuoyTheme.brandLive
+                            : (contrast == .increased ? tone.color : RunBuoyTheme.separator),
+                        lineWidth: contrast == .increased ? 1.5 : 1
+                    )
             }
-            if let subtitle = message.subtitle {
-                Text(subtitle)
-                    .font(.subheadline.weight(.medium))
-            }
-            Text(message.body)
-                .font(.body)
-                .textSelection(.enabled)
-            ForEach(message.fields) { field in
-                HStack(alignment: .firstTextBaseline, spacing: 12) {
-                    Text(field.name)
-                    Spacer(minLength: 8)
-                    Text(field.value)
-                        .multilineTextAlignment(.trailing)
-                }
-                .font(.caption)
-                .foregroundStyle(.primary)
-            }
-        }
-        .padding(.vertical, 5)
-        .accessibilityElement(children: .combine)
     }
+}
 
-    private var messageSymbol: String {
-        switch message.level.lowercased() {
-        case "success": "checkmark.circle.fill"
-        case "warning": "exclamationmark.triangle.fill"
-        case "error", "failure": "xmark.octagon.fill"
-        default: "info.circle.fill"
-        }
+private enum RunListProgressText {
+    static func summary(_ progress: TrustedRunProgress) -> String {
+        let count = "\(progress.current.formatted()) / \(progress.total.formatted())"
+        let unitCount = progress.unit.map { "\(count) \($0)" } ?? count
+        let percentage = progress.fraction.formatted(.percent.precision(.fractionLength(0)))
+        return "\(unitCount) · \(percentage)"
     }
+}
 
-    private var messageColor: Color {
-        switch message.level.lowercased() {
-        case "success": .green
-        case "warning": .orange
-        case "error", "failure": .red
-        default: .blue
-        }
+private extension RunSnapshot {
+    func listVisualState(isOfflineCached: Bool) -> RunStatusVisualState {
+        RunStatusVisualState.resolve(
+            executionStatus: executionStatus.rawValue,
+            healthStatus: healthStatus.rawValue,
+            attentionStatus: attentionStatus.rawValue,
+            isStale: isOfflineCached
+        )
+    }
+}
+
+private extension RunBuoyStore.LoadState {
+    var isFailure: Bool {
+        if case .failed = self { return true }
+        return false
     }
 }
 
