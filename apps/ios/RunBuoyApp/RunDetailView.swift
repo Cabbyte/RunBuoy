@@ -17,34 +17,46 @@ struct RunDetailView: View {
         return RunDetail(run: latestSnapshot, feed: detail.feed)
     }
 
+    private var cachedDetail: RunDetail? {
+        store.runs.first(where: { $0.id == runID }).map {
+            RunDetail(run: $0, feed: [])
+        }
+    }
+
+    private var connectivityMessage: String? {
+        if let errorMessage {
+            return errorMessage
+        }
+        if case .offline(let message) = store.state {
+            return message
+        }
+        return nil
+    }
+
     var body: some View {
-        ZStack {
-            Color.clear
-            if let detail = presentedDetail {
-                RunDetailContent(detail: detail)
-                    .overlay(alignment: .top) {
-                        refreshErrorBanner
-                    }
-            } else if let cached = store.runs.first(where: { $0.id == runID }) {
-                RunDetailContent(detail: RunDetail(run: cached, feed: []))
-                    .overlay(alignment: .top) {
-                        refreshErrorBanner
-                    }
+        Group {
+            if let detail = presentedDetail ?? cachedDetail {
+                RunDetailContent(
+                    detail: detail,
+                    connectivityMessage: connectivityMessage
+                )
             } else if let errorMessage {
-                List {
-                    ContentUnavailableView {
-                        Label("run.unavailable", systemImage: "exclamationmark.icloud")
-                    } description: {
-                        Text(errorMessage)
+                ContentUnavailableView {
+                    Label("run.unavailable", systemImage: "exclamationmark.icloud")
+                } description: {
+                    Text(errorMessage)
+                } actions: {
+                    Button("common.try_again") {
+                        Task { await load() }
                     }
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
+                    .runBuoyProminentButtonStyle()
                 }
-                .listStyle(.plain)
+                .accessibilityIdentifier("run.unavailable")
             } else {
-                ProgressView("run.loading")
+                RunDetailLoadingView()
             }
         }
+        .runBuoyCanvas()
         .accessibilityIdentifier("screen.runDetail")
         .navigationTitle("run.detail_title")
         .navigationBarTitleDisplayMode(.inline)
@@ -68,24 +80,19 @@ struct RunDetailView: View {
             errorMessage = error.localizedDescription
         }
     }
-
-    @ViewBuilder
-    private var refreshErrorBanner: some View {
-        if let errorMessage {
-            OfflineBanner(message: errorMessage)
-                .padding()
-        }
-    }
 }
 
 struct RunDetailContent: View {
     let detail: RunDetail
+    var connectivityMessage: String?
     private let orderedFeed: [RunFeedEvent]
     private let safeLogLines: [SafeLogLine]
     @AppStorage("runbuoy.safe-messages-enabled") private var safeMessagesEnabled = true
+    @State private var technicalDetailsExpanded = false
 
-    init(detail: RunDetail) {
+    init(detail: RunDetail, connectivityMessage: String? = nil) {
         self.detail = detail
+        self.connectivityMessage = connectivityMessage
         orderedFeed = detail.feed.sorted { $0.sequence < $1.sequence }
         safeLogLines = (detail.run.safeLogTail ?? []).enumerated().map {
             SafeLogLine(id: $0.offset, text: $0.element)
@@ -93,181 +100,525 @@ struct RunDetailContent: View {
     }
 
     var body: some View {
-        List {
-            RunOverviewSection(run: detail.run)
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 14) {
+                RunDetailHero(run: detail.run)
 
-            Section("run.timeline") {
-                DetailValueRow("run.elapsed") {
-                    RunElapsedView(
-                        startedAt: detail.run.startedAt,
-                        endedAt: detail.run.endedAt
+                if let banner = stateBanner {
+                    RunStateBanner(tone: banner.tone, symbol: banner.symbol) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(banner.title)
+                                .font(.headline)
+                            Text(banner.message)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityIdentifier("run.stateBanner")
+                }
+
+                if let safeMessage {
+                    LatestConfirmedUpdateCard(
+                        phase: detail.run.phase,
+                        message: safeMessage,
+                        confirmedAt: detail.run.updatedAt,
+                        tone: detail.run.statusVisualState.tone
                     )
                 }
-                if let estimate = detail.run.estimatedEndAt {
-                    DetailValueRow("run.explicit_eta") {
-                        Text(estimate, format: .dateTime.hour().minute())
-                    }
-                }
-                DetailValueRow("run.started") {
-                    Text(detail.run.startedAt, format: .dateTime)
-                }
-                DetailValueRow("run.updated") {
-                    Text(detail.run.updatedAt, format: .dateTime)
-                }
-                if let ended = detail.run.endedAt {
-                    DetailValueRow("run.ended") {
-                        Text(ended, format: .dateTime)
-                    }
-                }
-                if let exitCode = detail.run.exitCode {
-                    DetailValueRow("run.exit_code") {
-                        Text(exitCode, format: .number)
-                    }
-                }
-            }
 
-            if safeMessagesEnabled, let message = detail.run.safeMessage, !message.isEmpty {
-                Section("run.safe_message") {
-                    Text(message)
-                        .textSelection(.enabled)
-                    Button(action: copySafeMessage) {
-                        Label("run.copy_message", systemImage: "doc.on.doc")
-                    }
-                    .tint(.primary)
-                }
-            }
+                RunDetailMetrics(run: detail.run)
 
-            if !orderedFeed.isEmpty {
-                Section("run.feed") {
-                    ForEach(orderedFeed) { event in
-                        RunFeedRow(event: event)
-                    }
-                }
+                TechnicalDetailsCard(
+                    run: detail.run,
+                    feed: orderedFeed,
+                    safeLogLines: safeLogLines,
+                    showsSafeMessages: safeMessagesEnabled,
+                    isExpanded: $technicalDetailsExpanded
+                )
             }
-
-            if !safeLogLines.isEmpty {
-                Section {
-                    ForEach(safeLogLines) { line in
-                        Text(line.text)
-                            .font(.system(.caption, design: .monospaced))
-                            .textSelection(.enabled)
-                    }
-                } header: {
-                    Text("run.safe_log_tail")
-                } footer: {
-                    Text("run.safe_log_tail_notice")
-                }
-            }
-
-            Section("run.identifier") {
-                Text(detail.run.id.uuidString.lowercased())
-                    .font(.caption.monospaced())
-                    .textSelection(.enabled)
-            }
+            .padding(.horizontal)
+            .padding(.top, 4)
+            .padding(.bottom, 12)
         }
-        .listStyle(.insetGrouped)
+        .runBuoyBottomScrollEdgeStyle()
         .safeAreaInset(edge: .bottom) {
-            RunDetailActionBar(run: detail.run)
+            if RunDetailSummaryActionsPolicy.isAvailable(detail: detail) {
+                RunDetailActionBar(
+                    run: detail.run,
+                    includesSafeMessage: safeMessagesEnabled
+                )
+            }
         }
     }
 
-    private func copySafeMessage() {
-        guard let safeMessage = detail.run.safeMessage else { return }
-        UIPasteboard.general.string = safeMessage
+    private var safeMessage: String? {
+        guard safeMessagesEnabled else { return nil }
+        return detail.run.safeMessage?.trimmedNonempty
+    }
+
+    private var stateBanner: RunDetailBanner? {
+        if let connectivityMessage {
+            return RunDetailBanner(
+                tone: .warning,
+                symbol: "wifi.slash",
+                title: "runs.cached_data",
+                message: connectivityMessage
+            )
+        }
+
+        let state = detail.run.statusVisualState
+        switch state.kind {
+        case .stale:
+            return RunDetailBanner(
+                tone: .warning,
+                symbol: state.symbolName,
+                title: "health.stale",
+                message: String(localized: "run.state.stale")
+            )
+        case .offline:
+            return RunDetailBanner(
+                tone: .warning,
+                symbol: state.symbolName,
+                title: "health.offline",
+                message: String(localized: "run.state.offline")
+            )
+        case .cancelled:
+            return RunDetailBanner(
+                tone: .neutral,
+                symbol: state.symbolName,
+                title: "status.cancelled",
+                message: String(localized: "run.state.cancelled")
+            )
+        case .actionRequired:
+            return RunDetailBanner(
+                tone: .critical,
+                symbol: state.symbolName,
+                title: "attention.action_required",
+                message: String(localized: "run.state.action_required")
+            )
+        case .warning:
+            return RunDetailBanner(
+                tone: .warning,
+                symbol: state.symbolName,
+                title: "attention.warning",
+                message: String(localized: "run.state.warning")
+            )
+        default:
+            return nil
+        }
     }
 }
 
-private struct SafeLogLine: Identifiable {
-    let id: Int
-    let text: String
+private struct RunDetailLoadingView: View {
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 14) {
+                ProgressView("run.loading")
+                    .frame(maxWidth: .infinity, minHeight: 120)
+                ForEach(0..<3, id: \.self) { _ in
+                    RoundedRectangle(cornerRadius: RunBuoyMetrics.cardCornerRadius)
+                        .fill(.quaternary)
+                        .frame(height: 84)
+                }
+            }
+            .padding()
+        }
+        .accessibilityIdentifier("run.loading")
+    }
 }
 
-private struct DetailValueRow<Value: View>: View {
-    let title: LocalizedStringKey
-    @ViewBuilder let value: () -> Value
+private struct RunDetailHero: View {
+    let run: RunSnapshot
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
-    init(
-        _ title: LocalizedStringKey,
-        @ViewBuilder value: @escaping () -> Value
-    ) {
-        self.title = title
-        self.value = value
-    }
-
     var body: some View {
-        Group {
-            if dynamicTypeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: 4) {
-                    titleLabel
-                    valueLabel
-                }
-            } else {
-                HStack(alignment: .firstTextBaseline, spacing: 12) {
-                    titleLabel
-                    Spacer(minLength: 8)
-                    valueLabel
-                }
-            }
-        }
-        .accessibilityElement(children: .combine)
-    }
+        RunDetailHeroSurface(status: run.statusVisualState) {
+            VStack(alignment: .leading, spacing: 14) {
+                header
 
-    private var titleLabel: some View {
-        Text(title)
-            .fixedSize(horizontal: false, vertical: true)
-    }
-
-    private var valueLabel: some View {
-        value()
-            .foregroundStyle(.primary)
-            .fixedSize(horizontal: false, vertical: true)
-            .multilineTextAlignment(dynamicTypeSize.isAccessibilitySize ? .leading : .trailing)
-    }
-}
-
-private struct RunOverviewSection: View {
-    let run: RunSnapshot
-
-    var body: some View {
-        Section {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    StatusBadge(presentation: primaryStatus)
-                    Text(run.title)
-                        .font(.title2.bold())
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Label {
+                    Text(run.machineName)
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 2)
+                } icon: {
                     MachineIconImage(machineID: run.machineID)
                         .accessibilityHidden(true)
-                    Text(run.machineName)
-                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .foregroundStyle(.primary)
+                .font(.subheadline)
+
                 RunProgressView(
                     progress: run.progress,
                     phase: run.phase,
                     status: run.statusVisualState,
-                    emphasis: .prominent,
+                    emphasis: .prominent
                 )
+
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 16) {
+                        runtime
+                        lastConfirmed
+                    }
+                    VStack(alignment: .leading, spacing: 6) {
+                        runtime
+                        lastConfirmed
+                    }
+                }
+                .font(.caption)
             }
-            .padding(.vertical, 8)
+            .accessibilityElement(children: .combine)
         }
     }
 
-    private var primaryStatus: StatusPresentation {
-        StatusPresentation(visualState: run.statusVisualState)
+    @ViewBuilder
+    private var header: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 10) {
+                statusBadge
+                title
+            }
+        } else {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                statusBadge
+                title
+            }
+        }
+    }
+
+    private var statusBadge: some View {
+        StatusBadge(
+            presentation: StatusPresentation(visualState: run.statusVisualState),
+            showsLabel: true
+        )
+    }
+
+    private var title: some View {
+        Text(run.title)
+            .font(.headline)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var runtime: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "timer")
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            Text("run.elapsed")
+                .foregroundStyle(.secondary)
+            ConfirmedElapsedText(run: run)
+                .fontWeight(.semibold)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("run.timing.execution")
+    }
+
+    private var lastConfirmed: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "waveform.path.ecg")
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            Text("run.last_confirmed")
+                .foregroundStyle(.secondary)
+            RelativeConfirmedText(date: run.updatedAt)
+                .fontWeight(.semibold)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("run.timing.heartbeat")
     }
 }
 
-private struct RunElapsedView: View {
-    let startedAt: Date
-    let endedAt: Date?
+private struct RunDetailHeroSurface<Content: View>: View {
+    let status: RunStatusVisualState
+    @ViewBuilder let content: () -> Content
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        if let endedAt {
-            durationText(to: endedAt)
+        content()
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background {
+                RoundedRectangle(cornerRadius: 22)
+                    .fill(theme.surface)
+                if status.kind == .running && status.allowsLiveEmphasis {
+                    RoundedRectangle(cornerRadius: 22)
+                        .fill(theme.status(.live).opacity(reduceTransparency ? 0.06 : 0.10))
+                }
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 22)
+                    .stroke(
+                        status.kind == .running
+                            ? theme.status(.live)
+                            : theme.border(status.tone),
+                        lineWidth: contrast == .increased ? 1.5 : 1
+                    )
+            }
+            .shadow(
+                color: status.kind == .running && status.allowsLiveEmphasis && !reduceTransparency
+                    ? theme.glow(.live)
+                    : .clear,
+                radius: status.kind == .running ? 10 : 0,
+                y: 1
+            )
+    }
+
+    private var theme: RunBuoyTheme {
+        RunBuoyTheme(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency,
+            increasedContrast: contrast == .increased
+        )
+    }
+}
+
+private struct LatestConfirmedUpdateCard: View {
+    let phase: String?
+    let message: String
+    let confirmedAt: Date
+    let tone: RunBuoyTone
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Label("run.latest_confirmed_update", systemImage: "waveform.path.ecg")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(theme.status(tone))
+            if let phase = phase?.trimmedNonempty {
+                Text(phase)
+                    .font(.subheadline.weight(.semibold))
+            }
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .textSelection(.enabled)
+            Label {
+                RelativeConfirmedText(date: confirmedAt)
+            } icon: {
+                Image(systemName: "clock")
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(theme.surface, in: RoundedRectangle(cornerRadius: RunBuoyMetrics.cardCornerRadius))
+        .overlay {
+            RoundedRectangle(cornerRadius: RunBuoyMetrics.cardCornerRadius)
+                .stroke(theme.border(), lineWidth: contrast == .increased ? 1.5 : 1)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("run.latestConfirmedUpdate")
+    }
+
+    private var theme: RunBuoyTheme {
+        RunBuoyTheme(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency,
+            increasedContrast: contrast == .increased
+        )
+    }
+}
+
+private struct RunDetailMetrics: View {
+    let run: RunSnapshot
+    private let columns = [GridItem(.adaptive(minimum: 145), spacing: 10)]
+
+    var body: some View {
+        LazyVGrid(columns: columns, alignment: .leading, spacing: 10) {
+            RunMetricCard("run.elapsed", symbol: "timer") {
+                ConfirmedElapsedText(run: run)
+                    .monospacedDigit()
+            }
+            RunMetricCard("run.last_confirmed", symbol: "waveform.path.ecg") {
+                RelativeConfirmedText(date: run.updatedAt)
+            }
+            RunMetricCard("run.started", symbol: "clock") {
+                Text(run.startedAt, format: .dateTime.hour().minute())
+            }
+            if let endedAt = run.endedAt {
+                RunMetricCard("run.ended", symbol: "stop.circle") {
+                    Text(endedAt, format: .dateTime.hour().minute())
+                }
+            } else {
+                RunMetricCard("run.updated", symbol: "clock.arrow.circlepath") {
+                    Text(run.updatedAt, format: .dateTime.hour().minute())
+                }
+            }
+        }
+        .accessibilityIdentifier("run.metrics")
+    }
+}
+
+private struct TechnicalDetailsCard: View {
+    let run: RunSnapshot
+    let feed: [RunFeedEvent]
+    let safeLogLines: [SafeLogLine]
+    let showsSafeMessages: Bool
+    @Binding var isExpanded: Bool
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        DisclosureGroup(isExpanded: $isExpanded) {
+            VStack(alignment: .leading, spacing: 16) {
+                Divider()
+                runIdentifier
+                timingDetails
+                if !feed.isEmpty {
+                    feedDetails
+                }
+                if !safeLogLines.isEmpty {
+                    safeLogDetails
+                }
+                safetyBoundary
+            }
+            .padding(.top, 8)
+        } label: {
+            ViewThatFits(in: .horizontal) {
+                HStack {
+                    Text("run.technical_details")
+                        .font(.headline)
+                    Spacer(minLength: 8)
+                    Text("run.safe_fields_only")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("run.technical_details")
+                        .font(.headline)
+                    Text("run.safe_fields_only")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .tint(.primary)
+        .padding(16)
+        .background(theme.surface, in: RoundedRectangle(cornerRadius: RunBuoyMetrics.cardCornerRadius))
+        .overlay {
+            RoundedRectangle(cornerRadius: RunBuoyMetrics.cardCornerRadius)
+                .stroke(theme.border(), lineWidth: contrast == .increased ? 1.5 : 1)
+        }
+        .accessibilityIdentifier("run.technicalDetails")
+    }
+
+    private var runIdentifier: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("run.identifier")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text(run.id.uuidString.lowercased())
+                .font(.caption.monospaced())
+                .textSelection(.enabled)
+            Button(action: copyID) {
+                Label("run.copy_id", systemImage: "doc.on.doc")
+            }
+            .runBuoySecondaryButtonStyle()
+            .accessibilityIdentifier("run.copyID")
+        }
+    }
+
+    private var timingDetails: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                    Text("run.elapsed")
+                        .foregroundStyle(.secondary)
+                    Spacer(minLength: 8)
+                    ConfirmedElapsedText(run: run)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("run.elapsed")
+                        .foregroundStyle(.secondary)
+                    ConfirmedElapsedText(run: run)
+                }
+            }
+            .font(.subheadline)
+            .accessibilityElement(children: .combine)
+            technicalRow("run.started", value: run.startedAt.formatted(date: .abbreviated, time: .standard))
+            technicalRow("run.updated", value: run.updatedAt.formatted(date: .abbreviated, time: .standard))
+            if let endedAt = run.endedAt {
+                technicalRow("run.ended", value: endedAt.formatted(date: .abbreviated, time: .standard))
+            }
+            if let exitCode = run.exitCode {
+                technicalRow("run.exit_code", value: exitCode.formatted())
+            }
+        }
+    }
+
+    private var feedDetails: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("run.feed")
+                .font(.headline)
+            ForEach(feed) { event in
+                RunFeedRow(event: event, showsMessage: showsSafeMessages)
+            }
+        }
+    }
+
+    private var safeLogDetails: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("run.safe_log_tail")
+                .font(.headline)
+            ForEach(safeLogLines) { line in
+                Text(line.text)
+                    .font(.system(.caption, design: .monospaced))
+                    .textSelection(.enabled)
+            }
+            Text("run.safe_log_tail_notice")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private var safetyBoundary: some View {
+        Label("run.safety_boundary", systemImage: "hand.raised.fill")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func technicalRow(_ title: LocalizedStringKey, value: String) -> some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text(title)
+                    .foregroundStyle(.secondary)
+                Spacer(minLength: 8)
+                Text(value)
+                    .multilineTextAlignment(.trailing)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .foregroundStyle(.secondary)
+                Text(value)
+            }
+        }
+        .font(.subheadline)
+        .accessibilityElement(children: .combine)
+    }
+
+    private func copyID() {
+        UIPasteboard.general.string = run.id.uuidString.lowercased()
+    }
+
+    private var theme: RunBuoyTheme {
+        RunBuoyTheme(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency,
+            increasedContrast: contrast == .increased
+        )
+    }
+}
+
+private struct ConfirmedElapsedText: View {
+    let run: RunSnapshot
+
+    var body: some View {
+        if let end = RunDetailTiming.elapsedEndDate(for: run) {
+            durationText(to: end)
         } else {
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 durationText(to: context.date)
@@ -276,87 +627,74 @@ private struct RunElapsedView: View {
     }
 
     private func durationText(to end: Date) -> some View {
-        Text(RunDurationText.string(from: startedAt, to: end))
+        Text(RunDurationText.string(from: run.startedAt, to: end))
             .monospacedDigit()
-            .foregroundStyle(.primary)
+    }
+}
+
+private struct RelativeConfirmedText: View {
+    let date: Date
+
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 60)) { _ in
+            Text(date, format: .relative(presentation: .named))
+        }
     }
 }
 
 private struct RunDetailActionBar: View {
     let run: RunSnapshot
+    let includesSafeMessage: Bool
 
-    @ViewBuilder
+    private var summary: String {
+        SafeRunSummary.text(
+            for: run,
+            includesSafeMessage: includesSafeMessage
+        )
+    }
+
     var body: some View {
-#if compiler(>=6.2)
-        if #available(iOS 26.0, *), RunBuoyVisualStyle.current == .liquidGlass {
-            liquidGlassActionBar
-        } else {
-            materialActionBar
-        }
-#else
-        materialActionBar
-#endif
-    }
-
-#if compiler(>=6.2)
-    @available(iOS 26.0, *)
-    private var liquidGlassActionBar: some View {
-        GlassEffectContainer(spacing: 12) {
-            actionButtons
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-    }
-#endif
-
-    private var materialActionBar: some View {
-        actionButtons
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(.ultraThinMaterial)
-    }
-
-    private var actionButtons: some View {
-        HStack(spacing: 12) {
-            Spacer(minLength: 0)
-
-            Button(action: copyID) {
-                Image(systemName: "doc.on.doc")
-                    .frame(minWidth: 44, minHeight: 44)
-                    .contentShape(Circle())
+        RunSummaryActionBar {
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 12) {
+                    copySummaryButton
+                    shareSummaryButton
+                }
+                VStack(spacing: 8) {
+                    shareSummaryButton
+                    copySummaryButton
+                }
             }
-            .runBuoySecondaryButtonStyle()
-            .buttonBorderShape(.circle)
-            .accessibilityLabel("run.copy_id")
-            .accessibilityIdentifier("run.copyID")
-
-            ShareLink(item: shareSummary) {
-                Image(systemName: "square.and.arrow.up")
-                    .frame(minWidth: 44, minHeight: 44)
-                    .contentShape(Circle())
-            }
-            .runBuoyProminentButtonStyle()
-            .buttonBorderShape(.circle)
-            .accessibilityLabel("run.share_summary")
-            .accessibilityIdentifier("run.shareSummary")
         }
+        .accessibilityIdentifier("run.summaryActions")
     }
 
-    private var shareSummary: String {
-        var lines = [run.title, run.machineName, run.executionStatus.rawValue]
-        if let safeMessage = run.safeMessage {
-            lines.append(safeMessage)
+    private var copySummaryButton: some View {
+        Button(action: copySummary) {
+            Label("run.copy_summary", systemImage: "doc.on.doc")
+                .frame(maxWidth: .infinity, minHeight: 44)
         }
-        return lines.joined(separator: "\n")
+        .runBuoySecondaryButtonStyle()
+        .accessibilityIdentifier("run.copySummary")
     }
 
-    private func copyID() {
-        UIPasteboard.general.string = run.id.uuidString.lowercased()
+    private var shareSummaryButton: some View {
+        ShareLink(item: summary) {
+            Label("run.share_summary", systemImage: "square.and.arrow.up")
+                .frame(maxWidth: .infinity, minHeight: 44)
+        }
+        .runBuoyProminentButtonStyle()
+        .accessibilityIdentifier("run.shareSummary")
+    }
+
+    private func copySummary() {
+        UIPasteboard.general.string = summary
     }
 }
 
 struct RunFeedRow: View {
     let event: RunFeedEvent
+    var showsMessage = true
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -371,10 +709,10 @@ struct RunFeedRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(eventTitle)
                     .font(.subheadline.weight(.semibold))
-                if let phase = event.phase {
+                if let phase = event.phase?.trimmedNonempty {
                     Text(phase)
                 }
-                if let message = event.message {
+                if showsMessage, let message = event.message?.trimmedNonempty {
                     Text(message)
                         .foregroundStyle(.secondary)
                 }
@@ -416,6 +754,116 @@ struct RunFeedRow: View {
         case "run.message": "text.bubble.fill"
         default: "circle.fill"
         }
+    }
+}
+
+struct SafeRunSummary {
+    static func text(
+        for run: RunSnapshot,
+        includesSafeMessage: Bool,
+        locale: Locale = .current
+    ) -> String {
+        var lines = [
+            line("run.summary.title", value: run.title, locale: locale),
+            line("machine.name", value: run.machineName, locale: locale),
+            line(
+                "run.summary.execution",
+                value: localizedExecution(run.executionStatus, locale: locale),
+                locale: locale
+            )
+        ]
+
+        if let phase = run.phase?.trimmedNonempty {
+            lines.append(line("run.phase", value: phase, locale: locale))
+        }
+
+        let progress = run.progressVisualState
+        if progress.kind == .determinate,
+           let current = progress.current,
+           let total = progress.total {
+            var value = "\(current.formatted(.number.locale(locale))) / \(total.formatted(.number.locale(locale)))"
+            if let unit = run.progress?.unit?.trimmedNonempty {
+                value += " \(unit)"
+            }
+            lines.append(line("run.progress", value: value, locale: locale))
+        }
+
+        let confirmed = run.updatedAt.formatted(
+            .dateTime
+                .year()
+                .month()
+                .day()
+                .hour()
+                .minute()
+                .second()
+                .locale(locale)
+        )
+        lines.append(line("run.last_confirmed", value: confirmed, locale: locale))
+
+        if includesSafeMessage,
+           let safeMessage = run.safeMessage?.trimmedNonempty {
+            lines.append(line("run.safe_message", value: safeMessage, locale: locale))
+        }
+
+        return lines.joined(separator: "\n")
+    }
+
+    private static func line(_ key: String.LocalizationValue, value: String, locale: Locale) -> String {
+        "\(String(localized: key, locale: locale)): \(value)"
+    }
+
+    private static func localizedExecution(_ status: ExecutionStatus, locale: Locale) -> String {
+        let key: String.LocalizationValue = switch status {
+        case .created: "status.created"
+        case .starting: "status.starting"
+        case .running: "status.running"
+        case .succeeded: "status.succeeded"
+        case .failed: "status.failed"
+        case .cancelled: "status.cancelled"
+        case .lost: "status.lost"
+        case .unknown: "status.unknown"
+        }
+        return String(localized: key, locale: locale)
+    }
+}
+
+enum RunDetailSummaryActionsPolicy {
+    static func isAvailable(detail: RunDetail?) -> Bool {
+        detail != nil
+    }
+}
+
+enum RunDetailTiming {
+    static func elapsedEndDate(for run: RunSnapshot) -> Date? {
+        if let endedAt = run.endedAt {
+            return endedAt
+        }
+        if run.executionStatus.isTerminal
+            || run.healthStatus == .stale
+            || run.healthStatus == .offline
+            || !run.executionStatus.isActive {
+            return run.updatedAt
+        }
+        return nil
+    }
+}
+
+private struct RunDetailBanner {
+    let tone: RunBuoyTone
+    let symbol: String
+    let title: LocalizedStringKey
+    let message: String
+}
+
+private struct SafeLogLine: Identifiable {
+    let id: Int
+    let text: String
+}
+
+private extension String {
+    var trimmedNonempty: String? {
+        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
     }
 }
 

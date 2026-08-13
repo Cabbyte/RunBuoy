@@ -293,4 +293,146 @@ final class ModelDecodingTests: XCTestCase {
         XCTAssertGreaterThan(PreviewFixtures.longEnglishDetail.run.title.count, 70)
         XCTAssertGreaterThan(PreviewFixtures.longChineseDetail.run.safeMessage?.count ?? 0, 30)
     }
+
+    func testSafeRunSummaryIncludesOnlyApprovedPresentationFields() {
+        let run = summaryRun(
+            executionStatus: .running,
+            healthStatus: .healthy,
+            safeMessage: "Safe checkpoint confirmed.",
+            source: "command --token SECRET /private/project",
+            safeLogTail: [
+                "RAW_LOG_SENTINEL",
+                "API_KEY=SECRET_VALUE"
+            ]
+        )
+
+        let summary = SafeRunSummary.text(
+            for: run,
+            includesSafeMessage: true,
+            locale: Locale(identifier: "en_US")
+        )
+
+        XCTAssertTrue(summary.contains("Safe summary test"))
+        XCTAssertTrue(summary.contains("Name: Test Mac"))
+        XCTAssertTrue(summary.contains("Running"))
+        XCTAssertTrue(summary.contains("Phase: Uploading artifacts"))
+        XCTAssertTrue(summary.contains("Progress: 31 / 50 files"))
+        XCTAssertTrue(summary.contains(run.updatedAt.formatted(
+            .dateTime
+                .year()
+                .month()
+                .day()
+                .hour()
+                .minute()
+                .second()
+                .locale(Locale(identifier: "en_US"))
+        )))
+        XCTAssertTrue(summary.contains("Safe Message: Safe checkpoint confirmed."))
+        XCTAssertFalse(summary.contains(run.id.uuidString.lowercased()))
+        XCTAssertFalse(summary.contains("RAW_LOG_SENTINEL"))
+        XCTAssertFalse(summary.contains("command --token"))
+        XCTAssertFalse(summary.contains("/private/project"))
+        XCTAssertFalse(summary.contains("API_KEY"))
+        XCTAssertFalse(summary.contains("SECRET"))
+    }
+
+    func testSafeRunSummaryRespectsSafeMessagePreferenceAndRejectsUntrustedProgress() {
+        let invalidProgress = RunProgress(
+            kind: .determinate,
+            current: 31,
+            total: 0,
+            fraction: 0.62,
+            unit: "files",
+            source: "untrusted"
+        )
+        let run = summaryRun(
+            progress: invalidProgress,
+            safeMessage: "SAFE_MESSAGE_SENTINEL"
+        )
+
+        let summary = SafeRunSummary.text(
+            for: run,
+            includesSafeMessage: false,
+            locale: Locale(identifier: "en_US")
+        )
+
+        XCTAssertFalse(summary.contains("SAFE_MESSAGE_SENTINEL"))
+        XCTAssertFalse(summary.contains("Progress:"))
+    }
+
+    func testUnavailableRunHasNoSummaryActions() {
+        XCTAssertFalse(RunDetailSummaryActionsPolicy.isAvailable(detail: nil))
+        XCTAssertTrue(
+            RunDetailSummaryActionsPolicy.isAvailable(
+                detail: RunDetail(run: summaryRun(), feed: [])
+            )
+        )
+    }
+
+    func testCancelledRunIsTerminalWithoutLiveEmphasisAndKeepsConfirmedProgress() {
+        let run = summaryRun(executionStatus: .cancelled, healthStatus: .healthy)
+        let status = run.statusVisualState
+        let progress = run.progressVisualState
+
+        XCTAssertEqual(status.kind, .cancelled)
+        XCTAssertTrue(status.isTerminal)
+        XCTAssertFalse(status.isActive)
+        XCTAssertFalse(status.allowsLiveEmphasis)
+        XCTAssertEqual(progress.kind, .determinate)
+        XCTAssertEqual(progress.fraction, 0.62)
+        XCTAssertFalse(progress.allowsLiveMotion)
+        XCTAssertFalse(progress.allowsGlow)
+        XCTAssertEqual(RunDetailTiming.elapsedEndDate(for: run), run.updatedAt)
+    }
+
+    func testDetailElapsedOnlyAdvancesForHealthyActiveRun() {
+        let running = summaryRun(executionStatus: .running, healthStatus: .healthy)
+        let stale = summaryRun(executionStatus: .running, healthStatus: .stale)
+        let offline = summaryRun(executionStatus: .running, healthStatus: .offline)
+        let succeeded = summaryRun(executionStatus: .succeeded, healthStatus: .healthy)
+
+        XCTAssertNil(RunDetailTiming.elapsedEndDate(for: running))
+        XCTAssertEqual(RunDetailTiming.elapsedEndDate(for: stale), stale.updatedAt)
+        XCTAssertEqual(RunDetailTiming.elapsedEndDate(for: offline), offline.updatedAt)
+        XCTAssertEqual(RunDetailTiming.elapsedEndDate(for: succeeded), succeeded.endedAt)
+    }
+
+    private func summaryRun(
+        executionStatus: ExecutionStatus = .running,
+        healthStatus: HealthStatus = .healthy,
+        progress: RunProgress? = RunProgress(
+            kind: .determinate,
+            current: 31,
+            total: 50,
+            fraction: 0.62,
+            unit: "files",
+            source: "explicit"
+        ),
+        safeMessage: String? = "Safe checkpoint confirmed.",
+        source: String? = "cli",
+        safeLogTail: [String]? = nil
+    ) -> RunSnapshot {
+        let startedAt = Date(timeIntervalSince1970: 1_000)
+        let updatedAt = startedAt.addingTimeInterval(252)
+        return RunSnapshot(
+            id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000009999")!,
+            machineID: "machine_test",
+            machineName: "Test Mac",
+            title: "Safe summary test",
+            source: source,
+            executionStatus: executionStatus,
+            healthStatus: healthStatus,
+            attentionStatus: .none,
+            progress: progress,
+            phase: "Uploading artifacts",
+            safeMessage: safeMessage,
+            startedAt: startedAt,
+            updatedAt: updatedAt,
+            endedAt: executionStatus.isTerminal ? updatedAt : nil,
+            estimatedEndAt: nil,
+            exitCode: executionStatus.isTerminal ? 0 : nil,
+            safeLogTail: safeLogTail,
+            sequence: 99
+        )
+    }
 }
