@@ -266,8 +266,13 @@ final class RoutingAndPairingTests: XCTestCase {
         XCTAssertEqual(CapabilityDemoStep.step(for: state), .stale)
     }
 
-    func testDemoTourCoversEveryDesignedLiveActivityState() {
+    func testDemoTourUsesExactlyFiveContinuousSignalBuoyStates() {
         let now = Date(timeIntervalSince1970: 1_785_076_800)
+
+        XCTAssertEqual(
+            CapabilityDemoStep.allCases,
+            [.running35, .running72Phase, .warning, .stale, .succeeded]
+        )
 
         for step in CapabilityDemoStep.allCases {
             let state = step.contentState(
@@ -280,11 +285,33 @@ final class RoutingAndPairingTests: XCTestCase {
                 step,
                 "Expected demo state to round-trip: \(step)"
             )
+            XCTAssertNotNil(state.trustedProgress)
+            XCTAssertNil(state.estimatedEndAt)
         }
 
-        XCTAssertEqual(CapabilityDemoStep.uploading.previewProgress, 0.92)
-        XCTAssertTrue(CapabilityDemoStep.cancelled.isTerminal)
-        XCTAssertTrue(CapabilityDemoStep.lost.isTerminal)
+        XCTAssertEqual(CapabilityDemoStep.running35.previewProgress, 0.35)
+        XCTAssertEqual(CapabilityDemoStep.running72Phase.previewProgress, 0.72)
+        XCTAssertEqual(CapabilityDemoStep.running35.next, .running72Phase)
+        XCTAssertEqual(CapabilityDemoStep.running72Phase.next, .warning)
+        XCTAssertEqual(CapabilityDemoStep.warning.next, .stale)
+        XCTAssertEqual(CapabilityDemoStep.stale.next, .succeeded)
+        XCTAssertNil(CapabilityDemoStep.succeeded.next)
+        XCTAssertTrue(CapabilityDemoStep.succeeded.isTerminal)
+
+        let running35 = CapabilityDemoStep.running35.contentState(
+            now: now,
+            createdAt: now.addingTimeInterval(-120),
+            startedAt: now.addingTimeInterval(-100)
+        )
+        let running72 = CapabilityDemoStep.running72Phase.contentState(
+            now: now,
+            createdAt: now.addingTimeInterval(-120),
+            startedAt: now.addingTimeInterval(-100)
+        )
+        XCTAssertNil(running35.phase)
+        XCTAssertNotNil(running72.phase)
+        XCTAssertEqual(running35.trustedProgress?.fraction, 0.35)
+        XCTAssertEqual(running72.trustedProgress?.fraction, 0.72)
     }
 }
 
