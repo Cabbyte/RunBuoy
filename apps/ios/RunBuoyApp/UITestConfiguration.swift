@@ -9,6 +9,7 @@ struct UITestConfiguration {
         case empty
         case offline
         case failed
+        case unavailable
     }
 
     let isEnabled: Bool

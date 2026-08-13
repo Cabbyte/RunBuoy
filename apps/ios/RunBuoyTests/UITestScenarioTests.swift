@@ -24,5 +24,9 @@ final class UITestScenarioTests: XCTestCase {
         let failed = PreviewFixtures.store(scenario: .failed)
         XCTAssertEqual(failed.state, .failed("UI test failure fixture"))
         XCTAssertTrue(failed.runs.isEmpty)
+
+        let unavailable = PreviewFixtures.store(scenario: .unavailable)
+        XCTAssertEqual(unavailable.state, .loaded)
+        XCTAssertTrue(unavailable.runs.isEmpty)
     }
 }

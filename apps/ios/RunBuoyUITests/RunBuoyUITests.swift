@@ -222,6 +222,85 @@ final class RunBuoyUITests: XCTestCase {
         XCTAssertTrue(element("demo.startLiveActivity").exists)
     }
 
+    func testRunDetailDisclosureUnavailableAndHistoryNavigationBoundaries() {
+        launch()
+
+        element("run.row.\(Self.activeRunID)").tap()
+        XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 3))
+        XCTAssertFalse(element("run.copyID").exists)
+        element("run.technicalDetails").tap()
+        for _ in 0..<3 where !element("run.copyID").exists {
+            element("screen.runDetail").swipeUp()
+        }
+        XCTAssertTrue(element("run.copyID").waitForExistence(timeout: 3))
+
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        tapTab("tab.history", label: "History")
+        XCTAssertTrue(element("screen.history").waitForExistence(timeout: 3))
+        element("run.row.\(Self.failedRunID)").tap()
+        XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 3))
+
+        launch(
+            scenario: "unavailable",
+            initialURL: "runbuoy://runs/\(Self.unavailableRunID)"
+        )
+        XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Run unavailable"].exists)
+        XCTAssertFalse(element("run.summaryActions").exists)
+        XCTAssertFalse(element("run.copySummary").exists)
+        XCTAssertFalse(element("run.shareSummary").exists)
+    }
+
+    func testAdvancedConfirmationsPreferenceTogglesAndScannerSheet() {
+        launch()
+        tapTab("tab.settings", label: "Settings")
+
+        let safeMessages = element("settings.safeMessages")
+        XCTAssertTrue(safeMessages.waitForExistence(timeout: 3))
+        let initialSafeMessagesValue = safeMessages.value as? String ?? "1"
+        safeMessages.coordinate(
+            withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)
+        ).tap()
+        waitForValue(initialSafeMessagesValue == "1" ? "0" : "1", of: safeMessages)
+
+        let liveActivities = element("settings.liveActivities")
+        XCTAssertTrue(liveActivities.exists)
+        if liveActivities.isEnabled {
+            let initialLiveActivitiesValue = liveActivities.value as? String ?? "1"
+            liveActivities.coordinate(
+                withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)
+            ).tap()
+            waitForValue(
+                initialLiveActivitiesValue == "1" ? "0" : "1",
+                of: liveActivities
+            )
+        }
+
+        openAdvancedData()
+        attachScreenshot(named: "advanced-data-en")
+        assertConfirmation(
+            actionID: "settings.resetDevice",
+            messagePrefix: "The server revokes this iPhone’s credential"
+        )
+        assertConfirmation(
+            actionID: "settings.resetLocalOnly",
+            messagePrefix: "Emergency option: local Keychain"
+        )
+        assertConfirmation(
+            actionID: "settings.deleteWorkspace",
+            messagePrefix: "This permanently deletes this workspace’s credentials"
+        )
+
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        openMachines(fromSettings: true)
+        attachScreenshot(named: "machines-en")
+        element("machines.enterPairingCode").tap()
+        XCTAssertTrue(element("screen.pairMachine").waitForExistence(timeout: 3))
+        element("machines.scanPairingCode").tap()
+        XCTAssertTrue(element("screen.qrScanner").waitForExistence(timeout: 3))
+        attachScreenshot(named: "scanner-simulator-unavailable-en")
+    }
+
     func testAccessibilityAuditForCoreScreensAndScenarios() throws {
         launch()
         XCTAssertTrue(element("screen.activeRuns").waitForExistence(timeout: 5))
@@ -318,6 +397,41 @@ final class RunBuoyUITests: XCTestCase {
         }
         element("settings.machines").tap()
         XCTAssertTrue(element("screen.machines").waitForExistence(timeout: 3))
+    }
+
+    private func openAdvancedData() {
+        let advancedData = element("settings.advancedData")
+        for _ in 0..<4 where !advancedData.isHittable {
+            element("screen.settings").swipeUp()
+        }
+        waitForHittable(advancedData)
+        advancedData.tap()
+        XCTAssertTrue(element("screen.advancedData").waitForExistence(timeout: 3))
+    }
+
+    private func assertConfirmation(actionID: String, messagePrefix: String) {
+        let action = element(actionID)
+        if !action.isHittable {
+            element("screen.advancedData").swipeUp()
+        }
+        waitForHittable(action)
+        action.tap()
+        XCTAssertTrue(
+            app.staticTexts.matching(
+                NSPredicate(format: "label BEGINSWITH %@", messagePrefix)
+            ).firstMatch.waitForExistence(timeout: 2)
+        )
+        app.terminate()
+        launch(resetState: false)
+        tapTab("tab.settings", label: "Settings")
+        openAdvancedData()
+    }
+
+    private func attachScreenshot(named name: String) {
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
 
     private func element(_ identifier: String) -> XCUIElement {
@@ -454,6 +568,7 @@ final class RunBuoyUITests: XCTestCase {
 
     private static let activeRunID = "018f0d8a-8c0a-7000-8000-000000000001"
     private static let failedRunID = "018f0d8a-8c0a-7000-8000-000000000002"
+    private static let unavailableRunID = "018f0d8a-8c0a-7000-8000-000000000099"
     private static let pairingURL =
         "runbuoy://pair/session_ui_test?challenge=once-only&machine=UI%20Test%20Mac&platform=macOS&region=global"
     private static let semanticallyScalingIdentifiers: Set<String> = [

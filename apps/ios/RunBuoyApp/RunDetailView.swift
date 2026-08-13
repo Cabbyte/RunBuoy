@@ -43,6 +43,7 @@ struct RunDetailView: View {
             } else if let errorMessage {
                 ContentUnavailableView {
                     Label("run.unavailable", systemImage: "exclamationmark.icloud")
+                        .accessibilityIdentifier("run.unavailable")
                 } description: {
                     Text(errorMessage)
                 } actions: {
@@ -51,7 +52,6 @@ struct RunDetailView: View {
                     }
                     .runBuoyProminentButtonStyle()
                 }
-                .accessibilityIdentifier("run.unavailable")
             } else {
                 RunDetailLoadingView()
             }
@@ -498,6 +498,7 @@ private struct TechnicalDetailsCard: View {
                     }
                 }
             }
+            .accessibilityIdentifier("run.technicalDetails")
         }
         .tint(.primary)
         .padding(16)
@@ -506,7 +507,6 @@ private struct TechnicalDetailsCard: View {
             RoundedRectangle(cornerRadius: RunBuoyMetrics.cardCornerRadius)
                 .stroke(theme.border(), lineWidth: contrast == .increased ? 1.5 : 1)
         }
-        .accessibilityIdentifier("run.technicalDetails")
     }
 
     private var technicalDetailsVerticalLabel: some View {
