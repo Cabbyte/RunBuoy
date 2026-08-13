@@ -216,10 +216,27 @@ final class RoutingAndPairingTests: XCTestCase {
         XCTAssertEqual(CapabilityDemoStep.step(for: state), .stale)
     }
 
-    func testDemoTourCoversEveryDesignedLiveActivityState() {
+    func testDemoTourUsesApprovedContinuousSequence() {
         let now = Date(timeIntervalSince1970: 1_785_076_800)
+        let expected: [CapabilityDemoStep] = [
+            .running35,
+            .running72,
+            .warning,
+            .stale,
+            .succeeded
+        ]
 
-        for step in CapabilityDemoStep.allCases {
+        XCTAssertEqual(CapabilityDemoStep.allCases, expected)
+        XCTAssertEqual(expected.map(\.next), [
+            .running72,
+            .warning,
+            .stale,
+            .succeeded,
+            nil
+        ])
+        XCTAssertEqual(expected.map(\.previewProgress), [0.35, 0.72, 0.72, 0.72, 1])
+
+        for step in expected {
             let state = step.contentState(
                 now: now,
                 createdAt: now.addingTimeInterval(-120),
@@ -230,11 +247,14 @@ final class RoutingAndPairingTests: XCTestCase {
                 step,
                 "Expected demo state to round-trip: \(step)"
             )
+            XCTAssertNil(state.estimatedEndAt)
+            XCTAssertEqual(state.progressKind, "determinate")
+            XCTAssertEqual(state.current, state.progress.map { $0 * 100 })
+            XCTAssertEqual(state.total, 100)
         }
 
-        XCTAssertEqual(CapabilityDemoStep.uploading.previewProgress, 0.92)
-        XCTAssertTrue(CapabilityDemoStep.cancelled.isTerminal)
-        XCTAssertTrue(CapabilityDemoStep.lost.isTerminal)
+        XCTAssertFalse(CapabilityDemoStep.stale.isTerminal)
+        XCTAssertTrue(CapabilityDemoStep.succeeded.isTerminal)
     }
 }
 

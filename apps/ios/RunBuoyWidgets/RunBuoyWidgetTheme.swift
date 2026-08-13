@@ -28,6 +28,58 @@ enum RunBuoyWidgetToneColor {
         }
     }
 
+    static func progressTrack(
+        _ tone: RunBuoyTone,
+        colorScheme: ColorScheme,
+        increasedContrast: Bool
+    ) -> Color {
+        resolve(tone, colorScheme: colorScheme)
+            .opacity(increasedContrast ? 0.34 : 0.18)
+    }
+
+    static func progressGradient(
+        _ tone: RunBuoyTone,
+        colorScheme: ColorScheme
+    ) -> LinearGradient {
+        LinearGradient(
+            colors: progressColors(tone, colorScheme: colorScheme),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+
+    static func progressRingGradient(
+        _ tone: RunBuoyTone,
+        colorScheme: ColorScheme
+    ) -> AngularGradient {
+        AngularGradient(
+            colors: progressColors(tone, colorScheme: colorScheme),
+            center: .center
+        )
+    }
+
+    static func glow(_ tone: RunBuoyTone, colorScheme: ColorScheme) -> Color {
+        guard tone == .live else { return .clear }
+        return brandLive(colorScheme: colorScheme).opacity(0.26)
+    }
+
+    private static func progressColors(
+        _ tone: RunBuoyTone,
+        colorScheme: ColorScheme
+    ) -> [Color] {
+        if tone == .live {
+            return [brandPrimary, brandLive(colorScheme: colorScheme)]
+        }
+        let color = resolve(tone, colorScheme: colorScheme)
+        return [color, color]
+    }
+
+    private static var brandPrimary: Color { rgb(36, 107, 254) }
+
+    private static func brandLive(colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? rgb(83, 218, 251) : rgb(53, 207, 246)
+    }
+
     private static func rgb(_ red: Double, _ green: Double, _ blue: Double) -> Color {
         Color(red: red / 255, green: green / 255, blue: blue / 255)
     }
