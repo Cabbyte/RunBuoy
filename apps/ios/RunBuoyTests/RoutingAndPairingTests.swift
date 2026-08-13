@@ -239,6 +239,111 @@ final class RoutingAndPairingTests: XCTestCase {
 }
 
 @MainActor
+final class ActiveRunPresentationTests: XCTestCase {
+    func testHeroOrderingUsesSeverityThenRecencyThenStableID() {
+        let running = makeRun(
+            id: "00000000-0000-0000-0000-000000000005",
+            execution: .running,
+            updatedOffset: 10
+        )
+        let starting = makeRun(
+            id: "00000000-0000-0000-0000-000000000004",
+            execution: .starting,
+            updatedOffset: 20
+        )
+        let offline = makeRun(
+            id: "00000000-0000-0000-0000-000000000003",
+            health: .offline,
+            updatedOffset: 30
+        )
+        let warning = makeRun(
+            id: "00000000-0000-0000-0000-000000000002",
+            attention: .warning,
+            updatedOffset: 40
+        )
+        let action = makeRun(
+            id: "00000000-0000-0000-0000-000000000001",
+            attention: .actionRequired,
+            updatedOffset: 1
+        )
+
+        let sorted = ActiveRunPresentation.sorted(
+            [running, action, offline, starting, warning].map(RunSummaryModel.init)
+        )
+
+        XCTAssertEqual(
+            sorted.map(\.id),
+            [action.id, warning.id, offline.id, starting.id, running.id]
+        )
+
+        let laterID = makeRun(
+            id: "00000000-0000-0000-0000-000000000012",
+            updatedOffset: 50
+        )
+        let earlierID = makeRun(
+            id: "00000000-0000-0000-0000-000000000011",
+            updatedOffset: 50
+        )
+        XCTAssertTrue(ActiveRunPresentation.orderedBefore(earlierID, laterID))
+    }
+
+    func testSystemSummaryReportsActualIssuesAndLatestConfirmation() {
+        let healthy = makeRun(
+            id: "00000000-0000-0000-0000-000000000021",
+            updatedOffset: 20
+        )
+        let warning = makeRun(
+            id: "00000000-0000-0000-0000-000000000022",
+            attention: .warning,
+            updatedOffset: 40
+        )
+        let offline = makeRun(
+            id: "00000000-0000-0000-0000-000000000023",
+            health: .offline,
+            updatedOffset: 30
+        )
+
+        let summary = ActiveSystemSummary(runs: [healthy, warning, offline])
+
+        XCTAssertEqual(summary.activeCount, 3)
+        XCTAssertEqual(summary.issueCount, 2)
+        XCTAssertEqual(summary.lastConfirmedAt, warning.updatedAt)
+        XCTAssertFalse(summary.isHealthy)
+        XCTAssertTrue(ActiveSystemSummary(runs: [healthy]).isHealthy)
+        XCTAssertFalse(ActiveSystemSummary(runs: []).isHealthy)
+    }
+
+    private func makeRun(
+        id: String,
+        execution: ExecutionStatus = .running,
+        health: HealthStatus = .healthy,
+        attention: AttentionStatus = .none,
+        updatedOffset: TimeInterval
+    ) -> RunSnapshot {
+        let startedAt = PreviewFixtures.baseDate
+        return RunSnapshot(
+            id: UUID(uuidString: id)!,
+            machineID: "machine_test",
+            machineName: "Test Mac",
+            title: "Test run",
+            executionStatus: execution,
+            healthStatus: health,
+            attentionStatus: attention,
+            progress: nil,
+            phase: nil,
+            safeMessage: nil,
+            startedAt: startedAt,
+            updatedAt: startedAt.addingTimeInterval(updatedOffset),
+            endedAt: nil,
+            estimatedEndAt: nil,
+            exitCode: nil,
+            safeLogTail: nil,
+            sequence: Int(updatedOffset)
+        )
+    }
+}
+
+@MainActor
 final class HistoryFilteringTests: XCTestCase {
     func testHistorySectionsShowFiveItemsUntilExpanded() {
         XCTAssertEqual(
