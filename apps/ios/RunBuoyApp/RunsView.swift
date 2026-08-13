@@ -27,7 +27,7 @@ struct ActiveRunsView: View {
                     if !secondary.isEmpty {
                         Text("runs.also_active")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
+                            .runBuoySecondaryText()
                             .textCase(.uppercase)
                         ForEach(secondary) { model in
                             ActiveRunCompactLink(model: model)
@@ -123,7 +123,7 @@ private struct ActiveSystemSummaryCard: View {
                 if let date = summary.lastConfirmedAt {
                     Text("\(String(localized: "run.last_confirmed")) \(date.formatted(.relative(presentation: .named)))")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .runBuoySecondaryText()
                 }
             }
         }
@@ -232,8 +232,13 @@ private struct ActiveRunTiming: View {
     private var runtime: some View {
         HStack(spacing: 4) {
             Image(systemName: "timer").accessibilityHidden(true)
-            Text("run.execution_time").foregroundStyle(.secondary)
-            Text(RunDurationText.string(from: run.startedAt, to: run.updatedAt)).fontWeight(.semibold)
+            (
+                Text("run.execution_time")
+                    + Text(" \(RunDurationText.string(from: run.startedAt, to: run.updatedAt))")
+                    .fontWeight(.semibold)
+            )
+            .font(.caption)
+            .foregroundStyle(.primary)
         }
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("run.timing.execution")
@@ -242,8 +247,13 @@ private struct ActiveRunTiming: View {
     private var confirmed: some View {
         HStack(spacing: 4) {
             Image(systemName: "waveform.path.ecg").accessibilityHidden(true)
-            Text("run.heartbeat_time").foregroundStyle(.secondary)
-            Text(run.updatedAt, format: .relative(presentation: .named)).fontWeight(.semibold)
+            (
+                Text("run.heartbeat_time")
+                    + Text(" \(run.updatedAt, format: .relative(presentation: .named))")
+                    .fontWeight(.semibold)
+            )
+            .font(.caption)
+            .foregroundStyle(.primary)
         }
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("run.timing.heartbeat")
@@ -429,21 +439,11 @@ struct RunHistoryView: View {
 
     @ViewBuilder
     private var historyListWithFilter: some View {
-#if compiler(>=6.2)
-        if #available(iOS 26.0, *), !machineOptions.isEmpty {
-            historyList
-                .safeAreaBar(edge: .top) {
-                    HistoryMachineFilterBar(
-                        options: machineOptions,
-                        selection: $selectedMachineID
-                    )
-                }
-        } else {
-            historyListWithLegacyFilter
-        }
-#else
+        // The system safe-area glass bar can become almost transparent while
+        // the accessibility audit snapshots a scrolled screen. Use the same
+        // native inset hierarchy on every supported OS so filter labels have a
+        // stable surface and reading order.
         historyListWithLegacyFilter
-#endif
     }
 
     private var historyListWithLegacyFilter: some View {
@@ -457,7 +457,7 @@ struct RunHistoryView: View {
                         )
                         Divider()
                     }
-                    .background(.ultraThinMaterial)
+                    .background(Color(.systemBackground))
                 }
             }
     }
@@ -486,7 +486,7 @@ private struct HistorySectionTitle: View {
     var body: some View {
         Text(title)
             .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
+            .runBuoySecondaryText()
             .textCase(.uppercase)
             .padding(.top, 4)
     }
@@ -668,19 +668,8 @@ private struct HistoryMachineFilterBar: View {
         .frame(height: height)
     }
 
-    @ViewBuilder
     private var filterGroup: some View {
-#if compiler(>=6.2)
-        if #available(iOS 26.0, *) {
-            GlassEffectContainer(spacing: 8) {
-                filterButtons
-            }
-        } else {
-            filterButtons
-        }
-#else
         filterButtons
-#endif
     }
 
     private var filterButtons: some View {
@@ -720,10 +709,10 @@ private struct HistoryMachineFilterBar: View {
 #if compiler(>=6.2)
             if #available(iOS 26.0, *) {
                 if isSelected {
-                    button
-                        .buttonStyle(.glassProminent)
-                        .tint(.accentColor)
-                        .buttonBorderShape(.capsule)
+                    // A filled glass tint can reduce text contrast as the
+                    // content behind it changes. The selected capsule keeps a
+                    // stable semantic fill, outline, and selected trait.
+                    legacyFilterButton(button, isSelected: true)
                 } else {
                     button
                         .buttonStyle(.glass)
@@ -755,8 +744,8 @@ private struct HistoryMachineFilterBar: View {
                 Capsule()
                     .fill(
                         isSelected
-                            ? Color.accentColor.opacity(0.2)
-                            : Color.secondary.opacity(0.16)
+                            ? Color(.secondarySystemBackground)
+                            : Color(.tertiarySystemFill)
                     )
             }
             .overlay {
@@ -778,8 +767,15 @@ private struct ActiveRunsEmptyState: View {
             Text(description)
         } actions: {
             if state.isFailure {
-                Button("common.try_again", action: retry)
-                    .runBuoyProminentButtonStyle()
+                Button(action: retry) {
+                    Text("common.try_again")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 18)
+                        .frame(minHeight: 44)
+                        .background(Color.accentColor, in: Capsule())
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding()
@@ -899,32 +895,38 @@ struct RichMessageRow: View {
                     .accessibilityHidden(true)
                 Text(message.title)
                     .font(.headline)
+                    .accessibilityIdentifier("history.message.\(message.id).title")
                 Spacer()
                 Text(message.createdAt, format: .relative(presentation: .named))
                     .font(.caption)
                     .foregroundStyle(.primary)
+                    .accessibilityIdentifier("history.message.\(message.id).date")
             }
             if let subtitle = message.subtitle {
                 Text(subtitle)
                     .font(.subheadline.weight(.medium))
+                    .accessibilityIdentifier("history.message.\(message.id).subtitle")
             }
             Text(message.body)
                 .font(.body)
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? 10 : 6)
                 .textSelection(.enabled)
+                .accessibilityIdentifier("history.message.\(message.id).body")
             ForEach(message.fields) { field in
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(field.name)
+                        .accessibilityIdentifier("history.message.\(message.id).field.\(field.id).name")
                     Spacer(minLength: 8)
                     Text(field.value)
                         .multilineTextAlignment(.trailing)
+                        .accessibilityIdentifier("history.message.\(message.id).field.\(field.id).value")
                 }
                 .font(.caption)
                 .foregroundStyle(.primary)
             }
         }
         .padding(.vertical, 5)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .contain)
     }
 
     private var messageSymbol: String {

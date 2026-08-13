@@ -54,15 +54,20 @@ struct SettingsView: View {
         Section {
             LabeledContent {
                 Text(selectedRegionName)
-                    .foregroundStyle(.secondary)
+                    .runBuoySecondaryText()
             } label: {
                 Label("settings.region", systemImage: "globe")
             }
 
             LabeledContent {
                 Text(AppConfiguration.displayAddress(for: AppConfiguration.live.apiBaseURL))
-                    .foregroundStyle(.secondary)
+                    .runBuoySecondaryText()
                     .lineLimit(1)
+                    .accessibilityLabel(
+                        serverAccessibilityLabel(
+                            AppConfiguration.displayAddress(for: AppConfiguration.live.apiBaseURL)
+                        )
+                    )
             } label: {
                 Label("settings.server", systemImage: "server.rack")
             }
@@ -73,16 +78,25 @@ struct SettingsView: View {
                         Text(store.machines.count, format: .number)
                         Text("settings.machines_paired_suffix")
                     }
-                    .foregroundStyle(.secondary)
+                    .runBuoySecondaryText()
                 } label: {
                     Label("settings.machines", systemImage: "desktopcomputer")
                 }
             }
             .accessibilityIdentifier("settings.machines")
+
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "lock.fill")
+                    .accessibilityHidden(true)
+                Text("settings.region_locked")
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .font(.footnote)
+            .foregroundStyle(.primary)
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier("settings.regionLock")
         } header: {
             Text("settings.connections")
-        } footer: {
-            Text("settings.region_locked")
         }
     }
 
@@ -111,13 +125,13 @@ struct SettingsView: View {
                     systemImage: "exclamationmark.triangle"
                 )
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .runBuoySecondaryText()
             }
 
             if notificationsSystemDenied {
                 Label("settings.notifications_system_disabled", systemImage: "bell.slash")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .runBuoySecondaryText()
             }
 
             if notificationsSystemDenied || !liveActivitiesAvailable {
@@ -125,6 +139,13 @@ struct SettingsView: View {
                     .accessibilityIdentifier("settings.openSystemSettings")
             }
         }
+    }
+
+    private func serverAccessibilityLabel(_ address: String) -> String {
+        String(
+            format: String(localized: "settings.server_accessibility_value"),
+            address
+        )
     }
 
     private var productSection: some View {
@@ -286,6 +307,7 @@ private struct SettingsConnectionSummary: View {
         }
         .padding(.vertical, 6)
         .accessibilityElement(children: .combine)
+        .accessibilityValue(Text(state.title))
         .accessibilityIdentifier("settings.connectionSummary")
     }
 
@@ -300,23 +322,43 @@ private struct SettingsConnectionSummary: View {
         VStack(alignment: .leading, spacing: 3) {
             Text(state.title)
                 .font(.headline)
+                .accessibilityIdentifier("settings.connectionSummary.title")
             HStack(spacing: 4) {
                 Text(machineCount, format: .number)
+                    .font(.subheadline)
+                    .accessibilityIdentifier("settings.connectionSummary.machineCount")
                 Text("settings.machines_count_suffix")
-                Text("·")
+                    .font(.subheadline)
+                    .accessibilityIdentifier("settings.connectionSummary.machineSuffix")
+                Circle()
+                    .fill(Color.primary)
+                    .frame(width: 3, height: 3)
                     .accessibilityHidden(true)
                 Text(regionName)
+                    .font(.subheadline)
+                    .accessibilityIdentifier("settings.connectionSummary.region")
             }
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .runBuoySecondaryText()
             .fixedSize(horizontal: false, vertical: true)
 
             HStack(spacing: 4) {
                 Text(serverAddress)
+                    .font(.caption)
+                    .accessibilityIdentifier("settings.connectionSummary.server")
+                    .accessibilityLabel(
+                        String(
+                            format: String(localized: "settings.server_accessibility_value"),
+                            serverAddress
+                        )
+                    )
                 if let lastConfirmedAt {
-                    Text("·")
+                    Circle()
+                        .fill(Color.primary)
+                        .frame(width: 3, height: 3)
                         .accessibilityHidden(true)
                     Text("settings.connection_last_confirmed")
+                        .font(.caption)
+                        .accessibilityIdentifier("settings.connectionSummary.confirmedLabel")
                     Text(
                         lastConfirmedAt,
                         format: .relative(
@@ -324,10 +366,11 @@ private struct SettingsConnectionSummary: View {
                             unitsStyle: .abbreviated
                         )
                     )
+                    .font(.caption)
+                    .accessibilityIdentifier("settings.connectionSummary.confirmedDate")
                 }
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .runBuoySecondaryText()
             .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -364,7 +407,7 @@ struct AdvancedDataView: View {
                             .font(.headline)
                         Text("settings.safe_data_only_description")
                             .font(.footnote)
-                            .foregroundStyle(.secondary)
+                            .runBuoySecondaryText()
                     }
                 } icon: {
                     Image(systemName: "lock.shield.fill")
@@ -383,7 +426,7 @@ struct AdvancedDataView: View {
                 if let cacheMessage {
                     Text(cacheMessage)
                         .font(.footnote)
-                        .foregroundStyle(.secondary)
+                        .runBuoySecondaryText()
                         .accessibilityIdentifier("settings.cacheCleared")
                 }
             }
@@ -410,13 +453,14 @@ struct AdvancedDataView: View {
                 if let lifecycleNotice {
                     Text(lifecycleNotice)
                         .font(.footnote)
-                        .foregroundStyle(.secondary)
+                        .runBuoySecondaryText()
                         .accessibilityIdentifier("settings.lifecycleNotice")
                 }
             } header: {
                 Text("settings.destructive_actions")
             } footer: {
                 Text("settings.read_only_boundary")
+                    .foregroundStyle(.primary)
             }
         }
         .runBuoyBottomScrollEdgeStyle()

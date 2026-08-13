@@ -10,6 +10,12 @@
             "state" : "new",
             "value" : "RunBuoy"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RunBuoy"
+          }
         }
       }
     },
@@ -20,6 +26,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "RunBuoy"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "RunBuoy"
           }
         }
@@ -50,6 +62,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Confirm identity before resetting this iPhone or deleting RunBuoy data."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在重置这台 iPhone 或删除 RunBuoy 数据前确认身份。"
           }
         }
       }

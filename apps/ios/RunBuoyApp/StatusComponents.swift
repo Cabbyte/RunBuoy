@@ -845,11 +845,11 @@ struct RunMetricCard<Value: View>: View {
                 if let symbol {
                     Label(title, systemImage: symbol)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary)
                 } else {
                     Text(title)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary)
                 }
                 value()
                     .font(.headline)
@@ -1141,25 +1141,30 @@ private struct RunRowMetadataFooter: View {
 
     private var completionTime: some View {
         HStack(spacing: 4) {
-            Text("history.completed")
-            Text(
-                run.endedAt ?? run.updatedAt,
-                format: .relative(presentation: .named)
+            (
+                Text("history.completed")
+                    + Text(
+                        " \((run.endedAt ?? run.updatedAt).formatted(.relative(presentation: .named)))"
+                    )
             )
+            .font(.caption)
         }
         .fixedSize(horizontal: true, vertical: false)
+        .accessibilityIdentifier("run.timing.completion")
     }
 
     private var executionTime: some View {
         HStack(spacing: 4) {
             Image(systemName: "timer")
-                .foregroundStyle(.secondary)
+                .runBuoySecondaryText()
                 .accessibilityHidden(true)
-            Text("run.execution_time")
-                .foregroundStyle(.secondary)
-            Text(RunDurationText.string(from: run.startedAt, to: run.updatedAt))
-                .fontWeight(.semibold)
-                .monospacedDigit()
+            (
+                Text("run.execution_time")
+                    + Text(" \(RunDurationText.string(from: run.startedAt, to: run.updatedAt))")
+                    .fontWeight(.semibold)
+            )
+            .foregroundStyle(.primary)
+            .monospacedDigit()
         }
         .fixedSize(horizontal: true, vertical: false)
         .accessibilityElement(children: .combine)
@@ -1171,11 +1176,13 @@ private struct RunRowMetadataFooter: View {
             Image(systemName: "waveform.path.ecg")
                 .foregroundStyle(theme.status(run.healthStatus.presentation.tone))
                 .accessibilityHidden(true)
-            Text("run.heartbeat_time")
-                .foregroundStyle(.secondary)
-            Text(run.updatedAt, style: .relative)
-                .fontWeight(.semibold)
-                .monospacedDigit()
+            (
+                Text("run.heartbeat_time")
+                    + Text(" \(run.updatedAt, style: .relative)")
+                    .fontWeight(.semibold)
+            )
+            .foregroundStyle(.primary)
+            .monospacedDigit()
         }
         .fixedSize(horizontal: true, vertical: false)
         .accessibilityElement(children: .combine)

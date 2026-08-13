@@ -70,12 +70,20 @@ struct RunBuoyTheme {
     var liveStart: Color { Self.rgb(36, 107, 254) }
     var liveEnd: Color { Self.rgb(53, 207, 246) }
 
+    var secondaryText: Color {
+        colorScheme == .dark
+            ? Self.rgb(190, 190, 198)
+            : Self.rgb(78, 78, 86)
+    }
+
     func status(_ tone: RunBuoyTone) -> Color {
         switch (tone, colorScheme) {
         case (.neutral, _):
             .secondary
         case (.live, .light):
-            Self.rgb(32, 182, 226)
+            // Primary blue is the accessible foreground for live semantics on
+            // light surfaces; cyan remains the gradient/emphasis endpoint.
+            Self.rgb(36, 107, 254)
         case (.live, .dark):
             Self.rgb(83, 218, 251)
         case (.success, .light):
@@ -145,6 +153,26 @@ struct RunBuoyTheme {
 extension View {
     func runBuoyCanvas() -> some View {
         modifier(RunBuoyCanvasModifier())
+    }
+
+    func runBuoySecondaryText() -> some View {
+        modifier(RunBuoySecondaryTextModifier())
+    }
+}
+
+private struct RunBuoySecondaryTextModifier: ViewModifier {
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.colorScheme) private var colorScheme
+
+    func body(content: Content) -> some View {
+        content.foregroundStyle(
+            RunBuoyTheme(
+                colorScheme: colorScheme,
+                reduceTransparency: reduceTransparency,
+                increasedContrast: contrast == .increased
+            ).secondaryText
+        )
     }
 }
 

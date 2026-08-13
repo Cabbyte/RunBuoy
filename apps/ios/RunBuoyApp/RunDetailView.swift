@@ -111,7 +111,7 @@ struct RunDetailContent: View {
                                 .font(.headline)
                             Text(banner.message)
                                 .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                                .runBuoySecondaryText()
                         }
                     }
                     .accessibilityIdentifier("run.stateBanner")
@@ -299,12 +299,9 @@ private struct RunDetailHero: View {
     private var runtime: some View {
         HStack(spacing: 4) {
             Image(systemName: "timer")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
                 .accessibilityHidden(true)
-            Text("run.elapsed")
-                .foregroundStyle(.secondary)
-            ConfirmedElapsedText(run: run)
-                .fontWeight(.semibold)
+            ConfirmedElapsedText(run: run, label: "run.elapsed", font: .caption)
         }
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("run.timing.execution")
@@ -313,12 +310,9 @@ private struct RunDetailHero: View {
     private var lastConfirmed: some View {
         HStack(spacing: 4) {
             Image(systemName: "waveform.path.ecg")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
                 .accessibilityHidden(true)
-            Text("run.last_confirmed")
-                .foregroundStyle(.secondary)
-            RelativeConfirmedText(date: run.updatedAt)
-                .fontWeight(.semibold)
+            RelativeConfirmedText(date: run.updatedAt, label: "run.last_confirmed", font: .caption)
         }
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("run.timing.heartbeat")
@@ -391,15 +385,15 @@ private struct LatestConfirmedUpdateCard: View {
             }
             Text(message)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .runBuoySecondaryText()
                 .textSelection(.enabled)
             Label {
-                RelativeConfirmedText(date: confirmedAt)
+                RelativeConfirmedText(date: confirmedAt, font: .caption)
             } icon: {
                 Image(systemName: "clock")
             }
             .font(.caption)
-            .foregroundStyle(.secondary)
+            .runBuoySecondaryText()
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -423,16 +417,25 @@ private struct LatestConfirmedUpdateCard: View {
 
 private struct RunDetailMetrics: View {
     let run: RunSnapshot
-    private let columns = [GridItem(.adaptive(minimum: 145), spacing: 10)]
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var columns: [GridItem] {
+        if dynamicTypeSize.isAccessibilitySize {
+            return [GridItem(.flexible())]
+        }
+        return [GridItem(.adaptive(minimum: 145), spacing: 10)]
+    }
 
     var body: some View {
         LazyVGrid(columns: columns, alignment: .leading, spacing: 10) {
             RunMetricCard("run.elapsed", symbol: "timer") {
-                ConfirmedElapsedText(run: run)
+                ConfirmedElapsedText(run: run, font: .headline)
                     .monospacedDigit()
+                    .accessibilityIdentifier("run.metric.elapsed")
             }
             RunMetricCard("run.last_confirmed", symbol: "waveform.path.ecg") {
-                RelativeConfirmedText(date: run.updatedAt)
+                RelativeConfirmedText(date: run.updatedAt, font: .headline)
+                    .accessibilityIdentifier("run.metric.lastConfirmed")
             }
             RunMetricCard("run.started", symbol: "clock") {
                 Text(run.startedAt, format: .dateTime.hour().minute())
@@ -457,6 +460,7 @@ private struct TechnicalDetailsCard: View {
     let safeLogLines: [SafeLogLine]
     let showsSafeMessages: Bool
     @Binding var isExpanded: Bool
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
     @Environment(\.colorScheme) private var colorScheme
@@ -477,21 +481,21 @@ private struct TechnicalDetailsCard: View {
             }
             .padding(.top, 8)
         } label: {
-            ViewThatFits(in: .horizontal) {
-                HStack {
-                    Text("run.technical_details")
-                        .font(.headline)
-                    Spacer(minLength: 8)
-                    Text("run.safe_fields_only")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("run.technical_details")
-                        .font(.headline)
-                    Text("run.safe_fields_only")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    technicalDetailsVerticalLabel
+                } else {
+                    ViewThatFits(in: .horizontal) {
+                        HStack {
+                            Text("run.technical_details")
+                                .font(.headline)
+                            Spacer(minLength: 8)
+                            Text("run.safe_fields_only")
+                                .font(.caption)
+                                .runBuoySecondaryText()
+                        }
+                        technicalDetailsVerticalLabel
+                    }
                 }
             }
         }
@@ -505,11 +509,23 @@ private struct TechnicalDetailsCard: View {
         .accessibilityIdentifier("run.technicalDetails")
     }
 
+    private var technicalDetailsVerticalLabel: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text("run.technical_details")
+                .font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
+            Text("run.safe_fields_only")
+                .font(.caption)
+                .runBuoySecondaryText()
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
     private var runIdentifier: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("run.identifier")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .runBuoySecondaryText()
             Text(run.id.uuidString.lowercased())
                 .font(.caption.monospaced())
                 .textSelection(.enabled)
@@ -526,14 +542,14 @@ private struct TechnicalDetailsCard: View {
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text("run.elapsed")
-                        .foregroundStyle(.secondary)
+                        .runBuoySecondaryText()
                     Spacer(minLength: 8)
-                    ConfirmedElapsedText(run: run)
+                    ConfirmedElapsedText(run: run, font: .subheadline)
                 }
                 VStack(alignment: .leading, spacing: 3) {
                     Text("run.elapsed")
-                        .foregroundStyle(.secondary)
-                    ConfirmedElapsedText(run: run)
+                        .runBuoySecondaryText()
+                    ConfirmedElapsedText(run: run, font: .subheadline)
                 }
             }
             .font(.subheadline)
@@ -570,14 +586,14 @@ private struct TechnicalDetailsCard: View {
             }
             Text("run.safe_log_tail_notice")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .runBuoySecondaryText()
         }
     }
 
     private var safetyBoundary: some View {
         Label("run.safety_boundary", systemImage: "hand.raised.fill")
             .font(.caption)
-            .foregroundStyle(.secondary)
+            .runBuoySecondaryText()
             .fixedSize(horizontal: false, vertical: true)
     }
 
@@ -585,14 +601,14 @@ private struct TechnicalDetailsCard: View {
         ViewThatFits(in: .horizontal) {
             HStack(alignment: .firstTextBaseline, spacing: 12) {
                 Text(title)
-                    .foregroundStyle(.secondary)
+                    .runBuoySecondaryText()
                 Spacer(minLength: 8)
                 Text(value)
                     .multilineTextAlignment(.trailing)
             }
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .foregroundStyle(.secondary)
+                    .runBuoySecondaryText()
                 Text(value)
             }
         }
@@ -615,29 +631,75 @@ private struct TechnicalDetailsCard: View {
 
 private struct ConfirmedElapsedText: View {
     let run: RunSnapshot
+    var label: LocalizedStringKey?
+    var font: Font
+
+    init(
+        run: RunSnapshot,
+        label: LocalizedStringKey? = nil,
+        font: Font = .body
+    ) {
+        self.run = run
+        self.label = label
+        self.font = font
+    }
 
     var body: some View {
         if let end = RunDetailTiming.elapsedEndDate(for: run) {
             durationText(to: end)
         } else {
-            TimelineView(.periodic(from: .now, by: 1)) { context in
+            // Machine-confirmed run state is intentionally minute-granular in
+            // the UI. This avoids implying sub-second telemetry freshness and
+            // keeps VoiceOver/audit focus stable while a label is being read.
+            TimelineView(.periodic(from: .now, by: 60)) { context in
                 durationText(to: context.date)
             }
         }
     }
 
+    @ViewBuilder
     private func durationText(to end: Date) -> some View {
-        Text(RunDurationText.string(from: run.startedAt, to: end))
-            .monospacedDigit()
+        let duration = RunDurationText.string(from: run.startedAt, to: end)
+        if let label {
+            (Text(label).fontWeight(.semibold) + Text(" \(duration)").fontWeight(.semibold))
+                .font(font)
+                .foregroundStyle(.primary)
+                .monospacedDigit()
+        } else {
+            Text(duration)
+                .font(font)
+                .monospacedDigit()
+        }
     }
 }
 
 private struct RelativeConfirmedText: View {
     let date: Date
+    var label: LocalizedStringKey?
+    var font: Font
+
+    init(
+        date: Date,
+        label: LocalizedStringKey? = nil,
+        font: Font = .body
+    ) {
+        self.date = date
+        self.label = label
+        self.font = font
+    }
 
     var body: some View {
-        TimelineView(.periodic(from: .now, by: 60)) { _ in
-            Text(date, format: .relative(presentation: .named))
+        let relative = date.formatted(.relative(presentation: .named))
+        if let label {
+            (
+                Text(label).fontWeight(.semibold)
+                    + Text(" \(relative)").fontWeight(.semibold)
+            )
+            .font(font)
+            .foregroundStyle(.primary)
+        } else {
+            Text(relative)
+                .font(font)
         }
     }
 }
@@ -645,6 +707,10 @@ private struct RelativeConfirmedText: View {
 private struct RunDetailActionBar: View {
     let run: RunSnapshot
     let includesSafeMessage: Bool
+
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.colorScheme) private var colorScheme
 
     private var summary: String {
         SafeRunSummary.text(
@@ -672,19 +738,43 @@ private struct RunDetailActionBar: View {
     private var copySummaryButton: some View {
         Button(action: copySummary) {
             Label("run.copy_summary", systemImage: "doc.on.doc")
+                .font(.headline)
+                .foregroundStyle(.primary)
+                .padding(.horizontal, 12)
                 .frame(maxWidth: .infinity, minHeight: 44)
+                .background(Color(.systemBackground), in: Capsule())
+                .overlay {
+                    Capsule()
+                        .stroke(Color.primary.opacity(0.22), lineWidth: 1)
+                }
+                .contentShape(Capsule())
         }
-        .runBuoySecondaryButtonStyle()
+        // The summary bar already supplies the system surface; keeping the
+        // secondary action opaque avoids stacking translucent glass layers.
+        .buttonStyle(.plain)
         .accessibilityIdentifier("run.copySummary")
     }
 
     private var shareSummaryButton: some View {
         ShareLink(item: summary) {
             Label("run.share_summary", systemImage: "square.and.arrow.up")
+                .font(.headline)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 12)
                 .frame(maxWidth: .infinity, minHeight: 44)
+                .background(theme.brand, in: Capsule())
+                .contentShape(Capsule())
         }
-        .runBuoyProminentButtonStyle()
+        .buttonStyle(.plain)
         .accessibilityIdentifier("run.shareSummary")
+    }
+
+    private var theme: RunBuoyTheme {
+        RunBuoyTheme(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency,
+            increasedContrast: contrast == .increased
+        )
     }
 
     private func copySummary() {
@@ -700,7 +790,7 @@ struct RunFeedRow: View {
         HStack(alignment: .top, spacing: 12) {
             Text(event.occurredAt, format: .dateTime.hour().minute())
                 .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .runBuoySecondaryText()
                 .accessibilityLabel(event.occurredAt.formatted(date: .omitted, time: .shortened))
             Image(systemName: symbol)
                 .foregroundStyle(.tint)
@@ -714,7 +804,7 @@ struct RunFeedRow: View {
                 }
                 if showsMessage, let message = event.message?.trimmedNonempty {
                     Text(message)
-                        .foregroundStyle(.secondary)
+                        .runBuoySecondaryText()
                 }
                 if let progress = event.progress, let fraction = progress.boundedFraction {
                     Text(fraction, format: .percent.precision(.fractionLength(0)))

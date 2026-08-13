@@ -57,28 +57,34 @@ struct MachinesView: View {
 
                     Button(action: showPairingCode) {
                         Label("settings.pair_machine", systemImage: "qrcode.viewfinder")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 16)
+                            .frame(minHeight: 44)
                             .frame(maxWidth: .infinity)
+                            .background(Color.accentColor, in: Capsule())
                     }
                     .labelStyle(.titleAndIcon)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
+                    .buttonStyle(.plain)
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
                     .accessibilityIdentifier("machines.enterPairingCode")
                 }
 
                 Section {
+                    Text("machines.paired")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .fixedSize(horizontal: false, vertical: true)
                     ForEach(store.machines) { machine in
                         NavigationLink(value: AppRoute.machine(machine.id)) {
                             MachineRow(machine: machine)
                         }
                         .accessibilityIdentifier("machine.row.\(machine.id)")
                     }
-                } header: {
-                    Text("machines.paired")
                 } footer: {
                     Text("machines.footer")
+                        .foregroundStyle(.primary)
                 }
             }
         }
@@ -176,7 +182,7 @@ private struct MachinesSummary: View {
 
             Text("machines.intro")
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .runBuoySecondaryText()
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
@@ -225,8 +231,8 @@ private struct MachineStateCount: View {
             Image(systemName: state.symbol)
                 .foregroundStyle(theme.status(state.tone))
         }
-        .font(.caption)
-        .foregroundStyle(.secondary)
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(.primary)
     }
 
     private var theme: RunBuoyTheme {
@@ -288,7 +294,7 @@ struct MachineRow: View {
                     )
                 }
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .runBuoySecondaryText()
                 .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 4)
@@ -298,7 +304,7 @@ struct MachineRow: View {
                     .accessibilityHidden(true)
                 Text(state.title)
                     .font(.caption2.weight(.medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
             }
             .fixedSize(horizontal: true, vertical: false)
         }

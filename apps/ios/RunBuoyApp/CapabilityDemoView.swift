@@ -412,7 +412,7 @@ struct CapabilityDemoView: View {
                             .font(.headline)
                         Text("demo.intro_body")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .runBuoySecondaryText()
                     }
                 } icon: {
                     Image(systemName: "iphone.gen3.radiowaves.left.and.right")
@@ -456,6 +456,7 @@ struct CapabilityDemoView: View {
                     Task { await model.sendDemoNotification() }
                 } label: {
                     Label("demo.send_notification", systemImage: "bell.and.waves.left.and.right")
+                        .foregroundStyle(.primary)
                 }
                 .disabled(model.isWorking)
                 .accessibilityIdentifier("demo.sendNotification")
@@ -463,7 +464,7 @@ struct CapabilityDemoView: View {
                 if let notificationMessage = model.notificationMessage {
                     Label(notificationMessage, systemImage: "checkmark.circle")
                         .font(.footnote)
-                        .foregroundStyle(.secondary)
+                        .runBuoySecondaryText()
                         .accessibilityIdentifier("demo.notificationScheduled")
                 }
             } header: {
@@ -510,12 +511,30 @@ struct CapabilityDemoView: View {
         switch model.sessionState {
         case .idle:
             Text("demo.live_activity_intro")
-                .foregroundStyle(.secondary)
+                .font(.body)
+                .runBuoySecondaryText()
+                .accessibilityIdentifier("demo.liveActivityIntro")
             Button {
                 Task { await model.start() }
             } label: {
-                Label("demo.start", systemImage: "play.fill")
+                HStack(spacing: 12) {
+                    Image(systemName: "play.fill")
+                        .accessibilityHidden(true)
+                    Text("demo.start")
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                }
+                .font(.body)
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                .padding(.horizontal, 12)
+                .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 12))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.primary.opacity(0.22), lineWidth: 1)
+                }
             }
+            .buttonStyle(.plain)
             .disabled(model.isWorking || !model.liveActivitiesAvailable)
             .accessibilityIdentifier("demo.startLiveActivity")
 
@@ -529,6 +548,7 @@ struct CapabilityDemoView: View {
                     Task { await model.advance() }
                 } label: {
                     Label("demo.next_step", systemImage: "arrow.right.circle.fill")
+                        .foregroundStyle(.primary)
                 }
                 .disabled(model.isWorking)
                 .accessibilityLabel("demo.next_step")
@@ -560,11 +580,12 @@ struct CapabilityDemoView: View {
             DemoStepRow(step: step)
             Text("demo.ended_body")
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .runBuoySecondaryText()
             Button {
                 Task { await model.start() }
             } label: {
                 Label("demo.start_again", systemImage: "arrow.clockwise")
+                    .foregroundStyle(.primary)
             }
             .disabled(model.isWorking || !model.liveActivitiesAvailable)
             .accessibilityIdentifier("demo.startAgain")
@@ -591,7 +612,7 @@ private struct DemoStatusRow: View {
     var body: some View {
         LabeledContent {
             Text(status)
-                .foregroundStyle(isAvailable ? Color.green : Color.secondary)
+                .foregroundStyle(.primary)
         } label: {
             Label(title, systemImage: symbol)
         }
@@ -608,7 +629,7 @@ private struct DemoStepRow: View {
                     .font(.headline)
                 Text(step.explanation)
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .runBuoySecondaryText()
             }
         } icon: {
             Image(systemName: step.symbol)
