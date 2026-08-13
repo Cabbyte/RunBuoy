@@ -8,42 +8,28 @@ struct SettingsView: View {
     @Environment(RunBuoyStore.self) private var store
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
-    @AppStorage("runbuoy.onboarding-complete") private var onboardingComplete = false
     @AppStorage("runbuoy.notifications-enabled") private var notificationsEnabled = true
     @AppStorage("runbuoy.live-activities-enabled") private var liveActivitiesEnabled = true
     @AppStorage("runbuoy.safe-messages-enabled") private var safeMessagesEnabled = true
-    @State private var cacheMessage: LocalizedStringKey?
-    @State private var confirmsCacheClear = false
-    @State private var confirmsDeviceReset = false
-    @State private var confirmsLocalReset = false
-    @State private var confirmsWorkspaceDeletion = false
-    @State private var isPerformingDestructiveAction = false
-    @State private var lifecycleNotice: String?
-    @State private var notificationsSystemDenied = false
-    private let ownerAuthorizer: any DeviceOwnerAuthorizing
-
-    init(ownerAuthorizer: any DeviceOwnerAuthorizing = LocalDeviceOwnerAuthorizer()) {
-        self.ownerAuthorizer = ownerAuthorizer
-    }
+    @State private var notificationAuthorizationStatus: UNAuthorizationStatus = .notDetermined
 
     var body: some View {
         Form {
             Section {
-                NavigationLink(value: AppRoute.machines) {
-                    LabeledContent {
-                        Text(store.machines.count, format: .number)
-                            .foregroundStyle(.primary)
-                    } label: {
-                        Label("settings.machines", systemImage: "desktopcomputer.and.macbook")
-                    }
-                }
-                .accessibilityIdentifier("settings.machines")
+                ConnectionSummaryCard(
+                    state: store.state,
+                    machineCount: store.machines.count,
+                    regionName: selectedRegionName,
+                    address: AppConfiguration.displayAddress(for: AppConfiguration.live.apiBaseURL),
+                    lastRefreshAt: store.lastRefreshAt,
+                    hasDeviceIdentity: store.deviceIdentity != nil
+                )
 
                 LabeledContent {
                     Text(selectedRegionName)
                         .foregroundStyle(.secondary)
                 } label: {
-                    Label("settings.region", systemImage: "globe.asia.australia")
+                    Label("settings.region", systemImage: "globe")
                 }
 
                 LabeledContent {
@@ -52,6 +38,16 @@ struct SettingsView: View {
                 } label: {
                     Label("settings.server", systemImage: "server.rack")
                 }
+
+                NavigationLink(value: AppRoute.machines) {
+                    LabeledContent {
+                        Text(store.machines.count, format: .number)
+                            .foregroundStyle(.secondary)
+                    } label: {
+                        Label("settings.machines", systemImage: "desktopcomputer")
+                    }
+                }
+                .accessibilityIdentifier("settings.machines")
             } header: {
                 Text("settings.connections")
             } footer: {
@@ -59,17 +55,6 @@ struct SettingsView: View {
             }
 
             Section {
-                NavigationLink(value: AppRoute.capabilityDemo) {
-                    Label("demo.settings_entry", systemImage: "sparkles")
-                }
-                .accessibilityIdentifier("settings.capabilityDemo")
-            } header: {
-                Text("settings.product")
-            } footer: {
-                Text("demo.settings_footer")
-            }
-
-            Section("settings.notifications") {
                 Toggle("settings.notifications_enabled", isOn: $notificationsEnabled)
                     .disabled(notificationsSystemDenied)
                     .accessibilityIdentifier("settings.notifications")
@@ -90,68 +75,27 @@ struct SettingsView: View {
                     Button("settings.open_system_settings", action: openSystemSettings)
                         .accessibilityIdentifier("settings.openSystemSettings")
                 }
-            }
-
-            Section("settings.storage") {
-                Button(action: requestCacheClear) {
-                    Label("settings.clear_cache", systemImage: "trash")
-                        .foregroundStyle(.primary)
-                }
-                .tint(.primary)
-                .accessibilityIdentifier("settings.clearCache")
-                if let cacheMessage {
-                    Text(cacheMessage)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .accessibilityIdentifier("settings.cacheCleared")
-                }
+            } header: {
+                Text("settings.preferences")
             }
 
             Section {
-                Button(role: .destructive) {
-                    confirmsDeviceReset = true
-                } label: {
-                    Label("settings.reset_device", systemImage: "iphone.slash")
+                NavigationLink(value: AppRoute.capabilityDemo) {
+                    Label("demo.settings_entry", systemImage: "sparkles")
                 }
-                .disabled(isPerformingDestructiveAction || store.deviceIdentity == nil)
-                .accessibilityIdentifier("settings.resetDevice")
+                .accessibilityIdentifier("settings.capabilityDemo")
 
-                Button(role: .destructive) {
-                    confirmsLocalReset = true
-                } label: {
-                    Label("settings.reset_local_only", systemImage: "externaldrive.badge.xmark")
+                NavigationLink(value: AppRoute.advancedData) {
+                    Label("settings.advanced_data", systemImage: "gearshape.fill")
                 }
-                .disabled(isPerformingDestructiveAction)
-                .accessibilityIdentifier("settings.resetLocalOnly")
-
-                Button(role: .destructive) {
-                    confirmsWorkspaceDeletion = true
-                } label: {
-                    Label("settings.delete_workspace", systemImage: "trash.slash")
-                }
-                .disabled(isPerformingDestructiveAction || store.deviceIdentity == nil)
-                .accessibilityIdentifier("settings.deleteWorkspace")
-
-                if isPerformingDestructiveAction {
-                    HStack {
-                        ProgressView()
-                        Text("settings.lifecycle_working")
-                    }
-                    .accessibilityIdentifier("settings.lifecycleWorking")
-                }
-                if let lifecycleNotice {
-                    Text(lifecycleNotice)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .accessibilityIdentifier("settings.lifecycleNotice")
-                }
+                .accessibilityIdentifier("settings.advancedData")
             } header: {
-                Text("settings.identity_data")
+                Text("settings.product")
             } footer: {
-                Text("settings.identity_data_explanation")
+                Text("demo.settings_footer")
             }
 
-            Section("settings.about") {
+            Section {
                 Link(destination: RunBuoyLinks.website) {
                     Label("settings.website", systemImage: "globe")
                         .foregroundStyle(.primary)
@@ -172,18 +116,275 @@ struct SettingsView: View {
                         .foregroundStyle(.primary)
                 }
                 .tint(.primary)
+            } header: {
+                Text("settings.about")
+            } footer: {
+                Text("settings.preferences_saved_footer")
             }
         }
         .runBuoyBottomScrollEdgeStyle()
         .accessibilityIdentifier("screen.settings")
         .navigationTitle("settings.title")
-        .onChange(of: notificationsEnabled) { _, _ in savePreferences() }
+        .onChange(of: notificationsEnabled) { _, enabled in
+            Task { await updateNotificationPreference(enabled) }
+        }
         .onChange(of: liveActivitiesEnabled) { _, _ in savePreferences() }
         .onChange(of: safeMessagesEnabled) { _, _ in savePreferences() }
         .task(id: scenePhase) {
             guard scenePhase == .active else { return }
             await refreshNotificationAuthorization()
         }
+    }
+
+    private func savePreferences() {
+        let preferences = DevicePreferences(
+            notificationsEnabled: notificationsEnabled,
+            liveActivitiesEnabled: liveActivitiesEnabled,
+            showSafeMessages: safeMessagesEnabled
+        )
+        Task { await store.savePreferences(preferences) }
+    }
+
+    private func refreshNotificationAuthorization() async {
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+        notificationAuthorizationStatus = settings.authorizationStatus
+    }
+
+    private func updateNotificationPreference(_ enabled: Bool) async {
+        guard enabled, notificationAuthorizationStatus == .notDetermined else {
+            savePreferences()
+            return
+        }
+        let center = UNUserNotificationCenter.current()
+        let granted = (try? await center.requestAuthorization(options: [.alert, .badge, .sound])) ?? false
+        await refreshNotificationAuthorization()
+        if granted {
+            UIApplication.shared.registerForRemoteNotifications()
+        } else {
+            notificationsEnabled = false
+        }
+        savePreferences()
+    }
+
+    private func openSystemSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        openURL(url)
+    }
+
+    private var selectedRegionName: String {
+        AppConfiguration.selectedRegion()?.displayName
+            ?? String(localized: "region.private_deployment")
+    }
+
+    private var notificationsSystemDenied: Bool {
+        notificationAuthorizationStatus == .denied
+    }
+}
+
+private struct ConnectionSummaryCard: View {
+    let state: RunBuoyStore.LoadState
+    let machineCount: Int
+    let regionName: String
+    let address: String
+    let lastRefreshAt: Date?
+    let hasDeviceIdentity: Bool
+    var body: some View {
+        Label {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                Text(
+                    String.localizedStringWithFormat(
+                        String(localized: "settings.connection_machines_region"),
+                        machineCount,
+                        regionName
+                    )
+                )
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 4) {
+                        Text(address)
+                        Text("·").accessibilityHidden(true)
+                        confirmationText
+                    }
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(address)
+                        confirmationText
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+        } icon: {
+            Image(systemName: symbol)
+                .font(.title3)
+                .foregroundStyle(tone.color)
+                .accessibilityHidden(true)
+        }
+        .padding(.vertical, 6)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("settings.connectionSummary")
+    }
+
+    @ViewBuilder
+    private var confirmationText: some View {
+        if let lastRefreshAt {
+            HStack(spacing: 3) {
+                Text("settings.connection_confirmed")
+                Text(lastRefreshAt, style: .relative)
+            }
+        } else {
+            Text("settings.connection_not_confirmed")
+        }
+    }
+
+    private var title: LocalizedStringKey {
+        switch state {
+        case .loaded: "settings.connection_connected"
+        case .offline: "settings.connection_cached"
+        case .loading: "settings.connection_loading"
+        case .failed: "settings.connection_unavailable"
+        case .idle:
+            hasDeviceIdentity ? "settings.connection_ready" : "settings.connection_not_connected"
+        }
+    }
+
+    private var symbol: String {
+        switch state {
+        case .loaded: "checkmark.circle.fill"
+        case .offline: "wifi.slash"
+        case .loading: "arrow.triangle.2.circlepath"
+        case .failed: "exclamationmark.triangle.fill"
+        case .idle: hasDeviceIdentity ? "link.circle" : "link.badge.plus"
+        }
+    }
+
+    private var tone: RunBuoyTone {
+        switch state {
+        case .loaded: .success
+        case .offline: .warning
+        case .loading: .live
+        case .failed: .critical
+        case .idle: .neutral
+        }
+    }
+}
+
+struct AdvancedDataView: View {
+    @Environment(RunBuoyStore.self) private var store
+    @AppStorage("runbuoy.onboarding-complete") private var onboardingComplete = false
+    @State private var cacheMessage: LocalizedStringKey?
+    @State private var confirmsCacheClear = false
+    @State private var confirmsDeviceReset = false
+    @State private var confirmsLocalReset = false
+    @State private var confirmsWorkspaceDeletion = false
+    @State private var isPerformingDestructiveAction = false
+    @State private var lifecycleNotice: String?
+    private let ownerAuthorizer: any DeviceOwnerAuthorizing
+
+    init(ownerAuthorizer: any DeviceOwnerAuthorizing = LocalDeviceOwnerAuthorizer()) {
+        self.ownerAuthorizer = ownerAuthorizer
+    }
+
+    var body: some View {
+        Form {
+            Section {
+                Label {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("settings.safe_data_only")
+                            .font(.headline)
+                        Text("settings.safe_data_only_body")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: "lock.shield.fill")
+                        .foregroundStyle(RunBuoyTheme.brandPrimary)
+                        .accessibilityHidden(true)
+                }
+                .padding(.vertical, 4)
+                .accessibilityElement(children: .combine)
+            }
+
+            Section("settings.local_data") {
+                Button(action: requestCacheClear) {
+                    actionLabel(
+                        title: "settings.clear_cache",
+                        description: "settings.clear_cache_description",
+                        symbol: "trash"
+                    )
+                }
+                .tint(.primary)
+                .accessibilityIdentifier("settings.clearCache")
+                if let cacheMessage {
+                    Text(cacheMessage)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .accessibilityIdentifier("settings.cacheCleared")
+                }
+            }
+
+            Section {
+                Button(role: .destructive) {
+                    confirmsDeviceReset = true
+                } label: {
+                    actionLabel(
+                        title: "settings.reset_device",
+                        description: "settings.reset_device_description",
+                        symbol: "iphone.slash"
+                    )
+                }
+                .disabled(isPerformingDestructiveAction || store.deviceIdentity == nil)
+                .accessibilityIdentifier("settings.resetDevice")
+
+                Button(role: .destructive) {
+                    confirmsLocalReset = true
+                } label: {
+                    actionLabel(
+                        title: "settings.reset_local_only",
+                        description: "settings.reset_local_description",
+                        symbol: "externaldrive.badge.xmark"
+                    )
+                }
+                .disabled(isPerformingDestructiveAction)
+                .accessibilityIdentifier("settings.resetLocalOnly")
+
+                Button(role: .destructive) {
+                    confirmsWorkspaceDeletion = true
+                } label: {
+                    actionLabel(
+                        title: "settings.delete_workspace",
+                        description: "settings.delete_workspace_description",
+                        symbol: "trash.slash"
+                    )
+                }
+                .disabled(isPerformingDestructiveAction || store.deviceIdentity == nil)
+                .accessibilityIdentifier("settings.deleteWorkspace")
+
+                if isPerformingDestructiveAction {
+                    HStack {
+                        ProgressView()
+                        Text("settings.lifecycle_working")
+                    }
+                    .accessibilityIdentifier("settings.lifecycleWorking")
+                }
+                if let lifecycleNotice {
+                    Text(lifecycleNotice)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .accessibilityIdentifier("settings.lifecycleNotice")
+                }
+            } header: {
+                Text("settings.destructive_actions")
+            } footer: {
+                Text("settings.read_only_boundary")
+            }
+        }
+        .accessibilityIdentifier("screen.advancedData")
+        .navigationTitle("settings.advanced_data")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .confirmationDialog(
             "settings.clear_cache_confirm_title",
             isPresented: $confirmsCacheClear,
@@ -232,13 +433,25 @@ struct SettingsView: View {
         }
     }
 
-    private func savePreferences() {
-        let preferences = DevicePreferences(
-            notificationsEnabled: notificationsEnabled,
-            liveActivitiesEnabled: liveActivitiesEnabled,
-            showSafeMessages: safeMessagesEnabled
-        )
-        Task { await store.savePreferences(preferences) }
+    private func actionLabel(
+        title: LocalizedStringKey,
+        description: LocalizedStringKey,
+        symbol: String
+    ) -> some View {
+        Label {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.body.weight(.semibold))
+                Text(description)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+            }
+        } icon: {
+            Image(systemName: symbol)
+                .accessibilityHidden(true)
+        }
+        .padding(.vertical, 4)
     }
 
     private func clearCache() {
@@ -255,16 +468,6 @@ struct SettingsView: View {
         } else {
             confirmsCacheClear = true
         }
-    }
-
-    private func refreshNotificationAuthorization() async {
-        let settings = await UNUserNotificationCenter.current().notificationSettings()
-        notificationsSystemDenied = settings.authorizationStatus == .denied
-    }
-
-    private func openSystemSettings() {
-        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-        openURL(url)
     }
 
     private func performLifecycleAction(_ action: SettingsLifecycleAction) {
@@ -297,11 +500,6 @@ struct SettingsView: View {
             }
             isPerformingDestructiveAction = false
         }
-    }
-
-    private var selectedRegionName: String {
-        AppConfiguration.selectedRegion()?.displayName
-            ?? String(localized: "region.private_deployment")
     }
 }
 

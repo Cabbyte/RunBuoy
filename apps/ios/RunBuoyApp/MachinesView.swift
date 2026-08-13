@@ -120,6 +120,9 @@ private struct MachinesEmptyState: View {
 struct MachineRow: View {
     let machine: MachineSnapshot
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    private var connectionState: MachineConnectionState {
+        .resolve(machine: machine)
+    }
 
     var body: some View {
         Group {
@@ -142,15 +145,19 @@ struct MachineRow: View {
     private var machineIcon: some View {
         MachineIconImage(machineID: machine.id)
             .font(.title2)
-            .foregroundStyle(machine.isSubscribed ? Color.accentColor : .secondary)
-            .frame(width: 34)
+            .foregroundStyle(connectionState.tone.color)
+            .frame(width: 44, height: 44)
+            .background(
+                RunBuoyTheme.elevatedSurface,
+                in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+            )
             .overlay(alignment: .bottomTrailing) {
-                if !machine.isSubscribed {
-                    Image(systemName: "exclamationmark.circle.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                        .background(.background, in: Circle())
-                }
+                Circle()
+                    .fill(connectionState.tone.color)
+                    .frame(width: 10, height: 10)
+                    .overlay {
+                        Circle().stroke(RunBuoyTheme.surface, lineWidth: 2)
+                    }
             }
             .accessibilityHidden(true)
     }
@@ -182,10 +189,10 @@ struct MachineRow: View {
             Spacer(minLength: 4)
             HStack(spacing: 4) {
                 Circle()
-                    .fill(machineStateColor)
+                    .fill(connectionState.tone.color)
                     .frame(width: 8, height: 8)
                     .accessibilityHidden(true)
-                Text(machineStateTitle)
+                Text(connectionState.title)
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(.secondary)
             }
@@ -195,20 +202,39 @@ struct MachineRow: View {
         .layoutPriority(1)
     }
 
-    private var isRecentlySeen: Bool {
-        Date().timeIntervalSince(machine.lastSeenAt) < 10 * 60
+}
+
+enum MachineConnectionState: Equatable {
+    case online
+    case idle
+    case offline
+    case updatesDisabled
+
+    static func resolve(machine: MachineSnapshot, now: Date = Date()) -> Self {
+        guard machine.isSubscribed else { return .updatesDisabled }
+        let elapsed = max(0, now.timeIntervalSince(machine.lastSeenAt))
+        if elapsed < 60 { return .online }
+        if elapsed < 10 * 60 { return .idle }
+        return .offline
     }
 
-    private var machineStateTitle: LocalizedStringKey {
-        if !machine.isSubscribed { return "machines.updates_off" }
-        return isRecentlySeen ? "machines.online" : "machines.idle"
+    var title: LocalizedStringKey {
+        switch self {
+        case .online: "machines.online"
+        case .idle: "machines.idle"
+        case .offline: "machines.offline"
+        case .updatesDisabled: "machines.updates_off"
+        }
     }
 
-    private var machineStateColor: Color {
-        if !machine.isSubscribed { return .orange }
-        return isRecentlySeen ? .green : .secondary
+    var tone: RunBuoyTone {
+        switch self {
+        case .online: .success
+        case .idle: .neutral
+        case .offline: .critical
+        case .updatesDisabled: .warning
+        }
     }
-
 }
 
 struct MachineDetailView: View {
@@ -242,6 +268,9 @@ private struct MachineDetailContent: View {
     @State private var pendingAction: MachineLifecycleAction?
     @State private var isPerformingAction = false
     @AppStorage private var machineIconName: String
+    private var connectionState: MachineConnectionState {
+        .resolve(machine: machine)
+    }
 
     init(machine: MachineSnapshot) {
         self.machine = machine
@@ -265,10 +294,10 @@ private struct MachineDetailContent: View {
                         .font(.title2.bold())
                         .multilineTextAlignment(.center)
                     Label {
-                        Text(machineStateTitle)
+                        Text(connectionState.title)
                     } icon: {
                         Circle()
-                            .fill(machineStateColor)
+                            .fill(connectionState.tone.color)
                             .frame(width: 8, height: 8)
                     }
                     .font(.subheadline)
@@ -364,20 +393,6 @@ private struct MachineDetailContent: View {
         } message: {
             Text(pendingAction?.message ?? "")
         }
-    }
-
-    private var isRecentlySeen: Bool {
-        Date().timeIntervalSince(machine.lastSeenAt) < 10 * 60
-    }
-
-    private var machineStateTitle: LocalizedStringKey {
-        if !machine.isSubscribed { return "machines.updates_off" }
-        return isRecentlySeen ? "machines.online" : "machines.idle"
-    }
-
-    private var machineStateColor: Color {
-        if !machine.isSubscribed { return .orange }
-        return isRecentlySeen ? .green : .secondary
     }
 
     private func perform(_ action: MachineLifecycleAction) {

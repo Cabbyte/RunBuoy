@@ -19,8 +19,10 @@ struct OnboardingView: View {
     @State private var selectedRegion: RunBuoyRegion? = AppConfiguration.selectedRegion()
     @State private var pairingCode: PairingCode?
     @State private var rawPairingCode = ""
+    @State private var showsManualEntry = false
     @State private var pairingSucceeded = false
     @State private var pairingFailed = false
+    @State private var pairedMachineName: String?
     @State private var errorMessage: String?
     @State private var isWorking = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -42,16 +44,18 @@ struct OnboardingView: View {
                     OnboardingOutcomePage(
                         symbol: "checkmark.circle.fill",
                         title: "onboarding.pairing_success_title",
-                        bodyText: "onboarding.pairing_success_body",
-                        color: .green
+                        bodyText: pairingSuccessBody,
+                        detail: nil,
+                        color: RunBuoyTheme.success
                     )
                     .accessibilityIdentifier("onboarding.pairing-success")
                 } else if pairingFailed {
                     OnboardingOutcomePage(
                         symbol: "exclamationmark.triangle.fill",
                         title: "onboarding.pairing_failed_title",
-                        bodyText: "onboarding.pairing_failed_body",
-                        color: .orange
+                        bodyText: String(localized: "onboarding.pairing_failed_body"),
+                        detail: errorMessage,
+                        color: RunBuoyTheme.warning
                     )
                     .accessibilityIdentifier("onboarding.pairing-failure")
                 } else {
@@ -73,26 +77,32 @@ struct OnboardingView: View {
     }
 
     private var onboardingPages: some View {
-        TabView(selection: $page) {
-            ProductIntroduction()
-                .tag(0)
-            RegionIntroduction(selection: $selectedRegion)
-                .tag(1)
-            PermissionIntroduction()
-                .tag(2)
-            PairingIntroduction(
-                rawCode: $rawPairingCode,
-                onValidate: validateEnteredPairingCode
-            )
-            .tag(3)
+        Group {
+            switch page {
+            case 0:
+                ProductIntroduction()
+            case 1:
+                RegionIntroduction(selection: $selectedRegion)
+            case 2:
+                PermissionIntroduction()
+            default:
+                PairingIntroduction(
+                    rawCode: $rawPairingCode,
+                    showsManualEntry: $showsManualEntry,
+                    pairingCode: pairingCode,
+                    onScan: { sheet = .scanner },
+                    onValidate: validateEnteredPairingCode
+                )
+            }
         }
-        .tabViewStyle(.page(indexDisplayMode: .never))
-        .animation(reduceMotion ? nil : .smooth, value: page)
+        .id(page)
+        .transition(.opacity)
+        .animation(RunBuoyMotion.selection(reduceMotion: reduceMotion), value: page)
         .overlay(alignment: .bottom) {
             HStack(spacing: 7) {
                 ForEach(0..<4, id: \.self) { index in
                     Capsule()
-                        .fill(index == page ? Color.accentColor : Color.secondary.opacity(0.24))
+                        .fill(index == page ? RunBuoyTheme.brandPrimary : Color.secondary.opacity(0.24))
                         .frame(width: index == page ? 24 : 7, height: 7)
                 }
             }
@@ -103,9 +113,6 @@ struct OnboardingView: View {
 
     private var actionArea: some View {
         VStack(spacing: 8) {
-            if page == 3, let pairingCode, !pairingSucceeded, !pairingFailed {
-                PairingIdentityCard(code: pairingCode)
-            }
             if let errorMessage, !pairingFailed {
                 Label(errorMessage, systemImage: "exclamationmark.triangle")
                     .font(.footnote)
@@ -113,19 +120,21 @@ struct OnboardingView: View {
                     .padding(.horizontal)
             }
 
-            Button(action: advanceAction) {
-                if isWorking {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                } else {
-                    Label(primaryTitle, systemImage: primarySymbol)
-                        .frame(maxWidth: .infinity)
+            if showsPrimaryAction {
+                Button(action: advanceAction) {
+                    if isWorking {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        Label(primaryTitle, systemImage: primarySymbol)
+                            .frame(maxWidth: .infinity)
+                    }
                 }
+                .runBuoyProminentButtonStyle()
+                .controlSize(.large)
+                .disabled(isWorking || (page == 1 && selectedRegion == nil))
+                .accessibilityIdentifier("onboarding.primary-action")
             }
-            .runBuoyProminentButtonStyle()
-            .controlSize(.large)
-            .disabled(isWorking || (page == 1 && selectedRegion == nil))
-            .accessibilityIdentifier("onboarding.primary-action")
 
             if !pairingSucceeded, !pairingFailed {
                 if page == 2 {
@@ -133,6 +142,7 @@ struct OnboardingView: View {
                         Task { await completePermissionStep(requestPermission: false) }
                     }
                     .disabled(isWorking)
+                    .accessibilityIdentifier("onboarding.notNow")
                 } else if page == 3 {
                     Button("onboarding.set_up_later", action: finishWithoutPairing)
                         .disabled(isWorking)
@@ -152,8 +162,7 @@ struct OnboardingView: View {
         case 0: "onboarding.continue"
         case 1: "onboarding.confirm_region"
         case 2: "onboarding.enable_notifications"
-        default:
-            pairingCode == nil ? "onboarding.scan_code" : "onboarding.confirm_machine"
+        default: "onboarding.confirm_machine"
         }
     }
 
@@ -164,8 +173,12 @@ struct OnboardingView: View {
         case 0: "arrow.right"
         case 1: "lock.shield"
         case 2: "bell.badge"
-        default: pairingCode == nil ? "qrcode.viewfinder" : "checkmark.shield"
+        default: "checkmark.shield"
         }
+    }
+
+    private var showsPrimaryAction: Bool {
+        page != 3 || pairingCode != nil || pairingSucceeded || pairingFailed
     }
 
     private func advanceAction() {
@@ -178,6 +191,7 @@ struct OnboardingView: View {
             try decoded.requireSelectedRegion()
             pairingCode = decoded
             rawPairingCode = value
+            showsManualEntry = false
             pairingFailed = false
             errorMessage = nil
         } catch {
@@ -199,6 +213,7 @@ struct OnboardingView: View {
             pairingFailed = false
             pairingCode = nil
             rawPairingCode = ""
+            showsManualEntry = false
             return
         }
         switch page {
@@ -225,6 +240,7 @@ struct OnboardingView: View {
             isWorking = true
             do {
                 try await store.claim(pairingCode)
+                pairedMachineName = pairingCode.machineDisplayName
                 pairingSucceeded = true
             } catch {
                 errorMessage = error.localizedDescription
@@ -278,6 +294,16 @@ struct OnboardingView: View {
             errorMessage = error.localizedDescription
         }
     }
+
+    private var pairingSuccessBody: String {
+        guard let pairedMachineName else {
+            return String(localized: "onboarding.pairing_success_body")
+        }
+        return String.localizedStringWithFormat(
+            String(localized: "onboarding.pairing_success_machine_body"),
+            pairedMachineName
+        )
+    }
 }
 
 private struct ProductIntroduction: View {
@@ -285,8 +311,9 @@ private struct ProductIntroduction: View {
         OnboardingPage(
             symbol: "water.waves",
             kicker: "onboarding.step_1_of_4",
-            title: "onboarding.welcome",
-            bodyText: "onboarding.welcome_body"
+            title: "onboarding.welcome_signal_buoy",
+            bodyText: "onboarding.welcome_signal_buoy_body",
+            usesSignalBuoyHero: true
         ) {
             VStack(alignment: .leading, spacing: 16) {
                 BoundaryRow(symbol: "waveform.path.ecg", title: "onboarding.benefit_live")
@@ -324,7 +351,10 @@ private struct PermissionIntroduction: View {
                         .foregroundStyle(.secondary)
                 }
                 .padding(14)
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .background(
+                    RunBuoyTheme.elevatedSurface,
+                    in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+                )
                 BoundaryRow(symbol: "waveform.path.ecg", title: "onboarding.live_updates")
                 BoundaryRow(symbol: "lock.fill", title: "onboarding.tokens_private")
             }
@@ -354,9 +384,18 @@ private struct RegionIntroduction: View {
                 .accessibilityIdentifier("onboarding.region-picker")
 
                 if let selection {
-                    Label(selection.detail, systemImage: "server.rack")
-                        .font(.headline)
-                        .accessibilityIdentifier("onboarding.region-detail")
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label(selection.detail, systemImage: "server.rack")
+                            .font(.headline)
+                        LabeledContent(
+                            "settings.server",
+                            value: AppConfiguration.displayAddress(
+                                for: AppConfiguration.apiBaseURL(for: selection)
+                            )
+                        )
+                        .font(.subheadline)
+                    }
+                    .accessibilityIdentifier("onboarding.region-detail")
                 }
 
                 Label("onboarding.region_locked", systemImage: "lock.fill")
@@ -370,6 +409,9 @@ private struct RegionIntroduction: View {
 
 private struct PairingIntroduction: View {
     @Binding var rawCode: String
+    @Binding var showsManualEntry: Bool
+    let pairingCode: PairingCode?
+    let onScan: () -> Void
     let onValidate: () -> Void
 
     var body: some View {
@@ -382,16 +424,33 @@ private struct PairingIntroduction: View {
             VStack(alignment: .leading, spacing: 12) {
                 Label("onboarding.one_time_code", systemImage: "clock.badge.checkmark")
                     .font(.headline)
-                TextField("pairing.code_placeholder", text: $rawCode)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.asciiCapable)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .submitLabel(.done)
-                    .onSubmit(onValidate)
-                    .accessibilityIdentifier("onboarding.pairing-code")
-                Button("pairing.continue", action: onValidate)
-                    .disabled(rawCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                if let pairingCode {
+                    PairingIdentityCard(code: pairingCode)
+                } else {
+                    Button("onboarding.scan_code", systemImage: "qrcode.viewfinder", action: onScan)
+                        .frame(maxWidth: .infinity)
+                        .runBuoyProminentButtonStyle()
+                        .controlSize(.large)
+                        .accessibilityIdentifier("onboarding.openScanner")
+
+                    Button("pairing.enter_code") {
+                        showsManualEntry.toggle()
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    if showsManualEntry {
+                        TextField("pairing.code_placeholder", text: $rawCode)
+                            .textFieldStyle(.roundedBorder)
+                            .keyboardType(.asciiCapable)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .submitLabel(.done)
+                            .onSubmit(onValidate)
+                            .accessibilityIdentifier("onboarding.pairing-code")
+                        Button("pairing.continue", action: onValidate)
+                            .disabled(rawCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    }
+                }
             }
         }
         .accessibilityIdentifier("onboarding.page.pairing")
@@ -403,6 +462,7 @@ private struct OnboardingPage<Content: View>: View {
     let kicker: LocalizedStringKey
     let title: LocalizedStringKey
     let bodyText: LocalizedStringKey
+    let usesSignalBuoyHero: Bool
     let content: Content
 
     init(
@@ -410,12 +470,14 @@ private struct OnboardingPage<Content: View>: View {
         kicker: LocalizedStringKey,
         title: LocalizedStringKey,
         bodyText: LocalizedStringKey,
+        usesSignalBuoyHero: Bool = false,
         @ViewBuilder content: () -> Content
     ) {
         self.symbol = symbol
         self.kicker = kicker
         self.title = title
         self.bodyText = bodyText
+        self.usesSignalBuoyHero = usesSignalBuoyHero
         self.content = content()
     }
 
@@ -426,12 +488,16 @@ private struct OnboardingPage<Content: View>: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .textCase(.uppercase)
-                Image(systemName: symbol)
-                    .font(.system(size: 42, weight: .semibold))
-                    .foregroundStyle(.tint)
-                    .frame(width: 82, height: 82)
-                    .background(Color.accentColor.opacity(0.12), in: Circle())
-                    .accessibilityHidden(true)
+                if usesSignalBuoyHero {
+                    SignalBuoyHero()
+                } else {
+                    Image(systemName: symbol)
+                        .font(.system(size: 42, weight: .semibold))
+                        .foregroundStyle(.tint)
+                        .frame(width: 82, height: 82)
+                        .background(Color.accentColor.opacity(0.12), in: Circle())
+                        .accessibilityHidden(true)
+                }
                 Text(title)
                     .font(.largeTitle.bold())
                     .multilineTextAlignment(.center)
@@ -450,13 +516,37 @@ private struct OnboardingPage<Content: View>: View {
             .padding(.bottom, 40)
             .frame(maxWidth: .infinity)
         }
+        .scrollDismissesKeyboard(.interactively)
+    }
+}
+
+private struct SignalBuoyHero: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 150
+    @ScaledMetric(relativeTo: .title) private var waveformSize: CGFloat = 48
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .trim(from: 0.10, to: 0.90)
+                .stroke(
+                    RunBuoyTheme.brandLive,
+                    style: StrokeStyle(lineWidth: 12, lineCap: .butt)
+                )
+                .rotationEffect(.degrees(-18))
+            Image(systemName: "waveform.path.ecg")
+                .font(.system(size: waveformSize, weight: .semibold))
+                .foregroundStyle(RunBuoyTheme.brandLive)
+        }
+        .frame(width: min(size, 190), height: min(size, 190))
+        .accessibilityHidden(true)
     }
 }
 
 private struct OnboardingOutcomePage: View {
     let symbol: String
     let title: LocalizedStringKey
-    let bodyText: LocalizedStringKey
+    let bodyText: String
+    let detail: String?
     let color: Color
 
     var body: some View {
@@ -464,7 +554,13 @@ private struct OnboardingOutcomePage: View {
             Label(title, systemImage: symbol)
                 .foregroundStyle(color)
         } description: {
-            Text(bodyText)
+            VStack(spacing: 8) {
+                Text(bodyText)
+                if let detail, !detail.isEmpty {
+                    Text(detail)
+                        .font(.footnote)
+                }
+            }
         }
         .frame(maxWidth: 520, maxHeight: .infinity)
         .padding(24)

@@ -195,6 +195,14 @@ final class RunBuoyUITests: XCTestCase {
         launch()
         tapTab("tab.settings", label: "Settings")
 
+        let advanced = element("settings.advancedData")
+        if !advanced.isHittable {
+            element("screen.settings").swipeUp()
+        }
+        waitForHittable(advanced)
+        advanced.tap()
+        XCTAssertTrue(element("screen.advancedData").waitForExistence(timeout: 3))
+
         let clearButton = element("settings.clearCache")
         XCTAssertTrue(clearButton.waitForExistence(timeout: 3))
         clearButton.tap()
@@ -238,12 +246,18 @@ final class RunBuoyUITests: XCTestCase {
         app.navigationBars.buttons.element(boundBy: 0).tap()
         XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
 
-        app.swipeUp()
-        waitForHittable(element("settings.clearCache"))
+        let advanced = element("settings.advancedData")
+        if !advanced.isHittable {
+            element("screen.settings").swipeUp()
+        }
+        waitForHittable(advanced)
+        advanced.tap()
+        XCTAssertTrue(element("screen.advancedData").waitForExistence(timeout: 3))
         try auditCurrentScreen()
-
-        app.swipeUp()
+        element("screen.advancedData").swipeUp()
         try auditCurrentScreen()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
 
         app.swipeDown()
         app.swipeDown()
@@ -417,9 +431,13 @@ final class RunBuoyUITests: XCTestCase {
         "Recent Runs",
         "Recent Messages",
         "Connections",
+        "Preferences",
+        "Product",
         "Notifications and Display",
         "Storage",
         "Identity and Data",
+        "Local Data",
+        "Destructive Actions",
         "About"
     ]
 }

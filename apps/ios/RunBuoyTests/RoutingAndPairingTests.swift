@@ -124,6 +124,39 @@ final class RoutingAndPairingTests: XCTestCase {
         )
     }
 
+    func testMachineConnectionStatesRemainSemanticallyDistinct() {
+        let now = Date(timeIntervalSince1970: 1_785_076_800)
+
+        XCTAssertEqual(
+            MachineConnectionState.resolve(
+                machine: machine(lastSeenAt: now.addingTimeInterval(-30)),
+                now: now
+            ),
+            .online
+        )
+        XCTAssertEqual(
+            MachineConnectionState.resolve(
+                machine: machine(lastSeenAt: now.addingTimeInterval(-5 * 60)),
+                now: now
+            ),
+            .idle
+        )
+        XCTAssertEqual(
+            MachineConnectionState.resolve(
+                machine: machine(lastSeenAt: now.addingTimeInterval(-10 * 60)),
+                now: now
+            ),
+            .offline
+        )
+        XCTAssertEqual(
+            MachineConnectionState.resolve(
+                machine: machine(lastSeenAt: now, isSubscribed: false),
+                now: now
+            ),
+            .updatesDisabled
+        )
+    }
+
     func testMachineIconSelectionIsStoredPerMachine() throws {
         let suiteName = "MachineIconTests.\(UUID().uuidString)"
         let userDefaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
@@ -200,6 +233,23 @@ final class RoutingAndPairingTests: XCTestCase {
 
         XCTAssertNil(attributes.demoSessionID)
         XCTAssertTrue(ActivityTokenCoordinator.shouldSynchronize(attributes))
+    }
+
+    private func machine(
+        lastSeenAt: Date,
+        isSubscribed: Bool = true
+    ) -> MachineSnapshot {
+        MachineSnapshot(
+            id: "machine_state_test",
+            displayName: "State Test",
+            platform: "macOS",
+            architecture: "arm64",
+            cliVersion: "1.0.0",
+            lastSeenAt: lastSeenAt,
+            pairedAt: lastSeenAt.addingTimeInterval(-86_400),
+            subscriptionID: isSubscribed ? "subscription_state_test" : nil,
+            isSubscribed: isSubscribed
+        )
     }
 
     func testDemoStepBuildsAndRestoresStaleState() {
