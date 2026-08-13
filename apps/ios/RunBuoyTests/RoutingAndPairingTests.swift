@@ -344,6 +344,88 @@ final class ActiveRunPresentationTests: XCTestCase {
 }
 
 @MainActor
+final class SettingsOnboardingMachinesFoundationTests: XCTestCase {
+    func testAdvancedDataHasDedicatedSettingsRoute() {
+        let router = AppRouter()
+
+        router.settingsPath.append(.advancedData)
+
+        XCTAssertEqual(router.settingsPath, [.advancedData])
+        XCTAssertNotEqual(AppRoute.advancedData, .machines)
+    }
+
+    func testAdvancedDataKeepsExactlyTheExistingDangerActions() {
+        XCTAssertEqual(
+            SettingsLifecycleAction.allCases.map(\.accessibilityIdentifier),
+            [
+                "settings.resetDevice",
+                "settings.resetLocalOnly",
+                "settings.deleteWorkspace"
+            ]
+        )
+    }
+
+    func testSettingsConnectionSummaryUsesConfirmedRefreshAndCacheSemantics() {
+        XCTAssertEqual(
+            SettingsConnectionState.resolve(loadState: .loaded, isRefreshing: false),
+            .confirmed
+        )
+        XCTAssertEqual(
+            SettingsConnectionState.resolve(loadState: .loaded, isRefreshing: true),
+            .refreshing
+        )
+        XCTAssertEqual(
+            SettingsConnectionState.resolve(loadState: .offline("cached"), isRefreshing: false),
+            .cached
+        )
+        XCTAssertEqual(
+            SettingsConnectionState.resolve(loadState: .failed("unavailable"), isRefreshing: false),
+            .unavailable
+        )
+    }
+
+    func testOnboardingHasFourOrderedSteps() {
+        XCTAssertEqual(
+            OnboardingStep.allCases,
+            [.welcome, .region, .notifications, .pairMac]
+        )
+        XCTAssertEqual(OnboardingStep.welcome.next, .region)
+        XCTAssertEqual(OnboardingStep.region.next, .notifications)
+        XCTAssertEqual(OnboardingStep.notifications.next, .pairMac)
+        XCTAssertNil(OnboardingStep.pairMac.next)
+    }
+
+    func testMachineVisualStateDoesNotClaimOnlinePresence() {
+        let now = Date(timeIntervalSince1970: 10_000)
+
+        XCTAssertEqual(
+            MachineReceivingVisualState.resolve(
+                isSubscribed: true,
+                lastSeenAt: now.addingTimeInterval(-30),
+                now: now
+            ),
+            .recentConfirmation
+        )
+        XCTAssertEqual(
+            MachineReceivingVisualState.resolve(
+                isSubscribed: true,
+                lastSeenAt: now.addingTimeInterval(-601),
+                now: now
+            ),
+            .receiving
+        )
+        XCTAssertEqual(
+            MachineReceivingVisualState.resolve(
+                isSubscribed: false,
+                lastSeenAt: now,
+                now: now
+            ),
+            .updatesDisabled
+        )
+    }
+}
+
+@MainActor
 final class HistoryFilteringTests: XCTestCase {
     func testHistorySectionsShowFiveItemsUntilExpanded() {
         XCTAssertEqual(

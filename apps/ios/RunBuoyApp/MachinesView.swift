@@ -1,5 +1,48 @@
 import SwiftUI
 
+enum MachineReceivingVisualState: Equatable {
+    case receiving
+    case recentConfirmation
+    case updatesDisabled
+
+    static func resolve(
+        isSubscribed: Bool,
+        lastSeenAt: Date,
+        now: Date = Date(),
+        recentInterval: TimeInterval = 10 * 60
+    ) -> Self {
+        guard isSubscribed else { return .updatesDisabled }
+        guard now.timeIntervalSince(lastSeenAt) >= recentInterval else {
+            return .recentConfirmation
+        }
+        return .receiving
+    }
+
+    var tone: RunBuoyTone {
+        switch self {
+        case .receiving: .live
+        case .recentConfirmation: .success
+        case .updatesDisabled: .warning
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .receiving: "antenna.radiowaves.left.and.right"
+        case .recentConfirmation: "checkmark.seal.fill"
+        case .updatesDisabled: "bell.slash.fill"
+        }
+    }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .receiving: "machines.receiving_updates"
+        case .recentConfirmation: "machines.recent_confirmation"
+        case .updatesDisabled: "machines.updates_off"
+        }
+    }
+}
+
 struct MachinesView: View {
     @Environment(RunBuoyStore.self) private var store
     @Environment(AppRouter.self) private var router
@@ -8,18 +51,16 @@ struct MachinesView: View {
         List {
             if !store.machines.isEmpty {
                 Section {
-                    Text("machines.intro")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    MachinesSummary(machines: store.machines)
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
 
                     Button(action: showPairingCode) {
-                        Label("settings.pair_machine", systemImage: "plus")
+                        Label("settings.pair_machine", systemImage: "qrcode.viewfinder")
                             .frame(maxWidth: .infinity)
                     }
                     .labelStyle(.titleAndIcon)
-                    .runBuoyProminentButtonStyle()
+                    .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.capsule)
                     .controlSize(.large)
                     .listRowBackground(Color.clear)
@@ -100,9 +141,9 @@ private struct MachinesEmptyState: View {
                 } description: {
                     Text("machines.empty_description")
                 } actions: {
-                    Button("settings.pair_machine", systemImage: "plus", action: pair)
+                    Button("settings.pair_machine", systemImage: "qrcode.viewfinder", action: pair)
                         .labelStyle(.titleAndIcon)
-                        .runBuoyProminentButtonStyle()
+                        .buttonStyle(.borderedProminent)
                         .buttonBorderShape(.capsule)
                         .accessibilityIdentifier("machines.enterPairingCode")
                 }
@@ -117,9 +158,92 @@ private struct MachinesEmptyState: View {
     }
 }
 
+private struct MachinesSummary: View {
+    let machines: [MachineSnapshot]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label("machines.paired", systemImage: "desktopcomputer.and.macbook")
+                .font(.headline)
+
+            Text(machines.count, format: .number)
+                .font(.system(.largeTitle, design: .rounded, weight: .bold))
+
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 14) { stateCounts }
+                VStack(alignment: .leading, spacing: 6) { stateCounts }
+            }
+
+            Text("machines.intro")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private var stateCounts: some View {
+        MachineStateCount(
+            state: .recentConfirmation,
+            count: count(for: .recentConfirmation)
+        )
+        MachineStateCount(
+            state: .receiving,
+            count: count(for: .receiving)
+        )
+        MachineStateCount(
+            state: .updatesDisabled,
+            count: count(for: .updatesDisabled)
+        )
+    }
+
+    private func count(for state: MachineReceivingVisualState) -> Int {
+        machines.count { machine in
+            MachineReceivingVisualState.resolve(
+                isSubscribed: machine.isSubscribed,
+                lastSeenAt: machine.lastSeenAt
+            ) == state
+        }
+    }
+}
+
+private struct MachineStateCount: View {
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    let state: MachineReceivingVisualState
+    let count: Int
+
+    var body: some View {
+        Label {
+            HStack(spacing: 3) {
+                Text(count, format: .number)
+                Text(state.title)
+            }
+        } icon: {
+            Image(systemName: state.symbol)
+                .foregroundStyle(theme.status(state.tone))
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+    }
+
+    private var theme: RunBuoyTheme {
+        RunBuoyTheme(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency,
+            increasedContrast: contrast == .increased
+        )
+    }
+}
+
 struct MachineRow: View {
     let machine: MachineSnapshot
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
         Group {
@@ -140,19 +264,7 @@ struct MachineRow: View {
     }
 
     private var machineIcon: some View {
-        MachineIconImage(machineID: machine.id)
-            .font(.title2)
-            .foregroundStyle(machine.isSubscribed ? Color.accentColor : .secondary)
-            .frame(width: 34)
-            .overlay(alignment: .bottomTrailing) {
-                if !machine.isSubscribed {
-                    Image(systemName: "exclamationmark.circle.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                        .background(.background, in: Circle())
-                }
-            }
-            .accessibilityHidden(true)
+        MachineStatusIcon(machineID: machine.id, state: state, size: 48)
     }
 
     private var machineMetadata: some View {
@@ -181,11 +293,10 @@ struct MachineRow: View {
             }
             Spacer(minLength: 4)
             HStack(spacing: 4) {
-                Circle()
-                    .fill(machineStateColor)
-                    .frame(width: 8, height: 8)
+                Image(systemName: state.symbol)
+                    .foregroundStyle(stateColor)
                     .accessibilityHidden(true)
-                Text(machineStateTitle)
+                Text(state.title)
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(.secondary)
             }
@@ -195,20 +306,58 @@ struct MachineRow: View {
         .layoutPriority(1)
     }
 
-    private var isRecentlySeen: Bool {
-        Date().timeIntervalSince(machine.lastSeenAt) < 10 * 60
+    private var state: MachineReceivingVisualState {
+        .resolve(isSubscribed: machine.isSubscribed, lastSeenAt: machine.lastSeenAt)
     }
 
-    private var machineStateTitle: LocalizedStringKey {
-        if !machine.isSubscribed { return "machines.updates_off" }
-        return isRecentlySeen ? "machines.online" : "machines.idle"
+    private var stateColor: Color {
+        theme.status(state.tone)
     }
 
-    private var machineStateColor: Color {
-        if !machine.isSubscribed { return .orange }
-        return isRecentlySeen ? .green : .secondary
+    private var theme: RunBuoyTheme {
+        RunBuoyTheme(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency,
+            increasedContrast: contrast == .increased
+        )
+    }
+}
+
+private struct MachineStatusIcon: View {
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    let machineID: String
+    let state: MachineReceivingVisualState
+    let size: CGFloat
+
+    var body: some View {
+        MachineIconImage(machineID: machineID)
+            .font(.system(size: size * 0.44, weight: .semibold))
+            .foregroundStyle(theme.status(state.tone))
+            .frame(width: size, height: size)
+            .background(theme.elevatedSurface, in: RoundedRectangle(cornerRadius: size * 0.28, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: size * 0.28, style: .continuous)
+                    .stroke(theme.border(state.tone), lineWidth: contrast == .increased ? 2 : 1)
+            }
+            .overlay(alignment: .bottomTrailing) {
+                Image(systemName: state.symbol)
+                    .font(.system(size: size * 0.22, weight: .bold))
+                    .foregroundStyle(theme.status(state.tone))
+                    .padding(3)
+                    .background(theme.surface, in: Circle())
+            }
+            .accessibilityHidden(true)
     }
 
+    private var theme: RunBuoyTheme {
+        RunBuoyTheme(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency,
+            increasedContrast: contrast == .increased
+        )
+    }
 }
 
 struct MachineDetailView: View {
@@ -255,22 +404,11 @@ private struct MachineDetailContent: View {
         Form {
             Section {
                 VStack(spacing: 10) {
-                    MachineIconImage(machineID: machine.id)
-                        .font(.system(size: 34, weight: .medium))
-                        .foregroundStyle(.tint)
-                        .frame(width: 72, height: 72)
-                        .background(Color.accentColor.opacity(0.12), in: Circle())
-                        .accessibilityHidden(true)
+                    MachineStatusIcon(machineID: machine.id, state: state, size: 72)
                     Text(machine.displayName)
                         .font(.title2.bold())
                         .multilineTextAlignment(.center)
-                    Label {
-                        Text(machineStateTitle)
-                    } icon: {
-                        Circle()
-                            .fill(machineStateColor)
-                            .frame(width: 8, height: 8)
-                    }
+                    Label(state.title, systemImage: state.symbol)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 }
@@ -366,18 +504,8 @@ private struct MachineDetailContent: View {
         }
     }
 
-    private var isRecentlySeen: Bool {
-        Date().timeIntervalSince(machine.lastSeenAt) < 10 * 60
-    }
-
-    private var machineStateTitle: LocalizedStringKey {
-        if !machine.isSubscribed { return "machines.updates_off" }
-        return isRecentlySeen ? "machines.online" : "machines.idle"
-    }
-
-    private var machineStateColor: Color {
-        if !machine.isSubscribed { return .orange }
-        return isRecentlySeen ? .green : .secondary
+    private var state: MachineReceivingVisualState {
+        .resolve(isSubscribed: machine.isSubscribed, lastSeenAt: machine.lastSeenAt)
     }
 
     private func perform(_ action: MachineLifecycleAction) {

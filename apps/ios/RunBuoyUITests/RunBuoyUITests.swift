@@ -195,6 +195,14 @@ final class RunBuoyUITests: XCTestCase {
         launch()
         tapTab("tab.settings", label: "Settings")
 
+        let advancedData = element("settings.advancedData")
+        if !advancedData.exists {
+            element("screen.settings").swipeUp()
+        }
+        XCTAssertTrue(advancedData.waitForExistence(timeout: 3))
+        advancedData.tap()
+        XCTAssertTrue(element("screen.advancedData").waitForExistence(timeout: 3))
+
         let clearButton = element("settings.clearCache")
         XCTAssertTrue(clearButton.waitForExistence(timeout: 3))
         clearButton.tap()
@@ -238,15 +246,21 @@ final class RunBuoyUITests: XCTestCase {
         app.navigationBars.buttons.element(boundBy: 0).tap()
         XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
 
-        app.swipeUp()
+        let advancedData = element("settings.advancedData")
+        if !advancedData.exists {
+            element("screen.settings").swipeUp()
+        }
+        waitForHittable(advancedData)
+        advancedData.tap()
+        XCTAssertTrue(element("screen.advancedData").waitForExistence(timeout: 3))
         waitForHittable(element("settings.clearCache"))
         try auditCurrentScreen()
 
         app.swipeUp()
         try auditCurrentScreen()
 
-        app.swipeDown()
-        app.swipeDown()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
         waitForHittable(element("settings.machines"))
         openMachines(fromSettings: true)
         try auditCurrentScreen()
