@@ -50,7 +50,7 @@ final class RunBuoyUITests: XCTestCase {
         let activeRow = element("run.row.\(Self.activeRunID)")
         XCTAssertTrue(activeRow.waitForExistence(timeout: 5))
         XCTAssertTrue(activeRow.label.contains("Run time"))
-        XCTAssertTrue(activeRow.label.contains("Heartbeat"))
+        XCTAssertTrue(activeRow.label.contains("Last confirmed"))
         activeRow.tap()
 
         XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 3))
@@ -93,23 +93,52 @@ final class RunBuoyUITests: XCTestCase {
         )
     }
 
+    func testHistoryRunOpensDetail() {
+        launch()
+        tapTab("tab.history", label: "History")
+
+        let historyRun = element("run.row.\(Self.failedRunID)")
+        XCTAssertTrue(historyRun.waitForExistence(timeout: 3))
+        historyRun.tap()
+
+        XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Release build"].exists)
+    }
+
+    func testTechnicalDetailsOwnsCopyRunIDAction() {
+        launch(initialURL: "runbuoy://runs/\(Self.activeRunID)")
+        XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 5))
+        XCTAssertFalse(element("run.copyID").exists)
+
+        element("screen.runDetail").swipeUp()
+        let details = app.buttons
+            .matching(NSPredicate(format: "label BEGINSWITH %@", "Technical Details"))
+            .firstMatch
+        scrollToHittable(details, in: element("screen.runDetail"))
+        details.tap()
+
+        XCTAssertTrue(element("run.copyID").waitForExistence(timeout: 3))
+    }
+
     func testNotificationPreferencePersistsAcrossRelaunch() {
         launch()
         tapTab("tab.settings", label: "Settings")
 
-        let toggle = element("settings.notifications")
+        let toggle = app.switches
+            .matching(identifier: "settings.notifications")
+            .firstMatch
         XCTAssertTrue(toggle.waitForExistence(timeout: 3))
         XCTAssertEqual(toggle.value as? String, "1")
-        toggle.coordinate(
-            withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)
-        ).tap()
+        tapSwitch(toggle)
         waitForValue("0", of: toggle)
 
         app.terminate()
         launch(resetState: false)
         tapTab("tab.settings", label: "Settings")
 
-        let relaunchedToggle = element("settings.notifications")
+        let relaunchedToggle = app.switches
+            .matching(identifier: "settings.notifications")
+            .firstMatch
         XCTAssertTrue(relaunchedToggle.waitForExistence(timeout: 3))
         XCTAssertEqual(relaunchedToggle.value as? String, "0")
     }
@@ -210,16 +239,135 @@ final class RunBuoyUITests: XCTestCase {
         XCTAssertTrue(element("settings.cacheCleared").waitForExistence(timeout: 3))
     }
 
+    func testSettingsRoutesToAdvancedData() {
+        launch()
+        openAdvancedData()
+        XCTAssertTrue(app.navigationBars["Advanced & Data"].exists)
+    }
+
+    func testAdvancedDataShowsDistinctDestructiveConfirmations() {
+        let confirmations = [
+            (
+                identifier: "settings.resetDevice",
+                title: "Reset this iPhone?",
+                messageSubstring: "server revokes this iPhone’s credential"
+            ),
+            (
+                identifier: "settings.resetLocalOnly",
+                title: "Reset only local data?",
+                messageSubstring: "local Keychain, cache, and settings are cleared"
+            ),
+            (
+                identifier: "settings.deleteWorkspace",
+                title: "Permanently delete the workspace?",
+                messageSubstring: "permanently deletes this workspace’s credentials"
+            )
+        ]
+
+        for confirmation in confirmations {
+            launch()
+            openAdvancedData()
+            let action = element(confirmation.identifier)
+            scrollToHittable(action, in: element("screen.advancedData"))
+            action.tap()
+
+            XCTAssertTrue(app.staticTexts[confirmation.title].waitForExistence(timeout: 2))
+            XCTAssertTrue(
+                app.staticTexts
+                    .matching(
+                        NSPredicate(
+                            format: "label CONTAINS %@",
+                            confirmation.messageSubstring
+                        )
+                    )
+                    .firstMatch
+                    .waitForExistence(timeout: 2)
+            )
+        }
+    }
+
+    func testLiveActivitiesAndSafeMessagesPreferencesToggle() {
+        launch()
+        tapTab("tab.settings", label: "Settings")
+
+        let liveActivities = app.switches
+            .matching(identifier: "settings.liveActivities")
+            .firstMatch
+        let safeMessages = app.switches
+            .matching(identifier: "settings.safeMessages")
+            .firstMatch
+        XCTAssertTrue(liveActivities.waitForExistence(timeout: 3))
+        XCTAssertTrue(safeMessages.exists)
+        XCTAssertTrue(liveActivities.isEnabled)
+        XCTAssertTrue(safeMessages.isEnabled)
+        XCTAssertEqual(liveActivities.value as? String, "1")
+        XCTAssertEqual(safeMessages.value as? String, "1")
+
+        tapSwitch(liveActivities)
+        waitForValue("0", of: liveActivities)
+        tapSwitch(safeMessages)
+        waitForValue("0", of: safeMessages)
+    }
+
+    func testOnboardingQRScannerPresentsSheetWithoutPermissionDialog() {
+        launch(onboarding: true)
+
+        XCTAssertTrue(element("onboarding.page.product").waitForExistence(timeout: 5))
+        element("onboarding.primary-action").tap()
+        XCTAssertTrue(element("onboarding.page.region").waitForExistence(timeout: 2))
+        app.segmentedControls.buttons["Global"].tap()
+        element("onboarding.primary-action").tap()
+        XCTAssertTrue(element("onboarding.page.permissions").waitForExistence(timeout: 2))
+        element("onboarding.notNow").tap()
+        XCTAssertTrue(element("onboarding.page.pairing").waitForExistence(timeout: 3))
+
+        element("onboarding.openScanner").tap()
+        XCTAssertTrue(element("screen.qrScanner").waitForExistence(timeout: 3))
+        XCTAssertTrue(app.navigationBars["Scan Pairing Code"].exists)
+    }
+
+    func testUnavailableDetailHasNoCopyOrShareActions() {
+        launch(
+            scenario: "detailUnavailable",
+            initialURL: "runbuoy://runs/\(Self.activeRunID)"
+        )
+
+        XCTAssertTrue(app.staticTexts["Run unavailable"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Try Again"].exists)
+        XCTAssertFalse(element("run.copyID").exists)
+        XCTAssertFalse(element("run.copySummary").exists)
+        XCTAssertFalse(element("run.shareSummary").exists)
+    }
+
+    func testActionRequiredRunWinsActiveHeroPriority() {
+        launch(scenario: "heroPriority")
+
+        let hero = element("run.row.\(Self.heroActionRequiredRunID)")
+        XCTAssertTrue(hero.waitForExistence(timeout: 5))
+        XCTAssertTrue(hero.label.contains("Attention needed"))
+        XCTAssertTrue(hero.label.contains("Release approval required"))
+        XCTAssertTrue(hero.label.contains("Run time"))
+        XCTAssertTrue(hero.label.contains("Last confirmed"))
+
+        let newerHealthy = element("run.row.\(Self.heroNewestHealthyRunID)")
+        XCTAssertTrue(newerHealthy.exists)
+        XCTAssertLessThan(hero.frame.minY, newerHealthy.frame.minY)
+        XCTAssertFalse(newerHealthy.label.contains("Run time"))
+    }
+
     func testCapabilityDemoOpensFromSettings() {
         launch()
         tapTab("tab.settings", label: "Settings")
 
         let featureTour = element("settings.capabilityDemo")
-        XCTAssertTrue(featureTour.waitForExistence(timeout: 3))
+        scrollToHittable(featureTour, in: element("screen.settings"))
         featureTour.tap()
 
-        XCTAssertTrue(element("screen.capabilityDemo").waitForExistence(timeout: 3))
-        XCTAssertTrue(element("demo.startLiveActivity").exists)
+        let screen = element("screen.capabilityDemo")
+        XCTAssertTrue(screen.waitForExistence(timeout: 3))
+        let startLiveActivity = element("demo.startLiveActivity")
+        scrollToHittable(startLiveActivity, in: screen)
+        XCTAssertTrue(startLiveActivity.exists)
     }
 
     func testAccessibilityAuditForCoreScreensAndScenarios() throws {
@@ -237,10 +385,16 @@ final class RunBuoyUITests: XCTestCase {
         try auditCurrentScreen()
 
         tapTab("tab.settings", label: "Settings")
-        XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
+        let settingsScreen = element("screen.settings")
+        XCTAssertTrue(settingsScreen.waitForExistence(timeout: 3))
         try auditCurrentScreen()
 
-        element("settings.capabilityDemo").tap()
+        let capabilityDemo = element("settings.capabilityDemo")
+        scrollAboveTabBar(
+            capabilityDemo,
+            in: settingsScreen
+        )
+        capabilityDemo.tap()
         XCTAssertTrue(element("screen.capabilityDemo").waitForExistence(timeout: 3))
         try auditCurrentScreen()
         app.navigationBars.buttons.element(boundBy: 0).tap()
@@ -316,6 +470,48 @@ final class RunBuoyUITests: XCTestCase {
         XCTAssertTrue(element("screen.machines").waitForExistence(timeout: 3))
     }
 
+    private func openAdvancedData() {
+        tapTab("tab.settings", label: "Settings")
+        XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
+        let advanced = element("settings.advancedData")
+        scrollToHittable(advanced, in: element("screen.settings"))
+        advanced.tap()
+        XCTAssertTrue(element("screen.advancedData").waitForExistence(timeout: 3))
+    }
+
+    private func scrollToHittable(
+        _ target: XCUIElement,
+        in container: XCUIElement,
+        attempts: Int = 4
+    ) {
+        for _ in 0..<attempts where !target.isHittable {
+            container.swipeUp()
+        }
+        waitForHittable(target)
+    }
+
+    private func scrollAboveTabBar(
+        _ target: XCUIElement,
+        in container: XCUIElement,
+        attempts: Int = 4
+    ) {
+        let tabBar = app.tabBars.firstMatch
+        for _ in 0..<attempts {
+            guard target.exists else {
+                container.swipeUp()
+                continue
+            }
+            guard tabBar.exists, target.frame.maxY >= tabBar.frame.minY else {
+                break
+            }
+            container.swipeUp()
+        }
+        XCTAssertTrue(target.isHittable)
+        if tabBar.exists {
+            XCTAssertLessThan(target.frame.maxY, tabBar.frame.minY)
+        }
+    }
+
     private func element(_ identifier: String) -> XCUIElement {
         app.descendants(matching: .any)
             .matching(identifier: identifier)
@@ -350,6 +546,12 @@ final class RunBuoyUITests: XCTestCase {
             object: element
         )
         XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
+    }
+
+    private func tapSwitch(_ element: XCUIElement) {
+        element.coordinate(
+            withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)
+        ).tap()
     }
 
     private func waitForHittable(
@@ -419,6 +621,8 @@ final class RunBuoyUITests: XCTestCase {
 
     private static let activeRunID = "018f0d8a-8c0a-7000-8000-000000000001"
     private static let failedRunID = "018f0d8a-8c0a-7000-8000-000000000002"
+    private static let heroActionRequiredRunID = "018f0d8a-8c0a-7000-8000-000000000301"
+    private static let heroNewestHealthyRunID = "018f0d8a-8c0a-7000-8000-000000000303"
     private static let pairingURL =
         "runbuoy://pair/session_ui_test?challenge=once-only&machine=UI%20Test%20Mac&platform=macOS&region=global"
     private static let knownSystemSectionHeaderLabels: Set<String> = [

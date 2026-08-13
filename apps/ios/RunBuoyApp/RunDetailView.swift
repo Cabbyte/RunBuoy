@@ -244,7 +244,7 @@ private struct RunDetailHeroCard: View {
                     MachineIconImage(machineID: run.machineID)
                 }
                 .font(.subheadline.weight(.medium))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
             }
 
             RunProgressView(
@@ -255,10 +255,7 @@ private struct RunDetailHeroCard: View {
                 emphasis: .prominent
             )
 
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 20) { timingContent }
-                VStack(alignment: .leading, spacing: 10) { timingContent }
-            }
+            VStack(alignment: .leading, spacing: 10) { timingContent }
         }
         .padding(20)
         .runDetailCard(
@@ -266,7 +263,6 @@ private struct RunDetailHeroCard: View {
             tone: visualState.tone,
             liveSurface: visualState.allowsLiveEmphasis && !isOfflineCached
         )
-        .accessibilityElement(children: .combine)
     }
 
     @ViewBuilder
@@ -275,7 +271,7 @@ private struct RunDetailHeroCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("run.execution_time")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
                 RunElapsedValue(
                     startedAt: run.startedAt,
                     endedAt: run.endedAt,
@@ -289,7 +285,7 @@ private struct RunDetailHeroCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("run.last_confirmed")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
                 Text(run.updatedAt, format: .relative(presentation: .named))
             }
         } icon: {
@@ -375,7 +371,7 @@ private struct RunLatestConfirmedUpdateCard: View {
                 .fixedSize(horizontal: false, vertical: true)
             Text(update.occurredAt, format: .relative(presentation: .named))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(RunBuoyMetrics.cardPadding)
@@ -431,7 +427,7 @@ private struct RunMetricCard<Value: View>: View {
         VStack(alignment: .leading, spacing: 8) {
             Label(title, systemImage: symbol)
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
             value()
                 .font(.headline)
                 .foregroundStyle(.primary)
@@ -532,12 +528,12 @@ private struct RunTechnicalDetailsCard: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            .accessibilityIdentifier("run.technicalDetails")
         }
         .tint(.primary)
         .padding(RunBuoyMetrics.cardPadding)
         .runDetailCard(radius: RunBuoyMetrics.compactCardRadius)
         .animation(RunBuoyMotion.stateChange(reduceMotion: reduceMotion), value: isExpanded)
-        .accessibilityIdentifier("run.technicalDetails")
     }
 
     private func copyID() {
@@ -591,13 +587,7 @@ private struct RunDetailActionBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background {
-            if reduceTransparency {
-                RunBuoyTheme.surface
-            } else {
-                Rectangle().fill(.ultraThinMaterial)
-            }
-        }
+        .background(RunBuoyTheme.surface)
         .overlay(alignment: .top) {
             if contrast == .increased || reduceTransparency { Divider() }
         }
@@ -609,14 +599,18 @@ private struct RunDetailActionBar: View {
             Label("run.copy_summary", systemImage: "doc.on.doc")
                 .frame(maxWidth: .infinity, minHeight: RunBuoyMetrics.minimumTarget)
         }
-        .runBuoySecondaryButtonStyle()
+        .buttonStyle(.borderedProminent)
+        .tint(RunBuoyTheme.surface)
+        .foregroundStyle(.primary)
         .accessibilityIdentifier("run.copySummary")
 
         ShareLink(item: summary.rendered()) {
             Label("run.share_summary", systemImage: "square.and.arrow.up")
                 .frame(maxWidth: .infinity, minHeight: RunBuoyMetrics.minimumTarget)
         }
-        .runBuoyProminentButtonStyle()
+        .buttonStyle(.borderedProminent)
+        .tint(.primary)
+        .foregroundStyle(RunBuoyTheme.surface)
         .accessibilityIdentifier("run.shareSummary")
     }
 

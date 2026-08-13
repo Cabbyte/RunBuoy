@@ -144,6 +144,7 @@ struct ScannerSheet: View {
                         .accessibilityHidden(true)
                 }
             }
+            .accessibilityIdentifier("screen.qrScanner")
             .navigationTitle("pairing.scan_title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

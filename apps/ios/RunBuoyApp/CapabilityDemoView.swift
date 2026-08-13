@@ -407,7 +407,7 @@ struct CapabilityDemoView: View {
                             .font(.headline)
                         Text("demo.intro_body")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.primary)
                     }
                 } icon: {
                     Image(systemName: "iphone.gen3.radiowaves.left.and.right")
@@ -415,7 +415,7 @@ struct CapabilityDemoView: View {
                 }
             }
 
-            Section("demo.system_status") {
+            Section {
                 DemoStatusRow(
                     title: "demo.live_activities",
                     symbol: "bolt.horizontal.circle",
@@ -436,6 +436,9 @@ struct CapabilityDemoView: View {
                     }
                     .accessibilityIdentifier("demo.openSettings")
                 }
+            } header: {
+                Text("demo.system_status")
+                    .foregroundStyle(Color(uiColor: .label))
             }
 
             Section {
@@ -583,8 +586,9 @@ private struct DemoStatusRow: View {
 
     var body: some View {
         LabeledContent {
-            Text(status)
-                .foregroundStyle(isAvailable ? Color.green : Color.secondary)
+            Label(status, systemImage: isAvailable ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .foregroundStyle(.primary)
+                .symbolRenderingMode(.hierarchical)
         } label: {
             Label(title, systemImage: symbol)
         }

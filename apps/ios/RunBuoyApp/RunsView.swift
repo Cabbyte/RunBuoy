@@ -117,7 +117,7 @@ struct ActiveRunsView: View {
         if orderedModels.count > 1 {
             Text("active.also_active")
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
                 .textCase(.uppercase)
                 .padding(.top, 4)
 
@@ -152,6 +152,7 @@ private struct ActiveRunsSystemSummaryCard: View {
     let summary: ActiveRunSystemSummary
     let runs: [RunSnapshot]
     let isOfflineCached: Bool
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     private var tone: RunBuoyTone {
         if isOfflineCached { return .warning }
@@ -185,26 +186,42 @@ private struct ActiveRunsSystemSummaryCard: View {
 
     var body: some View {
         SignalCardSurface(tone: tone, usesLiveSurface: tone == .live) {
-            HStack(spacing: 12) {
-                Image(systemName: symbol)
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(tone.color)
-                    .frame(width: 22)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(headline)
-                        .font(.callout.weight(.semibold))
-                    HStack(spacing: 4) {
-                        Text("active.summary.last_confirmed")
-                        Text(summary.lastConfirmed, format: .relative(presentation: .named))
-                    }
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 10) {
+                    summarySymbol
+                    summaryText
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                HStack(spacing: 12) {
+                    summarySymbol
+                    summaryText
+                }
             }
         }
-        .accessibilityElement(children: .combine)
+    }
+
+    private var summarySymbol: some View {
+        Image(systemName: symbol)
+            .font(.body.weight(.semibold))
+            .foregroundStyle(tone.color)
+            .frame(width: 22)
+            .accessibilityHidden(true)
+    }
+
+    private var summaryText: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(headline)
+                .font(.callout.weight(.semibold))
+            (
+                Text("active.summary.last_confirmed")
+                    + Text(" ")
+                    + Text(summary.lastConfirmed, format: .relative(presentation: .named))
+            )
+            .font(.footnote)
+            .foregroundStyle(.primary)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -236,7 +253,6 @@ private struct ActiveRunHeroCard: View {
             }
         }
         .contentShape(RoundedRectangle(cornerRadius: 22))
-        .accessibilityElement(children: .combine)
     }
 
     @ViewBuilder
@@ -257,68 +273,59 @@ private struct ActiveRunHeroCard: View {
     private var title: some View {
         Text(run.title)
             .font(.headline)
-            .lineLimit(dynamicTypeSize.isAccessibilitySize ? 4 : 3)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var machine: some View {
         Label {
             Text(run.machineName)
-                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
-                .truncationMode(.tail)
         } icon: {
             MachineIconImage(machineID: run.machineID)
                 .accessibilityHidden(true)
         }
         .font(.subheadline)
+        .foregroundStyle(.primary)
     }
 
     private var metadata: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 16) {
-                confirmedRuntime
-                Spacer(minLength: 8)
-                lastConfirmed
-            }
-            VStack(alignment: .leading, spacing: 6) {
-                confirmedRuntime
-                lastConfirmed
-            }
+        VStack(alignment: .leading, spacing: 6) {
+            confirmedRuntime
+            lastConfirmed
         }
         .font(.caption)
     }
 
     private var confirmedRuntime: some View {
         Label {
-            HStack(spacing: 4) {
+            (
                 Text("run.execution_time")
-                    .foregroundStyle(.secondary)
-                Text(RunDurationText.string(from: run.startedAt, to: run.updatedAt))
+                    + Text(" ")
+                    + Text(RunDurationText.string(from: run.startedAt, to: run.updatedAt))
                     .fontWeight(.semibold)
                     .monospacedDigit()
-            }
+            )
         } icon: {
             Image(systemName: "timer")
-                .foregroundStyle(.secondary)
         }
-        .fixedSize(horizontal: true, vertical: false)
+        .foregroundStyle(.primary)
+        .fixedSize(horizontal: false, vertical: true)
         .accessibilityIdentifier("run.timing.execution")
     }
 
     private var lastConfirmed: some View {
         Label {
-            HStack(spacing: 4) {
+            (
                 Text("active.summary.last_confirmed")
-                    .foregroundStyle(.secondary)
-                Text(run.updatedAt, format: .relative(presentation: .named))
+                    + Text(" ")
+                    + Text(run.updatedAt, format: .relative(presentation: .named))
                     .fontWeight(.semibold)
                     .monospacedDigit()
-            }
+            )
         } icon: {
             Image(systemName: "waveform.path.ecg")
-                .foregroundStyle(visualState.color)
         }
-        .fixedSize(horizontal: true, vertical: false)
+        .foregroundStyle(.primary)
+        .fixedSize(horizontal: false, vertical: true)
         .accessibilityIdentifier("run.timing.heartbeat")
     }
 }
@@ -432,7 +439,7 @@ private struct ActiveCompactRunCard: View {
         Label {
             HStack(spacing: 4) {
                 Text("active.summary.last_confirmed")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
                 Text(run.updatedAt, format: .relative(presentation: .named))
                     .fontWeight(.semibold)
             }
@@ -675,7 +682,7 @@ private struct HistorySectionHeader: View {
     var body: some View {
         Text(key)
             .font(.footnote.weight(.semibold))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.primary)
             .textCase(.uppercase)
             .padding(.horizontal, 24)
     }
@@ -753,6 +760,7 @@ private struct HistoryRunCard: View {
                 .accessibilityHidden(true)
         }
         .font(.subheadline)
+        .foregroundStyle(.primary)
     }
 
     @ViewBuilder
@@ -794,7 +802,7 @@ private struct HistoryRunCard: View {
             Text("run.updated")
             Text(run.endedAt ?? run.updatedAt, format: .relative(presentation: .named))
         }
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.primary)
     }
 }
 
@@ -806,17 +814,14 @@ private struct HistoryMachineFilterBar: View {
     @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 8) {
-                filterButton(id: nil, name: String(localized: "history.all"), showsMachine: false)
-                ForEach(options) { option in
-                    filterButton(id: option.id, name: option.name, showsMachine: true)
-                }
+        HistoryFilterFlowLayout(spacing: 8) {
+            filterButton(id: nil, name: String(localized: "history.all"), showsMachine: false)
+            ForEach(options) { option in
+                filterButton(id: option.id, name: option.name, showsMachine: true)
             }
-            .padding(.horizontal)
-            .padding(.vertical, 8)
         }
-        .scrollIndicators(.hidden)
+        .padding(.horizontal)
+        .padding(.vertical, 8)
         .overlay(alignment: .bottom) { Divider() }
     }
 
@@ -838,12 +843,11 @@ private struct HistoryMachineFilterBar: View {
                         .accessibilityHidden(true)
                 }
                 Text(name)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .frame(maxWidth: 180)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .font(.subheadline.weight(.semibold))
-            .foregroundStyle(isSelected ? RunBuoyTheme.brandPrimary : Color.secondary)
+            .foregroundStyle(.primary)
             .padding(.horizontal, 14)
             .frame(minHeight: RunBuoyMetrics.minimumTarget)
             .background(
@@ -863,6 +867,73 @@ private struct HistoryMachineFilterBar: View {
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .accessibilityIdentifier(id.map { "history.filter.\($0)" } ?? "history.filter.all")
+    }
+}
+
+private struct HistoryFilterFlowLayout: Layout {
+    let spacing: CGFloat
+
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) -> CGSize {
+        let maxWidth = proposal.width ?? .greatestFiniteMagnitude
+        var rowWidth: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var contentWidth: CGFloat = 0
+        var contentHeight: CGFloat = 0
+
+        for subview in subviews {
+            let size = measuredSize(of: subview, maximumWidth: maxWidth)
+            let proposedWidth = rowWidth == 0 ? size.width : rowWidth + spacing + size.width
+            if proposedWidth > maxWidth, rowWidth > 0 {
+                contentWidth = max(contentWidth, rowWidth)
+                contentHeight += rowHeight + spacing
+                rowWidth = size.width
+                rowHeight = size.height
+            } else {
+                rowWidth = proposedWidth
+                rowHeight = max(rowHeight, size.height)
+            }
+        }
+
+        contentWidth = max(contentWidth, rowWidth)
+        contentHeight += rowHeight
+        return CGSize(width: proposal.width ?? contentWidth, height: contentHeight)
+    }
+
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) {
+        var x = bounds.minX
+        var y = bounds.minY
+        var rowHeight: CGFloat = 0
+
+        for subview in subviews {
+            let size = measuredSize(of: subview, maximumWidth: bounds.width)
+            if x > bounds.minX, x + size.width > bounds.maxX {
+                x = bounds.minX
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            subview.place(
+                at: CGPoint(x: x, y: y),
+                anchor: .topLeading,
+                proposal: ProposedViewSize(size)
+            )
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+        }
+    }
+
+    private func measuredSize(of subview: LayoutSubview, maximumWidth: CGFloat) -> CGSize {
+        let idealSize = subview.sizeThatFits(.unspecified)
+        guard idealSize.width > maximumWidth else { return idealSize }
+        return subview.sizeThatFits(ProposedViewSize(width: maximumWidth, height: nil))
     }
 }
 
@@ -941,7 +1012,7 @@ private struct RichMessageHistoricalCard: View {
     private var relativeTime: some View {
         Text(message.createdAt, format: .relative(presentation: .named))
             .font(.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.primary)
     }
 }
 

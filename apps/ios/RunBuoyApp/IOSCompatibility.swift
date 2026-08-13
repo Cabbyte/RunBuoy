@@ -27,15 +27,9 @@ enum RunBuoyVisualStyle: Equatable {
 extension View {
     @ViewBuilder
     func runBuoyProminentButtonStyle() -> some View {
-#if compiler(>=6.2)
-        if #available(iOS 26.0, *), RunBuoyVisualStyle.current == .liquidGlass {
-            buttonStyle(.glassProminent)
-        } else {
-            buttonStyle(.borderedProminent)
-        }
-#else
         buttonStyle(.borderedProminent)
-#endif
+            .tint(.primary)
+            .foregroundStyle(RunBuoyTheme.surface)
     }
 
     @ViewBuilder
@@ -56,6 +50,19 @@ extension View {
 #if compiler(>=6.2)
         if #available(iOS 26.0, *), RunBuoyVisualStyle.current == .liquidGlass {
             scrollEdgeEffectHidden(true, for: .bottom)
+        } else {
+            self
+        }
+#else
+        self
+#endif
+    }
+
+    @ViewBuilder
+    func runBuoyReadableBottomScrollEdgeStyle() -> some View {
+#if compiler(>=6.2)
+        if #available(iOS 26.0, *), RunBuoyVisualStyle.current == .liquidGlass {
+            scrollEdgeEffectStyle(.hard, for: .bottom)
         } else {
             self
         }

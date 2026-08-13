@@ -137,8 +137,7 @@ struct RunStatusBadge: View {
                     }
             }
         }
-        .lineLimit(1)
-        .fixedSize(horizontal: true, vertical: false)
+        .fixedSize(horizontal: false, vertical: true)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(state.localizedTitle)
     }
@@ -333,10 +332,19 @@ struct RunProgressView: View {
         }
     }
 
+    @ViewBuilder
     private func phaseLabel(_ phase: String) -> some View {
+        if emphasis == .prominent {
+            phaseText(phase)
+        } else {
+            phaseText(phase)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+        }
+    }
+
+    private func phaseText(_ phase: String) -> some View {
         Text(phase)
             .font(emphasis.phaseFont)
-            .lineLimit(emphasis == .prominent ? 3 : 2)
             .accessibilityLabel(String(localized: "run.phase"))
             .accessibilityValue(phase)
     }

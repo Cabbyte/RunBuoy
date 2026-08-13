@@ -10,7 +10,7 @@ struct MachinesView: View {
                 Section {
                     Text("machines.intro")
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary)
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
 
@@ -36,8 +36,10 @@ struct MachinesView: View {
                     }
                 } header: {
                     Text("machines.paired")
+                        .foregroundStyle(Color(uiColor: .label))
                 } footer: {
                     Text("machines.footer")
+                        .foregroundStyle(Color(uiColor: .label))
                 }
             }
         }
@@ -171,7 +173,9 @@ struct MachineRow: View {
                     .fixedSize(horizontal: false, vertical: true)
                 HStack(spacing: 4) {
                     Text(machine.platform)
-                    Text("·")
+                    Circle()
+                        .fill(.primary)
+                        .frame(width: 3, height: 3)
                         .accessibilityHidden(true)
                     Text("machines.last_seen_prefix")
                     Text(
@@ -183,7 +187,7 @@ struct MachineRow: View {
                     )
                 }
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 4)
@@ -194,7 +198,7 @@ struct MachineRow: View {
                     .accessibilityHidden(true)
                 Text(connectionState.title)
                     .font(.caption2.weight(.medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
             }
             .fixedSize(horizontal: true, vertical: false)
         }

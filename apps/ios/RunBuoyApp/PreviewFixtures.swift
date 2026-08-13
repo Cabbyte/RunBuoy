@@ -62,6 +62,90 @@ enum PreviewFixtures {
         sequence: 18
     )
 
+    static let heroActionRequiredRun = RunSnapshot(
+        id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000301")!,
+        machineID: "machine_mac_studio",
+        machineName: "Mac Studio",
+        title: "Release approval required",
+        source: "cli",
+        executionStatus: .running,
+        healthStatus: .healthy,
+        attentionStatus: .actionRequired,
+        progress: RunProgress(
+            kind: .determinate,
+            current: 45,
+            total: 100,
+            fraction: 0.45,
+            unit: "items",
+            source: "explicit"
+        ),
+        phase: "Waiting for approval",
+        safeMessage: "A release approval is required.",
+        startedAt: baseDate.addingTimeInterval(-900),
+        updatedAt: baseDate.addingTimeInterval(-120),
+        endedAt: nil,
+        estimatedEndAt: nil,
+        exitCode: nil,
+        safeLogTail: nil,
+        sequence: 30
+    )
+
+    static let heroWarningRun = RunSnapshot(
+        id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000302")!,
+        machineID: "machine_ci",
+        machineName: "CI Builder",
+        title: "Release build warning",
+        source: "webhook",
+        executionStatus: .running,
+        healthStatus: .healthy,
+        attentionStatus: .warning,
+        progress: RunProgress(
+            kind: .determinate,
+            current: 78,
+            total: 100,
+            fraction: 0.78,
+            unit: "items",
+            source: "explicit"
+        ),
+        phase: "Checking signing",
+        safeMessage: "The signing check needs attention.",
+        startedAt: baseDate.addingTimeInterval(-600),
+        updatedAt: baseDate.addingTimeInterval(-30),
+        endedAt: nil,
+        estimatedEndAt: nil,
+        exitCode: nil,
+        safeLogTail: nil,
+        sequence: 31
+    )
+
+    static let heroNewestHealthyRun = RunSnapshot(
+        id: UUID(uuidString: "018f0d8a-8c0a-7000-8000-000000000303")!,
+        machineID: "machine_mac_studio",
+        machineName: "Mac Studio",
+        title: "Newest healthy run",
+        source: "cli",
+        executionStatus: .running,
+        healthStatus: .healthy,
+        attentionStatus: .none,
+        progress: RunProgress(
+            kind: .determinate,
+            current: 92,
+            total: 100,
+            fraction: 0.92,
+            unit: "items",
+            source: "explicit"
+        ),
+        phase: "Uploading artifacts",
+        safeMessage: "Artifacts are uploading.",
+        startedAt: baseDate.addingTimeInterval(-300),
+        updatedAt: baseDate,
+        endedAt: nil,
+        estimatedEndAt: nil,
+        exitCode: nil,
+        safeLogTail: nil,
+        sequence: 32
+    )
+
     static let machine = MachineSnapshot(
         id: "machine_mac_studio",
         displayName: "Mac Studio",
@@ -656,22 +740,26 @@ enum PreviewFixtures {
         let apiSnapshot: CachedSnapshot
         let apiEvents: [RunFeedEvent]
         let initialState: RunBuoyStore.LoadState?
+        let failsRunDetail: Bool
         switch scenario {
         case .loaded:
             snapshot = loadedSnapshot
             apiSnapshot = loadedSnapshot
             apiEvents = events
             initialState = .loaded
+            failsRunDetail = false
         case .showcase:
             snapshot = showcaseSnapshot
             apiSnapshot = showcaseSnapshot
             apiEvents = showcaseEvents
             initialState = .loaded
+            failsRunDetail = false
         case .showcaseEnglish:
             snapshot = showcaseEnglishSnapshot
             apiSnapshot = showcaseEnglishSnapshot
             apiEvents = showcaseEnglishEvents
             initialState = .loaded
+            failsRunDetail = false
         case .empty:
             snapshot = CachedSnapshot(
                 runs: [],
@@ -682,20 +770,45 @@ enum PreviewFixtures {
             apiSnapshot = loadedSnapshot
             apiEvents = events
             initialState = .loaded
+            failsRunDetail = false
         case .offline:
             snapshot = loadedSnapshot
             apiSnapshot = loadedSnapshot
             apiEvents = events
             initialState = .offline("UI test offline fixture")
+            failsRunDetail = false
         case .failed:
             snapshot = nil
             apiSnapshot = loadedSnapshot
             apiEvents = events
             initialState = .failed("UI test failure fixture")
+            failsRunDetail = false
+        case .heroPriority:
+            let prioritySnapshot = CachedSnapshot(
+                runs: [heroNewestHealthyRun, heroWarningRun, heroActionRequiredRun],
+                machines: [machine, ciMachine],
+                messages: [],
+                savedAt: baseDate
+            )
+            snapshot = prioritySnapshot
+            apiSnapshot = prioritySnapshot
+            apiEvents = []
+            initialState = .loaded
+            failsRunDetail = false
+        case .detailUnavailable:
+            snapshot = nil
+            apiSnapshot = loadedSnapshot
+            apiEvents = []
+            initialState = .failed("UI test detail unavailable fixture")
+            failsRunDetail = true
         }
 
         return RunBuoyStore(
-            api: PreviewAPI(snapshot: apiSnapshot, events: apiEvents),
+            api: PreviewAPI(
+                snapshot: apiSnapshot,
+                events: apiEvents,
+                failsRunDetail: failsRunDetail
+            ),
             identityStore: PreviewIdentityStore(),
             cache: LocalCacheStore(
                 fileURL: FileManager.default.temporaryDirectory
@@ -718,13 +831,20 @@ private struct PreviewIdentityStore: DeviceIdentityStoring {
 private struct PreviewAPI: RunBuoyAPI {
     let snapshot: CachedSnapshot
     let events: [RunFeedEvent]
+    let failsRunDetail: Bool
 
     func bootstrap(installationID: String, appVersion: String, osVersion: String) async throws -> DeviceIdentity {
         DeviceIdentity(deviceID: "preview-device", workspaceID: "preview-workspace", credential: "preview")
     }
     func listRuns() async throws -> [RunSnapshot] { snapshot.runs }
     func runDetail(id: UUID) async throws -> RunDetail {
-        RunDetail(run: snapshot.runs.first(where: { $0.id == id }) ?? snapshot.runs[0], feed: events)
+        if failsRunDetail {
+            throw URLError(.notConnectedToInternet)
+        }
+        return RunDetail(
+            run: snapshot.runs.first(where: { $0.id == id }) ?? snapshot.runs[0],
+            feed: events
+        )
     }
     func listMachines() async throws -> [MachineSnapshot] { snapshot.machines }
     func listMessages() async throws -> [RichMessage] { snapshot.messages }

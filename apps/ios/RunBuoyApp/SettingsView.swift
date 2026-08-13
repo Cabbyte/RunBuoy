@@ -27,24 +27,33 @@ struct SettingsView: View {
 
                 LabeledContent {
                     Text(selectedRegionName)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary)
                 } label: {
                     Label("settings.region", systemImage: "globe")
                 }
 
                 LabeledContent {
                     Text(AppConfiguration.displayAddress(for: AppConfiguration.live.apiBaseURL))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary)
                 } label: {
                     Label("settings.server", systemImage: "server.rack")
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text("settings.server"))
+                .accessibilityValue(Text(AppConfiguration.displayAddress(for: AppConfiguration.live.apiBaseURL)))
 
                 NavigationLink(value: AppRoute.machines) {
-                    LabeledContent {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Image(systemName: "desktopcomputer")
+                                .accessibilityHidden(true)
+                            Text("settings.machines")
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                         Text(store.machines.count, format: .number)
-                            .foregroundStyle(.secondary)
-                    } label: {
-                        Label("settings.machines", systemImage: "desktopcomputer")
+                            .font(.subheadline)
+                            .foregroundStyle(.primary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
                 .accessibilityIdentifier("settings.machines")
@@ -52,6 +61,7 @@ struct SettingsView: View {
                 Text("settings.connections")
             } footer: {
                 Text("settings.region_locked")
+                    .foregroundStyle(Color(uiColor: .label))
             }
 
             Section {
@@ -77,22 +87,29 @@ struct SettingsView: View {
                 }
             } header: {
                 Text("settings.preferences")
+            } footer: {
+                Color.clear
+                    .frame(height: 8)
+                    .accessibilityHidden(true)
             }
 
             Section {
                 NavigationLink(value: AppRoute.capabilityDemo) {
                     Label("demo.settings_entry", systemImage: "sparkles")
+                        .foregroundStyle(.primary)
                 }
                 .accessibilityIdentifier("settings.capabilityDemo")
 
                 NavigationLink(value: AppRoute.advancedData) {
                     Label("settings.advanced_data", systemImage: "gearshape.fill")
+                        .foregroundStyle(.primary)
                 }
                 .accessibilityIdentifier("settings.advancedData")
             } header: {
                 Text("settings.product")
             } footer: {
                 Text("demo.settings_footer")
+                    .foregroundStyle(Color(uiColor: .label))
             }
 
             Section {
@@ -120,9 +137,12 @@ struct SettingsView: View {
                 Text("settings.about")
             } footer: {
                 Text("settings.preferences_saved_footer")
+                    .foregroundStyle(Color(uiColor: .label))
             }
         }
-        .runBuoyBottomScrollEdgeStyle()
+        .padding(.bottom, 44)
+        .background(Color(uiColor: .systemGroupedBackground))
+        .runBuoyReadableBottomScrollEdgeStyle()
         .accessibilityIdentifier("screen.settings")
         .navigationTitle("settings.title")
         .onChange(of: notificationsEnabled) { _, enabled in
@@ -193,6 +213,7 @@ private struct ConnectionSummaryCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.headline)
+                    .accessibilityIdentifier("settings.connectionSummary")
                 Text(
                     String.localizedStringWithFormat(
                         String(localized: "settings.connection_machines_region"),
@@ -201,20 +222,27 @@ private struct ConnectionSummaryCard: View {
                     )
                 )
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: 4) {
                         Text(address)
-                        Text("·").accessibilityHidden(true)
+                            .accessibilityLabel(Text("settings.server"))
+                            .accessibilityValue(Text(address))
+                        Circle()
+                            .fill(.primary)
+                            .frame(width: 3, height: 3)
+                            .accessibilityHidden(true)
                         confirmationText
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         Text(address)
+                            .accessibilityLabel(Text("settings.server"))
+                            .accessibilityValue(Text(address))
                         confirmationText
                     }
                 }
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
             }
         } icon: {
             Image(systemName: symbol)
@@ -223,8 +251,6 @@ private struct ConnectionSummaryCard: View {
                 .accessibilityHidden(true)
         }
         .padding(.vertical, 6)
-        .accessibilityElement(children: .combine)
-        .accessibilityIdentifier("settings.connectionSummary")
     }
 
     @ViewBuilder
@@ -296,7 +322,7 @@ struct AdvancedDataView: View {
                             .font(.headline)
                         Text("settings.safe_data_only_body")
                             .font(.footnote)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.primary)
                     }
                 } icon: {
                     Image(systemName: "lock.shield.fill")
@@ -379,6 +405,7 @@ struct AdvancedDataView: View {
                 Text("settings.destructive_actions")
             } footer: {
                 Text("settings.read_only_boundary")
+                    .foregroundStyle(Color(uiColor: .label))
             }
         }
         .accessibilityIdentifier("screen.advancedData")
@@ -442,9 +469,10 @@ struct AdvancedDataView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.body.weight(.semibold))
+                    .foregroundStyle(Color(uiColor: .label))
                 Text(description)
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color(uiColor: .label))
                     .multilineTextAlignment(.leading)
             }
         } icon: {

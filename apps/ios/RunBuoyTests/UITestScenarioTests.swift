@@ -24,6 +24,17 @@ final class UITestScenarioTests: XCTestCase {
         let failed = PreviewFixtures.store(scenario: .failed)
         XCTAssertEqual(failed.state, .failed("UI test failure fixture"))
         XCTAssertTrue(failed.runs.isEmpty)
+
+        let priority = PreviewFixtures.store(scenario: .heroPriority)
+        XCTAssertEqual(priority.activeRunModels.count, 3)
+        XCTAssertEqual(
+            ActiveRunsPresentation.ordered(priority.activeRunModels).first?.id,
+            PreviewFixtures.heroActionRequiredRun.id
+        )
+
+        let unavailable = PreviewFixtures.store(scenario: .detailUnavailable)
+        XCTAssertEqual(unavailable.state, .failed("UI test detail unavailable fixture"))
+        XCTAssertTrue(unavailable.runs.isEmpty)
     }
 
     func testActiveHeroOrderingPrioritizesSemanticsThenRecencyAndStableID() {
