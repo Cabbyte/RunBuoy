@@ -158,17 +158,38 @@ regex_log="$test_root/regex.jsonl"
   >"$regex_log"
 regex_run_id="$(json_value 'value["run_id"]' "$regex_log")"
 regex_detail="$test_root/regex-detail.json"
-curl --silent --fail \
-  "$api_url/v1/runs/$regex_run_id" \
-  -H "Authorization: Bearer $device_credential" \
-  >"$regex_detail"
+# --wait observes the local result; the uploader can still be sending events.
+# Wait for the remote terminal projection before checking its progress.
+regex_run_finished() {
+  curl --silent --show-error --fail --max-time 2 \
+    "$api_url/v1/runs/$regex_run_id" \
+    -H "Authorization: Bearer $device_credential" \
+    >"$regex_detail" || return 1
+  python3 - "$regex_detail" <<'PY'
+import json
+import sys
+
+value = json.load(open(sys.argv[1], encoding="utf-8"))
+run = value.get("run", value)
+terminal = {"SUCCEEDED", "FAILED", "CANCELLED", "LOST"}
+sys.exit(0 if isinstance(run, dict) and run.get("execution_status") in terminal else 1)
+PY
+}
+
+if ! wait_for "regex Run terminal projection" "regex_run_finished"; then
+  echo "Last regex Run projection:" >&2
+  cat "$regex_detail" >&2
+  exit 1
+fi
 python3 - "$regex_detail" <<'PY'
 import json
 import sys
 
 value = json.load(open(sys.argv[1], encoding="utf-8"))
 run = value.get("run", value)
-assert run["progress"]["fraction"] == 1.0, run
+assert run["execution_status"] == "SUCCEEDED", run
+progress = run.get("progress")
+assert isinstance(progress, dict) and progress.get("fraction") == 1.0, run
 PY
 
 short_success="$test_root/short-success.jsonl"
