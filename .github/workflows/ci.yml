@@ -111,6 +111,16 @@ jobs:
         with:
           python-version: "3.12"
           enable-cache: true
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/chatgpt/package-lock.json
+      - working-directory: apps/chatgpt
+        run: |
+          npm ci
+          npm test
+          npm run build
       - working-directory: server
         run: uv sync --all-extras
       - working-directory: server

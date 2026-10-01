@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Connect RunBuoy</title>
+<style nonce="__NONCE__">:root{font:16px system-ui;color-scheme:light dark}body{margin:0;display:grid;place-items:center;min-height:100dvh;background:light-dark(#f4f5f7,#111318)}main{max-width:440px;padding:32px;text-align:center}.qr{background:white;border-radius:20px;padding:16px;width:220px;margin:24px auto}svg{width:220px;height:220px}a{display:block;background:#2965ef;color:white;padding:14px;border-radius:14px;text-decoration:none}p{line-height:1.6}.small{font-size:13px;opacity:.65}textarea{box-sizing:border-box;width:100%;margin-top:12px;height:70px;border-radius:8px}</style>
+<main><h1>Connect RunBuoy<br>连接 RunBuoy</h1><p>Scan with RunBuoy on your iPhone, or open the app below.<br>用 RunBuoy 扫码，或在此手机打开 App。</p>
+<div class="qr">__QR__</div><a href="__LINK__">Open RunBuoy · 打开 App</a>
+<p>Read-only access to runs, machines and messages.<br>仅读取任务、电脑和消息；不会控制电脑。</p>
+<p id="status" role="status">Waiting for your confirmation · 等待手机确认</p>
+<details><summary>Paste link in RunBuoy · 粘贴连接链接</summary><textarea readonly aria-label="Connection link">__LINK__</textarea></details>
+<p class="small">Expires in five minutes. Approve only a connection you started.<br>五分钟内有效，请仅确认自己发起的连接。</p></main>
+<script nonce="__NONCE__">let stopped=false;async function check(){if(stopped)return;try{const r=await fetch(location.pathname+'/status',{cache:'no-store'});if(!r.ok){stopped=true;document.getElementById('status').textContent='Expired or unavailable · 请重新发起连接';return}const s=await r.json();if(s.redirect_url){stopped=true;location.replace(s.redirect_url);return}if(s.status==='completed'){stopped=true;document.getElementById('status').textContent='Connected · 已连接'}}catch{document.getElementById('status').textContent='Reconnecting · 正在重连'}if(!stopped)setTimeout(check,2000)}check();</script></html>

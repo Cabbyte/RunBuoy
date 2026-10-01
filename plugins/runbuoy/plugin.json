@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "runbuoy",
+  "version": "0.1.0",
+  "description": "Read-only run monitoring with iPhone-confirmed access to your RunBuoy workspace.",
+  "author": {"name": "Cabbyte"},
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "RunBuoy",
+        "shortDescription": "Keep every run in sight",
+        "longDescription": "View active runs, confirmed progress, history, machines, shared messages and redacted log excerpts. Connect through your RunBuoy iPhone app and revoke access there at any time.",
+        "developerName": "Cabbyte",
+        "category": "Developer Tools",
+        "capabilities": ["Interactive"],
+        "defaultPrompt": "Show my current runs and anything that needs attention.",
+        "logo": "./assets/icon.svg",
+        "composerIcon": "./assets/icon.svg"
+      }
+    }
+  }
+}

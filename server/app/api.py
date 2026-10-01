@@ -6,9 +6,10 @@ from datetime import timedelta
 from typing import Any
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, status
-from sqlalchemy import func, or_, select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from . import read_models
 from .abuse import (
     acquire_quota_lock,
     anonymized_key,
@@ -31,11 +32,11 @@ from .models import (
     Notification,
     PairingSession,
     Run,
-    RunEvent,
     Webhook,
     Workspace,
     utcnow,
 )
+from .read_models import _notification_snapshot
 from .schemas import (
     ActivitySyncRequest,
     ActivityTokenRegistration,
@@ -67,7 +68,7 @@ from .services import (
     schedule_binding_update,
     schedule_run_pushes,
 )
-from .sync import bump_workspace_revision, decode_history_cursor, encode_history_cursor
+from .sync import bump_workspace_revision
 
 router = APIRouter(prefix="/v1")
 SYNC_SNAPSHOT_LIMIT = 200
@@ -119,82 +120,6 @@ def _webhook_auth(
     ):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid webhook credential")
     return webhook
-
-
-def _machine_snapshot(
-    machine: Machine,
-    *,
-    subscription_id: str | None,
-) -> dict[str, Any]:
-    return {
-        "id": machine.id,
-        "display_name": machine.display_name,
-        "platform": machine.platform,
-        "architecture": machine.architecture,
-        "cli_version": machine.cli_version,
-        "last_seen_at": machine.last_seen_at,
-        "paired_at": machine.paired_at,
-        "subscription_id": subscription_id,
-        "is_subscribed": subscription_id is not None,
-    }
-
-
-def _subscription_ids_by_machine(
-    session: Session,
-    *,
-    device_id: str,
-    machine_ids: list[str],
-) -> dict[str, str]:
-    if not machine_ids:
-        return {}
-    rows = session.execute(
-        select(
-            MachineDeviceSubscription.machine_id,
-            MachineDeviceSubscription.id,
-        ).where(
-            MachineDeviceSubscription.device_id == device_id,
-            MachineDeviceSubscription.machine_id.in_(machine_ids),
-        )
-    )
-    return {machine_id: subscription_id for machine_id, subscription_id in rows}
-
-
-def _notification_snapshot(item: Notification) -> dict[str, Any]:
-    return {
-        "id": item.id,
-        "machine_id": item.machine_id,
-        "run_id": item.run_id,
-        "title": item.title,
-        "subtitle": item.subtitle,
-        "body": item.body,
-        "level": item.level,
-        "fields": item.fields,
-        "safe_link": item.safe_link,
-        "created_at": item.created_at,
-        "expires_at": item.expires_at,
-    }
-
-
-def _sync_etag(workspace_id: str, revision: int) -> str:
-    return f'"sync-{workspace_id}-{revision}"'
-
-
-def _etag_matches(if_none_match: str | None, etag: str) -> bool:
-    if if_none_match is None:
-        return False
-    candidates = {value.strip() for value in if_none_match.split(",")}
-    return "*" in candidates or etag in candidates or f"W/{etag}" in candidates
-
-
-def _runs_after_cursor(sort_time: Any, item_id: str) -> Any:
-    return or_(Run.updated_at < sort_time, (Run.updated_at == sort_time) & (Run.id < item_id))
-
-
-def _notifications_after_cursor(sort_time: Any, item_id: str) -> Any:
-    return or_(
-        Notification.created_at < sort_time,
-        (Notification.created_at == sort_time) & (Notification.id < item_id),
-    )
 
 
 @router.post("/devices/bootstrap", status_code=status.HTTP_201_CREATED)
@@ -840,143 +765,14 @@ def sync_snapshot(
     session: Session = Depends(get_session),
     principal: Principal = Depends(require_scope("runs:read")),
 ) -> Any:
-    required_scopes = {"runs:read", "machines:read", "notifications:read"}
-    if not required_scopes.issubset(principal.scopes):
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "missing sync read scopes")
-    # A shared row lock keeps the revision and all bounded projections in this
-    # response consistent with writers, which update this row atomically.
-    workspace = session.scalar(
-        select(Workspace).where(Workspace.id == principal.workspace_id).with_for_update(read=True)
+    snapshot, etag = read_models.sync_snapshot(
+        session, principal, settings_for(request), cursor, if_none_match
     )
-    if workspace is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "workspace not found")
-    revision = workspace.revision
-    if cursor is not None and cursor > revision:
-        raise HTTPException(status.HTTP_409_CONFLICT, "sync cursor is ahead of the workspace")
-
-    etag = _sync_etag(workspace.id, revision)
-    cache_headers = {"ETag": etag, "Cache-Control": "private, no-cache"}
-    if cursor == revision or _etag_matches(if_none_match, etag):
-        return Response(status_code=status.HTTP_304_NOT_MODIFIED, headers=cache_headers)
-
-    settings = settings_for(request)
-    # Active Runs have no history endpoint, so every Run allowed by the active
-    # quota must fit in the bounded sync projection. Terminal history remains a
-    # fixed-size window and can be paged through /history/runs.
-    active_run_limit = settings.max_machines_per_workspace * settings.max_active_runs_per_machine
-    active_runs = list(
-        session.scalars(
-            select(Run)
-            .where(
-                Run.workspace_id == workspace.id,
-                ~Run.execution_status.in_(TERMINAL_STATUSES),
-            )
-            .order_by(Run.updated_at.desc(), Run.id.desc())
-            .limit(active_run_limit)
-        )
-    )
-    terminal_runs = list(
-        session.scalars(
-            select(Run)
-            .where(
-                Run.workspace_id == workspace.id,
-                Run.execution_status.in_(TERMINAL_STATUSES),
-            )
-            .order_by(Run.updated_at.desc(), Run.id.desc())
-            .limit(SYNC_SNAPSHOT_LIMIT)
-        )
-    )
-    runs = [*active_runs, *terminal_runs]
-    machines = list(
-        session.scalars(
-            select(Machine)
-            .where(Machine.workspace_id == workspace.id, Machine.revoked_at.is_(None))
-            .order_by(Machine.paired_at.desc(), Machine.id.desc())
-            .limit(settings.max_machines_per_workspace)
-        )
-    )
-    notifications = list(
-        session.scalars(
-            select(Notification)
-            .where(Notification.workspace_id == workspace.id)
-            .order_by(Notification.created_at.desc(), Notification.id.desc())
-            .limit(SYNC_SNAPSHOT_LIMIT)
-        )
-    )
-    subscription_ids = _subscription_ids_by_machine(
-        session,
-        device_id=principal.subject_id,
-        machine_ids=[machine.id for machine in machines],
-    )
-
-    history_runs_cursor = None
-    if terminal_runs:
-        oldest_run = terminal_runs[-1]
-        has_more_runs = (
-            session.scalar(
-                select(Run.id).where(
-                    Run.workspace_id == workspace.id,
-                    Run.execution_status.in_(TERMINAL_STATUSES),
-                    _runs_after_cursor(oldest_run.updated_at, oldest_run.id),
-                )
-            )
-            is not None
-        )
-        if has_more_runs:
-            history_runs_cursor = encode_history_cursor(
-                "runs", oldest_run.updated_at, oldest_run.id, None
-            )
-    else:
-        has_more_runs = (
-            session.scalar(
-                select(Run.id).where(
-                    Run.workspace_id == workspace.id,
-                    Run.execution_status.in_(TERMINAL_STATUSES),
-                )
-            )
-            is not None
-        )
-
-    history_notifications_cursor = None
-    if notifications:
-        oldest_notification = notifications[-1]
-        has_more_notifications = (
-            session.scalar(
-                select(Notification.id).where(
-                    Notification.workspace_id == workspace.id,
-                    _notifications_after_cursor(
-                        oldest_notification.created_at, oldest_notification.id
-                    ),
-                )
-            )
-            is not None
-        )
-        if has_more_notifications:
-            history_notifications_cursor = encode_history_cursor(
-                "notifications",
-                oldest_notification.created_at,
-                oldest_notification.id,
-                None,
-            )
-    else:
-        has_more_notifications = False
-
-    response.headers.update(cache_headers)
-    return {
-        "schema_version": 1,
-        "next_cursor": revision,
-        "server_time": utcnow(),
-        "runs": [run_snapshot(run) for run in runs],
-        "machines": [
-            _machine_snapshot(machine, subscription_id=subscription_ids.get(machine.id))
-            for machine in machines
-        ],
-        "notifications": [_notification_snapshot(item) for item in notifications],
-        "history_runs_next_cursor": history_runs_cursor,
-        "history_runs_has_more": has_more_runs,
-        "history_notifications_next_cursor": history_notifications_cursor,
-        "history_notifications_has_more": has_more_notifications,
-    }
+    headers = {"ETag": etag, "Cache-Control": "private, no-cache"}
+    if snapshot is None:
+        return Response(status_code=304, headers=headers)
+    response.headers.update(headers)
+    return snapshot
 
 
 @router.get("/history/runs")
@@ -987,34 +783,7 @@ def list_run_history(
     session: Session = Depends(get_session),
     principal: Principal = Depends(require_scope("runs:read")),
 ) -> dict[str, Any]:
-    query = select(Run).where(
-        Run.workspace_id == principal.workspace_id,
-        Run.execution_status.in_(TERMINAL_STATUSES),
-    )
-    if machine_id is not None:
-        query = query.where(Run.machine_id == machine_id)
-    if cursor is not None:
-        sort_time, item_id = decode_history_cursor(
-            cursor,
-            expected_kind="runs",
-            machine_id=machine_id,
-        )
-        query = query.where(_runs_after_cursor(sort_time, item_id))
-    rows = list(
-        session.scalars(query.order_by(Run.updated_at.desc(), Run.id.desc()).limit(limit + 1))
-    )
-    has_more = len(rows) > limit
-    items = rows[:limit]
-    next_cursor = (
-        encode_history_cursor("runs", items[-1].updated_at, items[-1].id, machine_id)
-        if has_more and items
-        else None
-    )
-    return {
-        "items": [run_snapshot(run) for run in items],
-        "next_cursor": next_cursor,
-        "has_more": has_more,
-    }
+    return read_models.list_run_history(session, principal, cursor, limit, machine_id)
 
 
 @router.get("/history/notifications")
@@ -1025,33 +794,7 @@ def list_notification_history(
     session: Session = Depends(get_session),
     principal: Principal = Depends(require_scope("notifications:read")),
 ) -> dict[str, Any]:
-    query = select(Notification).where(Notification.workspace_id == principal.workspace_id)
-    if machine_id is not None:
-        query = query.where(Notification.machine_id == machine_id)
-    if cursor is not None:
-        sort_time, item_id = decode_history_cursor(
-            cursor,
-            expected_kind="notifications",
-            machine_id=machine_id,
-        )
-        query = query.where(_notifications_after_cursor(sort_time, item_id))
-    rows = list(
-        session.scalars(
-            query.order_by(Notification.created_at.desc(), Notification.id.desc()).limit(limit + 1)
-        )
-    )
-    has_more = len(rows) > limit
-    items = rows[:limit]
-    next_cursor = (
-        encode_history_cursor("notifications", items[-1].created_at, items[-1].id, machine_id)
-        if has_more and items
-        else None
-    )
-    return {
-        "items": [_notification_snapshot(item) for item in items],
-        "next_cursor": next_cursor,
-        "has_more": has_more,
-    }
+    return read_models.list_notification_history(session, principal, cursor, limit, machine_id)
 
 
 @router.get("/runs")
@@ -1076,27 +819,21 @@ def get_run(
     session: Session = Depends(get_session),
     principal: Principal = Depends(require_scope("runs:read")),
 ) -> dict[str, Any]:
-    run = session.get(Run, str(run_id))
-    if run is None or run.workspace_id != principal.workspace_id:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "run not found")
-    result = run_snapshot(run)
-    events = list(
-        session.scalars(
-            select(RunEvent).where(RunEvent.run_id == run.id).order_by(RunEvent.seq).limit(500)
-        )
+    return read_models.get_run(session, principal, str(run_id))
+
+
+@router.get("/runs/{run_id}/events")
+def list_run_events(
+    run_id: uuid.UUID,
+    before_seq: int | None = Query(default=None, ge=0),
+    after_seq: int | None = Query(default=None, ge=0),
+    limit: int = Query(default=100, ge=1, le=100),
+    session: Session = Depends(get_session),
+    principal: Principal = Depends(require_scope("runs:read")),
+) -> dict[str, Any]:
+    return read_models.list_run_events(
+        session, principal, str(run_id), before_seq, after_seq, limit
     )
-    events_payload = [
-        {
-            "event_id": event.event_id,
-            "seq": event.seq,
-            "type": event.type,
-            "occurred_at": event.occurred_at,
-            "received_at": event.received_at,
-            "payload": event.payload,
-        }
-        for event in events
-    ]
-    return {"run": result, "events": events_payload}
 
 
 @router.get("/machines")
@@ -1104,22 +841,7 @@ def list_machines(
     session: Session = Depends(get_session),
     principal: Principal = Depends(require_scope("machines:read")),
 ) -> list[dict[str, Any]]:
-    machines = list(
-        session.scalars(
-            select(Machine)
-            .where(Machine.workspace_id == principal.workspace_id, Machine.revoked_at.is_(None))
-            .order_by(Machine.paired_at.desc())
-        )
-    )
-    subscription_ids = _subscription_ids_by_machine(
-        session,
-        device_id=principal.subject_id,
-        machine_ids=[machine.id for machine in machines],
-    )
-    return [
-        _machine_snapshot(machine, subscription_id=subscription_ids.get(machine.id))
-        for machine in machines
-    ]
+    return read_models.list_machines(session, principal)
 
 
 @router.patch("/machines/{machine_id}")

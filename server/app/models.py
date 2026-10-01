@@ -33,6 +33,53 @@ class Workspace(Base):
     revision: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
 
 
+class PluginGrant(Base):
+    __tablename__ = "plugin_grants"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    workspace_id: Mapped[str] = mapped_column(
+        ForeignKey("workspaces.id", ondelete="CASCADE"), index=True
+    )
+    device_id: Mapped[str] = mapped_column(ForeignKey("devices.id", ondelete="CASCADE"), index=True)
+    client_id: Mapped[str] = mapped_column(String(128))
+    scopes: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class PluginAuthorization(Base):
+    __tablename__ = "plugin_authorizations"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    browser_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    challenge_hash: Mapped[str] = mapped_column(String(64))
+    challenge_encrypted: Mapped[str] = mapped_column(Text)
+    params: Mapped[dict[str, Any]] = mapped_column(JSON)
+    client_id: Mapped[str] = mapped_column(String(128))
+    status: Mapped[str] = mapped_column(String(16), default="pending")
+    grant_id: Mapped[str | None] = mapped_column(
+        ForeignKey("plugin_grants.id", ondelete="CASCADE"), index=True
+    )
+    code_hash: Mapped[str | None] = mapped_column(String(64), unique=True)
+    code_encrypted: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class PluginToken(Base):
+    __tablename__ = "plugin_tokens"
+    token_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    grant_id: Mapped[str] = mapped_column(
+        ForeignKey("plugin_grants.id", ondelete="CASCADE"), index=True
+    )
+    kind: Mapped[str] = mapped_column(String(16))
+    scopes: Mapped[str] = mapped_column(Text)
+    resource: Mapped[str] = mapped_column(String(512))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class WorkspaceDeletionChallenge(Base):
     __tablename__ = "workspace_deletion_challenges"
     __table_args__ = (
