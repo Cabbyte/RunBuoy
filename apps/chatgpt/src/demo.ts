@@ -119,12 +119,13 @@ export function createDemoBridge(
     overview.machines = [];
     overview.notifications = [];
   }
+  const hostContext = {
+    displayMode: params.get("mode") === "inline" ? "inline" : "fullscreen",
+    locale: params.get("lang") === "zh" ? "zh-CN" : "en-US",
+    theme: params.get("theme") || "light",
+  };
   setTimeout(() => {
-    onContext({
-      displayMode: params.get("mode") === "inline" ? "inline" : "fullscreen",
-      locale: params.get("lang") === "zh" ? "zh-CN" : "en-US",
-      theme: params.get("theme") || "light",
-    });
+    onContext(hostContext);
     onResult({ data: { overview } });
   }, 30);
   return {
@@ -183,7 +184,7 @@ export function createDemoBridge(
       }
       return { data: {} };
     },
-    expand: async () => onContext({ displayMode: "fullscreen" }),
+    expand: async () => onContext({ ...hostContext, displayMode: "fullscreen" }),
     context: async () => {},
     close: () => {},
   };

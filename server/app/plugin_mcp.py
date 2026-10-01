@@ -23,7 +23,7 @@ from .auth import Principal
 from .config import Settings
 from .plugin_auth import READ_SCOPES, PhoneOAuthProvider, SessionFactory, valid_grant
 
-UI_URI = "ui://runbuoy/dashboard/v1.html"
+UI_URI = "ui://runbuoy/dashboard/v2.html"
 
 
 def _result(data: dict[str, Any], summary: dict[str, Any] | None = None) -> CallToolResult:
