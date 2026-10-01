@@ -91,6 +91,17 @@ def main() -> None:
                 line = next(line for line in source.splitlines() if anchor in line)
                 indent = line[: len(line) - len(line.lstrip())]
                 mutant = source.replace(line, f"{indent}{modifier}\n{line}", 1)
+                if kind == "fixed" and short_name == "hint":
+                    # An outer font modifier cannot replace this Text's inner caption.
+                    # Replace the declaration itself so this is an actual fixed font.
+                    start = source.index('Text("runs.confirmation_hint")')
+                    end = source.index(anchor, start)
+                    block = source[start:end]
+                    if block.count(".font(.caption)") != 1:
+                        raise RuntimeError("Expected exactly one hint caption declaration")
+                    mutant = (
+                        source[:start] + block.replace(".font(.caption)", modifier) + source[end:]
+                    )
                 case_name = f"mutation-{kind}-{short_name}"
                 try:
                     target.write_text(mutant)
