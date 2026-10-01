@@ -36,6 +36,7 @@ class Controller:
         self.errors: list[str] = []
         self.root: Path | None = None
         self.next_container_check = 0.0
+        self.container_discovery = {"retry_count": 0, "last_error": None}
 
     def simctl(self, *arguments: str) -> str:
         return command([XCRUN, "simctl", *arguments])
@@ -45,7 +46,7 @@ class Controller:
         executable = plistlib.loads((bundle / "Info.plist").read_bytes())["CFBundleExecutable"]
         expected = str(bundle / executable)
         matches = []
-        for line in command(["/bin/ps", "-axo", "pid=,command="]).splitlines():
+        for line in command(["/bin/ps", "-axww", "-o", "pid=,command="]).splitlines():
             parts = line.strip().split(maxsplit=1)
             if len(parts) == 2 and parts[1].startswith(expected + " "):
                 if "-runbuoy-ui-testing" not in parts[1].split():
@@ -110,10 +111,18 @@ class Controller:
         if time.monotonic() >= self.next_container_check:
             self.next_container_check = time.monotonic() + 3
             try:
-                container = self.simctl("get_app_container", self.device, RUNNER, "data")
+                container = command(
+                    [XCRUN, "simctl", "get_app_container", self.device, RUNNER, "data"],
+                    timeout=5,
+                )
                 self.root = Path(container) / "Documents" / DIRECTORY
-            except RuntimeError:
-                return  # XCTest has not installed its runner yet.
+            except (RuntimeError, subprocess.TimeoutExpired) as error:
+                # Runner installation can lag behind the build or a busy Simulator.
+                # Retry discovery while xcodebuild lives; actual state changes and
+                # readbacks below must still fail on any error or timeout.
+                self.container_discovery["retry_count"] += 1
+                self.container_discovery["last_error"] = f"{type(error).__name__}: {error}"
+                # Retain a previously discovered container during a transient delay.
         if self.root is None:
             return
         for path in sorted(self.root.glob("*.request.json")):
@@ -203,6 +212,7 @@ def main() -> int:
             "device": args.device,
             "original_size": controller.original,
             "sessions": controller.sessions,
+            "container_discovery": controller.container_discovery,
             "xcodebuild_exit_code": exit_code,
             "restoration": restoration,
             "errors": controller.errors,

@@ -136,6 +136,8 @@ final class TypographyDiagnosticsTests: XCTestCase {
     }
 
     func testRemainingSettingsTextAtLargeAndLargestSizes() throws {
+        // Keep every assertion, but collect all selected measurements in one pass.
+        continueAfterFailure = true
         let samples: [(String, UIFont.TextStyle)] = [
             ("settings.connectionSummary.title", .headline),
             ("settings.connectionSummary.machineCount", .subheadline),
