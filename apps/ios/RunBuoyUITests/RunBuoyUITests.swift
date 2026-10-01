@@ -44,7 +44,7 @@ final class RunBuoyUITests: XCTestCase {
         launch(initialURL: link)
         XCTAssertTrue(element("plugin.deny").waitForExistence(timeout: 5))
         element("plugin.deny").tap()
-        let completion = element("plugin.completion")
+        let completion = app.staticTexts["plugin.completion"]
         XCTAssertTrue(completion.waitForExistence(timeout: 3))
         XCTAssertTrue(completion.label.contains("Connection denied."), app.debugDescription)
         XCTAssertFalse(element("plugin.revoke").exists)
