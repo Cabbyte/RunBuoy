@@ -75,6 +75,34 @@ xcodebuild \
 Simulator unit tests run only where an installed Xcode runtime is available.
 Signing and real APNs require external Apple configuration.
 
+The runtime Dynamic Type UI tests use the host's supported `simctl ui
+content_size` control. Run them through the wrapper below with a specific
+Simulator UUID in `RUNBUOY_TEST_DEVICE`:
+
+```bash
+xcrun simctl bootstatus "$RUNBUOY_TEST_DEVICE" -b
+python3 scripts/run_ios_system_size_tests.py \
+  --device "$RUNBUOY_TEST_DEVICE" \
+  --evidence-dir /tmp/runbuoy-runtime-size-results -- \
+  xcodebuild -project apps/ios/RunBuoy.xcodeproj -scheme RunBuoy \
+  -destination "platform=iOS Simulator,id=$RUNBUOY_TEST_DEVICE" \
+  -parallel-testing-enabled NO \
+  -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchPreservesAppAndMachineNavigation \
+  -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchRestoresSizeAfterInjectedFailure \
+  CODE_SIGNING_ALLOWED=NO test
+```
+
+The existing runtime test launches the sample app once and retains its glyph,
+complete-text, and Machines navigation checks. The wrapper and XCTest exchange
+requests in the test runner's own Documents directory; the wrapper checks the
+same app PID and reads the live UIApplication and window categories with LLDB.
+XCTest restores the original size before terminating the app, including an
+injected failure after a verified maximum-size change. The host also restores
+the system size if XCTest aborts; a missing live-app teardown remains a failure.
+Running these tests without the wrapper fails explicitly rather than skipping
+them. The full latest-iOS CI UI step and typography controls use this wrapper;
+native accessibility audits retain every finding.
+
 ## E2E
 
 ```bash

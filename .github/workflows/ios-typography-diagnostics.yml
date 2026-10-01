@@ -7,7 +7,7 @@ on:
         description: Validation scope
         type: choice
         default: all-controls
-        options: [all-controls, system-size-and-e2e, settings-contrast]
+        options: [all-controls, system-size-and-e2e, settings-contrast, runtime-and-audit-finish]
   push:
     branches: ["codex/a11y-diagnostics-20261001"]
 
@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   glyphs-and-negative-controls:
-    if: ${{ inputs.scope != 'system-size-and-e2e' && inputs.scope != 'settings-contrast' }}
+    if: ${{ inputs.scope == '' || inputs.scope == 'all-controls' }}
     runs-on: macos-26
     timeout-minutes: 45
     steps:
@@ -40,7 +40,10 @@ jobs:
       - name: Verify glyphs, complete text, navigation, runtime switching and history quantities
         run: |
           set -o pipefail
-          xcodebuild \
+          python3 scripts/run_ios_system_size_tests.py \
+            --device "$TYPOGRAPHY_SIMULATOR_ID" \
+            --evidence-dir "$RUNNER_TEMP/typography-evidence/runtime-system-size" -- \
+            xcodebuild \
             -project apps/ios/RunBuoy.xcodeproj \
             -scheme RunBuoy \
             -destination "platform=iOS Simulator,id=$TYPOGRAPHY_SIMULATOR_ID" \
@@ -49,6 +52,7 @@ jobs:
             -parallel-testing-enabled NO \
             -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRenderedGlyphsAndMachineNavigationAtAllSystemSizes \
             -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchPreservesAppAndMachineNavigation \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchRestoresSizeAfterInjectedFailure \
             -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testHistoryCompletedQuantityRemainsVisibleAtLargeType \
             CODE_SIGNING_ALLOWED=NO \
             test 2>&1 | tee "$RUNNER_TEMP/typography-evidence/positive-controls.log"
@@ -256,4 +260,89 @@ jobs:
             ${{ runner.temp }}/settings-evidence/*-attachments/*.json
             ${{ runner.temp }}/settings-evidence/*-attachments/*.txt
             ${{ runner.temp }}/settings-evidence/*-attachments/*.png
+          retention-days: 14
+
+  runtime-and-audit-finish:
+    if: ${{ inputs.scope == 'runtime-and-audit-finish' }}
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: Select iOS 26.5 and preserve simulator appearance and size
+        run: |
+          mkdir -p "$RUNNER_TEMP/runtime-audit-evidence"
+          git rev-parse HEAD > "$RUNNER_TEMP/runtime-audit-evidence/revision.txt"
+          xcodebuild -version > "$RUNNER_TEMP/runtime-audit-evidence/xcode.txt"
+          simulator_id=$(xcrun simctl list devices available --json | python3 -c 'import json,sys; devices=json.load(sys.stdin)["devices"]["com.apple.CoreSimulator.SimRuntime.iOS-26-5"]; print(next(d["udid"] for d in devices if d["name"] == "iPhone 17"))')
+          xcrun simctl bootstatus "$simulator_id" -b
+          echo "SETTINGS_SIMULATOR_ID=$simulator_id" >> "$GITHUB_ENV"
+          echo "SETTINGS_ORIGINAL_SIZE=$(xcrun simctl ui "$simulator_id" content_size)" >> "$GITHUB_ENV"
+          echo "SETTINGS_ORIGINAL_APPEARANCE=$(xcrun simctl ui "$simulator_id" appearance)" >> "$GITHUB_ENV"
+          xcrun simctl ui "$simulator_id" content_size large
+          xcrun simctl ui "$simulator_id" appearance light
+          printf 'runtime=iOS26.5\nmodel=iPhone17\nsize=large\nappearance=light\n' > "$RUNNER_TEMP/runtime-audit-evidence/environment.txt"
+      - name: Verify integrated runtime control, failure restoration and remaining text
+        run: |
+          set -o pipefail
+          python3 scripts/run_ios_system_size_tests.py \
+            --device "$SETTINGS_SIMULATOR_ID" \
+            --evidence-dir "$RUNNER_TEMP/runtime-audit-evidence/runtime-system-size" -- \
+            xcodebuild -project apps/ios/RunBuoy.xcodeproj -scheme RunBuoy \
+            -destination "platform=iOS Simulator,id=$SETTINGS_SIMULATOR_ID" \
+            -derivedDataPath "$RUNNER_TEMP/runtime-audit-derived-data" \
+            -resultBundlePath "$RUNNER_TEMP/runtime-audit-evidence/Runtime.xcresult" \
+            -parallel-testing-enabled NO \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchPreservesAppAndMachineNavigation \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchRestoresSizeAfterInjectedFailure \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRemainingSettingsTextAtLargeAndLargestSizes \
+            CODE_SIGNING_ALLOWED=NO test 2>&1 | tee "$RUNNER_TEMP/runtime-audit-evidence/runtime.log"
+      - name: Run one bounded native audit reproduction at each selected position
+        if: ${{ !cancelled() && env.SETTINGS_SIMULATOR_ID != '' }}
+        run: |
+          set -o pipefail
+          xcodebuild -project apps/ios/RunBuoy.xcodeproj -scheme RunBuoy \
+            -destination "platform=iOS Simulator,id=$SETTINGS_SIMULATOR_ID" \
+            -derivedDataPath "$RUNNER_TEMP/runtime-audit-derived-data" \
+            -resultBundlePath "$RUNNER_TEMP/runtime-audit-evidence/NativeAudit.xcresult" \
+            -parallel-testing-enabled NO \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testSettingsNativeAuditWithoutFilters \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testSettingsLowerSectionsNativeAuditWithoutFilters \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testFormNativeAuditWithoutFilters \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testLowerFormRowNativeAuditWithoutFilters \
+            CODE_SIGNING_ALLOWED=NO test-without-building 2>&1 | tee "$RUNNER_TEMP/runtime-audit-evidence/native-audit.log"
+      - name: Export compact raw audit and screenshot evidence
+        if: always()
+        run: |
+          for result in Runtime NativeAudit; do
+            bundle="$RUNNER_TEMP/runtime-audit-evidence/$result.xcresult"
+            if [ -d "$bundle" ]; then
+              xcrun xcresulttool get test-results summary --path "$bundle" > "$RUNNER_TEMP/runtime-audit-evidence/$result-summary.json"
+              xcrun xcresulttool export attachments --path "$bundle" --output-path "$RUNNER_TEMP/runtime-audit-evidence/$result-attachments"
+            fi
+          done
+      - name: Restore simulator appearance and size
+        if: ${{ always() && env.SETTINGS_SIMULATOR_ID != '' }}
+        run: |
+          xcrun simctl ui "$SETTINGS_SIMULATOR_ID" content_size "$SETTINGS_ORIGINAL_SIZE"
+          xcrun simctl ui "$SETTINGS_SIMULATOR_ID" appearance "$SETTINGS_ORIGINAL_APPEARANCE"
+          actual_size=$(xcrun simctl ui "$SETTINGS_SIMULATOR_ID" content_size)
+          actual_appearance=$(xcrun simctl ui "$SETTINGS_SIMULATOR_ID" appearance)
+          printf 'expected_size=%s\nactual_size=%s\nexpected_appearance=%s\nactual_appearance=%s\n' "$SETTINGS_ORIGINAL_SIZE" "$actual_size" "$SETTINGS_ORIGINAL_APPEARANCE" "$actual_appearance" > "$RUNNER_TEMP/runtime-audit-evidence/restoration.txt"
+          test "$actual_size" = "$SETTINGS_ORIGINAL_SIZE"
+          test "$actual_appearance" = "$SETTINGS_ORIGINAL_APPEARANCE"
+      - name: Save raw findings and selected files without exported videos
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: runtime-audit-finish-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/runtime-audit-evidence/runtime-system-size
+            ${{ runner.temp }}/runtime-audit-evidence/*.txt
+            ${{ runner.temp }}/runtime-audit-evidence/*.json
+            ${{ runner.temp }}/runtime-audit-evidence/*.log
+            ${{ runner.temp }}/runtime-audit-evidence/*-attachments/*.json
+            ${{ runner.temp }}/runtime-audit-evidence/*-attachments/*.txt
+            ${{ runner.temp }}/runtime-audit-evidence/*-attachments/*.png
           retention-days: 14

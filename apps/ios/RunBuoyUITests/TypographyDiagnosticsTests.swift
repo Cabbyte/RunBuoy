@@ -62,130 +62,104 @@ final class TypographyDiagnosticsTests: XCTestCase {
     }
 
     func testRuntimeFontSwitchPreservesAppAndMachineNavigation() throws {
-        let settings = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
-        settings.launch()
-        if !settings.switches["Larger Accessibility Sizes"].exists {
-            tapSettingsEntry("Accessibility", in: settings)
-            tapSettingsEntry("Display & Text Size", in: settings)
-            tapSettingsEntry("Larger Text", in: settings)
-        }
-        let expandedSizes = settings.switches["Larger Accessibility Sizes"]
-        XCTAssertTrue(expandedSizes.waitForExistence(timeout: 5), settings.debugDescription)
-        XCTAssertTrue(settings.sliders.firstMatch.waitForExistence(timeout: 5))
-        let originalSwitch = try XCTUnwrap(expandedSizes.value as? String)
-        let originalPosition = settings.sliders.firstMatch.normalizedSliderPosition
-        XCTAssertTrue(["0", "1"].contains(originalSwitch))
-        XCTAssertTrue((0...1).contains(originalPosition))
-        print("SYSTEM SIZE SNAPSHOT switch=\(originalSwitch) slider=\(originalPosition)")
-
-        // Registered before the first change. XCTest runs this even when an
-        // assertion aborts the test, before tearDownWithError terminates the app.
-        addTeardownBlock { [self] in
-            continueAfterFailure = true
-            attachScreenshot("runtime-before-state-restoration")
-            settings.activate()
-            XCTAssertTrue(setSystemSwitch(expandedSizes, to: originalSwitch, in: settings))
-            XCTAssertTrue(setSystemSlider(in: settings, to: originalPosition))
-            XCTAssertEqual(expandedSizes.value as? String, originalSwitch)
-            XCTAssertEqual(settings.sliders.firstMatch.normalizedSliderPosition,
-                           originalPosition, accuracy: 0.01)
-            print("SYSTEM SIZE RESTORED switch=\(String(describing: expandedSizes.value)) slider=\(settings.sliders.firstMatch.normalizedSliderPosition) expectedSwitch=\(originalSwitch) expectedSlider=\(originalPosition)")
-            attachScreenshot("system-settings-restored-original-size")
-        }
-
-        XCTAssertTrue(setSystemSwitch(expandedSizes, to: "0", in: settings))
-        XCTAssertTrue(setSystemSlider(in: settings, to: 0.5))
         launch()
-        try verifyRenderedTextAndNavigation(category: .large)
-        settings.activate()
-        XCTAssertTrue(setSystemSwitch(expandedSizes, to: "1", in: settings))
-        XCTAssertTrue(setSystemSlider(in: settings, to: 1))
-        attachScreenshot("system-settings-maximum-accessibility-size")
-        XCTAssertTrue(app.state == .runningBackground || app.state == .runningBackgroundSuspended,
-                      "RunBuoy must remain alive during the system setting change")
-        app.activate()
-        try verifyRenderedTextAndNavigation(category: .accessibilityExtraExtraExtraLarge)
-        settings.activate()
-        XCTAssertTrue(setSystemSwitch(expandedSizes, to: "0", in: settings))
-        XCTAssertTrue(setSystemSlider(in: settings, to: 0.5))
-        attachScreenshot("system-settings-restored-default-size")
-        XCTAssertTrue(app.state == .runningBackground || app.state == .runningBackgroundSuspended)
-        app.activate()
-        try verifyRenderedTextAndNavigation(category: .large)
-        print("RUNTIME FONT SWITCH LARGE -> ACCESSIBILITY XXXL -> LARGE PASSED WITHOUT RELAUNCH")
-    }
-
-    private func setSystemSwitch(_ control: XCUIElement, to value: String,
-                                 in settings: XCUIApplication) -> Bool {
-        guard control.waitForExistence(timeout: 5) else { return false }
-        print("SYSTEM SWITCH before=\(String(describing: control.value)) target=\(value) frame=\(control.frame)")
-        if control.value as? String != value {
-            // Settings exposes the whole row as a switch. Its center can hit
-            // the label without changing the right-hand toggle.
-            control.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        let session = try beginSystemSizeSession()
+        try withSystemSizeSession(session) {
+            try session.set("large", expected: .large)
+            try verifyRenderedTextAndNavigation(category: .large)
+            try session.set("accessibility-extra-extra-extra-large", expected: .accessibilityExtraExtraExtraLarge)
+            XCTAssertEqual(app.state, .runningForeground)
+            try verifyRenderedTextAndNavigation(category: .accessibilityExtraExtraExtraLarge)
+            try session.set("large", expected: .large)
+            XCTAssertEqual(app.state, .runningForeground)
+            try verifyRenderedTextAndNavigation(category: .large)
         }
-        let expectation = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "value == %@", value), object: control
-        )
-        let matched = XCTWaiter.wait(for: [expectation], timeout: 5) == .completed
-        print("SYSTEM SWITCH after=\(String(describing: control.value))")
-        return matched
+        print("RUNTIME FONT SWITCH LARGE -> ACCESSIBILITY XXXL -> LARGE PASSED WITHOUT RELAUNCH pid=\(session.pid)")
     }
 
-    private func setSystemSlider(in settings: XCUIApplication, to target: CGFloat) -> Bool {
-        guard settings.sliders.firstMatch.waitForExistence(timeout: 5) else { return false }
-        for attempt in 0..<4 {
-            // Re-query after changing the switch: the slider now has 12 stops,
-            // whereas the standard range has 7. Never assume adjust succeeded.
-            let slider = settings.sliders.firstMatch
-            let before = slider.normalizedSliderPosition
-            print("SYSTEM SLIDER attempt=\(attempt) before=\(before) target=\(target) value=\(String(describing: slider.value)) frame=\(slider.frame)")
-            if abs(before - target) <= 0.01 { return true }
-            if attempt == 0 || (target > 0 && target < 1) {
-                // The slider's AX frame includes insets outside its thumb track.
-                // A hand-calculated midpoint drag can alternate between 1/3 and
-                // 2/3. Let XCTest re-resolve interior positions from fresh state.
-                slider.adjust(toNormalizedSliderPosition: target)
-            } else {
-                // iOS 26.5's adjust can stop at 6/11 despite a requested 1.0.
-                // Drag the visible thumb, then require the same strict readback.
-                let start = slider.coordinate(withNormalizedOffset: CGVector(dx: before, dy: 0.5))
-                let end = slider.coordinate(withNormalizedOffset: CGVector(
-                    dx: min(0.99, max(0.01, target)), dy: 0.5
-                ))
-                start.press(forDuration: 0.1, thenDragTo: end)
+    func testRuntimeFontSwitchRestoresSizeAfterInjectedFailure() throws {
+        enum Injected: Error { case afterMaximumReadback }
+        launch()
+        let session = try beginSystemSizeSession()
+        var observedInjectedFailure = false
+        do {
+            try withSystemSizeSession(session) {
+                try session.set("large", expected: .large)
+                try session.set("accessibility-extra-extra-extra-large", expected: .accessibilityExtraExtraExtraLarge)
+                attachScreenshot("runtime-maximum-before-injected-failure")
+                throw Injected.afterMaximumReadback
             }
-            let expectation = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                abs(settings.sliders.firstMatch.normalizedSliderPosition - target) <= 0.01
-            }, object: nil)
-            let matched = XCTWaiter.wait(for: [expectation], timeout: 2) == .completed
-            print("SYSTEM SLIDER readback=\(settings.sliders.firstMatch.normalizedSliderPosition) target=\(target) matched=\(matched)")
-            if matched { return true }
+        } catch Injected.afterMaximumReadback {
+            observedInjectedFailure = true
         }
-        let attachment = XCTAttachment(string: settings.debugDescription)
-        attachment.name = "System slider failed readback"
-        attachment.lifetime = .keepAlways
-        add(attachment)
-        attachScreenshot("system-slider-failed-readback")
-        return false
+        XCTAssertTrue(observedInjectedFailure)
+        XCTAssertTrue(session.restored)
+        XCTAssertEqual(session.lastRestoration?.pid, session.pid)
+        XCTAssertEqual(session.lastRestoration?.systemSize, session.originalSize)
+        XCTAssertEqual(app.state, .runningForeground)
+        attachScreenshot("runtime-injected-failure-restored")
+        print("INJECTED FAILURE RESTORED ORIGINAL SYSTEM / APP / WINDOW SIZE pid=\(session.pid)")
     }
 
-    private func tapSettingsEntry(_ label: String, in settings: XCUIApplication) {
-        let entry = settings.descendants(matching: .any).matching(
-            NSPredicate(format: "label == %@ OR identifier == %@", label, label)
-        ).firstMatch
-        for _ in 0..<10 {
-            if entry.exists && entry.isHittable {
-                entry.tap()
-                return
-            }
-            settings.swipeUp()
+    private func beginSystemSizeSession() throws -> SystemSizeSession {
+        let session = try SystemSizeSession(test: name)
+        // Registered before the first change, and runs before app termination
+        // in tearDownWithError even if an XCTest assertion aborts the body.
+        addTeardownBlock {
+            if !session.restored { try session.restore() }
         }
-        let attachment = XCTAttachment(string: settings.debugDescription)
-        attachment.name = "System text-size settings hierarchy"
-        attachment.lifetime = .keepAlways
-        add(attachment)
-        XCTFail("System settings entry not reachable: \(label)")
+        return session
+    }
+
+    private func withSystemSizeSession(_ session: SystemSizeSession,
+                                       operation: () throws -> Void) throws {
+        do {
+            try operation()
+        } catch {
+            try session.restore()
+            throw error
+        }
+        try session.restore()
+    }
+
+    func testSettingsLowerSectionsNativeAuditWithoutFilters() throws {
+        launch()
+        tapTab("Settings")
+        let labels = [app.staticTexts["Show safe messages"], app.staticTexts["Product"]]
+        ensureFullyVisible(labels)
+        for label in labels {
+            try verifyCompleteText([label.label], in: label.screenshot().image)
+            print("LOWER SETTINGS VISIBLE label=\(label.label) frame=\(label.frame) viewport=\(visibleContentRect) hittable=\(label.isHittable)")
+        }
+        attachScreenshot("settings-lower-sections-fully-visible-before-audit")
+        try recordUnfilteredAudit()
+    }
+
+    func testRemainingSettingsTextAtLargeAndLargestSizes() throws {
+        let samples: [(String, UIFont.TextStyle)] = [
+            ("settings.connectionSummary.title", .headline),
+            ("settings.connectionSummary.machineCount", .subheadline),
+            ("settings.connectionSummary.machineSuffix", .subheadline),
+            ("settings.connectionSummary.region", .subheadline),
+            ("settings.connectionSummary.confirmedLabel", .caption1),
+            ("settings.connectionSummary.confirmedDate", .caption1),
+            ("The selected data region cannot be changed.", .footnote)
+        ]
+        for category in [UIContentSizeCategory.large, .accessibilityExtraExtraExtraLarge] {
+            launch(category: category)
+            tapTab("Settings")
+            attachScreenshot("settings-summary-initial-\(category.rawValue)")
+            for (identifier, style) in samples {
+                let node = app.staticTexts[identifier]
+                ensureFullyVisible([node])
+                let text = node.label
+                let first = try XCTUnwrap(text.first)
+                try verifyGlyph(node, character: String(first), style: style,
+                                category: category, expectedText: text)
+                try verifyCompleteText([text], in: node.screenshot().image)
+            }
+            attachScreenshot("settings-summary-measurements-finished-\(category.rawValue)")
+        }
     }
 
     func testRenderedGlyphsAndMachineNavigationAtAllSystemSizes() throws {

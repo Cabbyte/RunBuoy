@@ -284,10 +284,15 @@ jobs:
       - name: Run latest iOS UI tests and accessibility audits
         run: |
           set -o pipefail
-          xcodebuild \
+          simulator_id=$(xcrun simctl list devices available --json | python3 -c 'import json,sys; groups=json.load(sys.stdin)["devices"]; runtimes=sorted((k for k in groups if ".iOS-" in k), key=lambda k:tuple(map(int,k.split(".iOS-")[1].split("-"))), reverse=True); print(next(d["udid"] for k in runtimes for d in groups[k] if d["name"] == "iPhone 17"))')
+          xcrun simctl bootstatus "$simulator_id" -b
+          python3 scripts/run_ios_system_size_tests.py \
+            --device "$simulator_id" \
+            --evidence-dir "$RUNNER_TEMP/$IOS_RESULT_DIR/runtime-system-size" -- \
+            xcodebuild \
             -project apps/ios/RunBuoy.xcodeproj \
             -scheme RunBuoy \
-            -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+            -destination "platform=iOS Simulator,id=$simulator_id" \
             -derivedDataPath "$RUNNER_TEMP/RunBuoy-iOS-latest-DerivedData" \
             -resultBundlePath "$RUNNER_TEMP/$IOS_RESULT_DIR/RunBuoyUITests.xcresult" \
             -parallel-testing-enabled NO \

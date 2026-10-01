@@ -64,6 +64,7 @@
 		A40000000000000000000001 /* RunBuoyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000001 /* RunBuoyUITests.swift */; };
 		A400000000000000000001AA /* TypographyDiagnosticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B600000000000000000001AA /* TypographyDiagnosticsTests.swift */; };
 		A400000000000000000001AB /* GlyphEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = B600000000000000000001AB /* GlyphEvidence.swift */; };
+		A400000000000000000001AC /* SystemSizeSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B600000000000000000001AC /* SystemSizeSession.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -168,6 +169,7 @@
 		B60000000000000000000001 /* RunBuoyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBuoyUITests.swift; sourceTree = "<group>"; };
 		B600000000000000000001AA /* TypographyDiagnosticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypographyDiagnosticsTests.swift; sourceTree = "<group>"; };
 		B600000000000000000001AB /* GlyphEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlyphEvidence.swift; sourceTree = "<group>"; };
+		B600000000000000000001AC /* SystemSizeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSizeSession.swift; sourceTree = "<group>"; };
 		B60000000000000000000002 /* RunBuoy.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text.plist.json.xctestplan; path = RunBuoy.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -324,6 +326,7 @@
 				B60000000000000000000001 /* RunBuoyUITests.swift */,
 				B600000000000000000001AA /* TypographyDiagnosticsTests.swift */,
 				B600000000000000000001AB /* GlyphEvidence.swift */,
+				B600000000000000000001AC /* SystemSizeSession.swift */,
 			);
 			path = RunBuoyUITests;
 			sourceTree = "<group>";
@@ -564,6 +567,7 @@
 				A40000000000000000000001 /* RunBuoyUITests.swift in Sources */,
 				A400000000000000000001AA /* TypographyDiagnosticsTests.swift in Sources */,
 				A400000000000000000001AB /* GlyphEvidence.swift in Sources */,
+				A400000000000000000001AC /* SystemSizeSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

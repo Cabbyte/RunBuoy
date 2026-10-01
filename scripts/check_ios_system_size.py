@@ -97,6 +97,27 @@ def read_app(pid: int, evidence: Path, label: str) -> list[str]:
     return values
 
 
+def verify_live_app(device: str, pid: int, evidence: Path, label: str, category: str) -> dict:
+    actual = command([XCRUN, "simctl", "ui", device, "content_size"])
+    if actual != category:
+        raise RuntimeError(f"System readback {actual!r} does not match {category!r}")
+    if command(["/bin/ps", "-p", str(pid), "-o", "pid="]).strip() != str(pid):
+        raise RuntimeError("The original app process is no longer alive")
+    values = read_app(pid, evidence, label)
+    expected = "UICTContentSizeCategory" + SIZES[category]
+    if values != [expected, expected]:
+        raise RuntimeError(f"Live app/window readback {values!r}; expected {expected!r}")
+    record = {
+        "stage": label,
+        "system_size": actual,
+        "pid": pid,
+        "application_category": values[0],
+        "window_category": values[1],
+    }
+    print(json.dumps(record), flush=True)
+    return record
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", required=True)
@@ -128,24 +149,8 @@ def main() -> int:
     pid: int | None = None
 
     def verify(label: str, category: str) -> dict:
-        actual = simctl("ui", args.device, "content_size")
-        if actual != category:
-            raise RuntimeError(f"System readback {actual!r} does not match {category!r}")
-        if command(["/bin/ps", "-p", str(pid), "-o", "pid="]).strip() != str(pid):
-            raise RuntimeError("The original app process is no longer alive")
-        values = read_app(pid, evidence, label)
-        expected = "UICTContentSizeCategory" + SIZES[category]
-        if values != [expected, expected]:
-            raise RuntimeError(f"Live app/window readback {values!r}; expected {expected!r}")
-        record = {
-            "stage": label,
-            "system_size": actual,
-            "pid": pid,
-            "application_category": values[0],
-            "window_category": values[1],
-        }
-        print(json.dumps(record), flush=True)
-        return record
+        assert pid is not None
+        return verify_live_app(args.device, pid, evidence, label, category)
 
     try:
         launch = simctl(
