@@ -71,21 +71,41 @@ final class TypographyDiagnosticsTests: XCTestCase {
         tapSettingsEntry("Larger Text", in: settings)
         let expandedSizes = settings.switches["Larger Accessibility Sizes"]
         XCTAssertTrue(expandedSizes.waitForExistence(timeout: 5), settings.debugDescription)
-        if expandedSizes.value as? String != "1" { expandedSizes.tap() }
+        setSystemSwitch(expandedSizes, to: "1", in: settings)
         let slider = settings.sliders.firstMatch
         XCTAssertTrue(slider.waitForExistence(timeout: 5), settings.debugDescription)
         slider.adjust(toNormalizedSliderPosition: 1)
+        XCTAssertEqual(slider.normalizedSliderPosition, 1, accuracy: 0.01)
+        attachScreenshot("system-settings-maximum-accessibility-size")
         XCTAssertTrue(app.state == .runningBackground || app.state == .runningBackgroundSuspended,
                       "RunBuoy must remain alive during the system setting change")
         app.activate()
         try verifyRenderedTextAndNavigation(category: .accessibilityExtraExtraExtraLarge)
         settings.activate()
-        if expandedSizes.value as? String == "1" { expandedSizes.tap() }
+        setSystemSwitch(expandedSizes, to: "0", in: settings)
         slider.adjust(toNormalizedSliderPosition: 0.5)
+        XCTAssertEqual(slider.normalizedSliderPosition, 0.5, accuracy: 0.05)
+        attachScreenshot("system-settings-restored-default-size")
         XCTAssertTrue(app.state == .runningBackground || app.state == .runningBackgroundSuspended)
         app.activate()
         try verifyRenderedTextAndNavigation(category: .large)
         print("RUNTIME FONT SWITCH LARGE -> ACCESSIBILITY XXXL -> LARGE PASSED WITHOUT RELAUNCH")
+    }
+
+    private func setSystemSwitch(_ control: XCUIElement, to value: String,
+                                 in settings: XCUIApplication) {
+        print("SYSTEM SWITCH before=\(String(describing: control.value)) target=\(value) frame=\(control.frame)")
+        if control.value as? String != value {
+            // Settings exposes the whole row as a switch. Its center can hit
+            // the label without changing the right-hand toggle.
+            control.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        }
+        let expectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@", value), object: control
+        )
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: 5), .completed,
+                       settings.debugDescription)
+        print("SYSTEM SWITCH after=\(String(describing: control.value))")
     }
 
     private func tapSettingsEntry(_ label: String, in settings: XCUIApplication) {
