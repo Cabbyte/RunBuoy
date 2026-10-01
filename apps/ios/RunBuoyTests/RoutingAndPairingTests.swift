@@ -41,6 +41,23 @@ final class RoutingAndPairingTests: XCTestCase {
         XCTAssertEqual(router.pendingPairingCode?.challenge, "once-only")
     }
 
+    func testPluginLinkOnlyOpensConsentAndRejectsAmbiguousLinks() throws {
+        let router = AppRouter()
+        let id = "pca_" + String(repeating: "a", count: 32)
+        let challenge = "pcc_" + String(repeating: "b", count: 43)
+        let link = "runbuoy://connect/\(id)?challenge=\(challenge)"
+        XCTAssertTrue(router.handle(URL(string: link)!))
+        XCTAssertEqual(router.selectedTab, .settings)
+        XCTAssertEqual(router.settingsPath, [.pluginConnections])
+        XCTAssertEqual(router.pendingPluginConnection?.id, id)
+        XCTAssertEqual(router.pendingPluginConnection?.challenge, challenge)
+        for invalid in [link + "&challenge=other", link + "&server=https://evil.example",
+                        link + "#fragment", link.replacingOccurrences(of: "runbuoy:", with: "https:"),
+                        "runbuoy://connect/../../runs?challenge=x"] {
+            XCTAssertThrowsError(try PluginConnectionCode.decode(invalid))
+        }
+    }
+
     func testHomeTabsDoNotIncludeMachines() {
         XCTAssertEqual(AppTab.allCases, [.activeRuns, .history, .settings])
     }
@@ -216,10 +233,27 @@ final class RoutingAndPairingTests: XCTestCase {
         XCTAssertEqual(CapabilityDemoStep.step(for: state), .stale)
     }
 
-    func testDemoTourCoversEveryDesignedLiveActivityState() {
+    func testDemoTourUsesApprovedContinuousSequence() {
         let now = Date(timeIntervalSince1970: 1_785_076_800)
+        let expected: [CapabilityDemoStep] = [
+            .running35,
+            .running72,
+            .warning,
+            .stale,
+            .succeeded
+        ]
 
-        for step in CapabilityDemoStep.allCases {
+        XCTAssertEqual(CapabilityDemoStep.allCases, expected)
+        XCTAssertEqual(expected.map(\.next), [
+            .running72,
+            .warning,
+            .stale,
+            .succeeded,
+            nil
+        ])
+        XCTAssertEqual(expected.map(\.previewProgress), [0.35, 0.72, 0.72, 0.72, 1])
+
+        for step in expected {
             let state = step.contentState(
                 now: now,
                 createdAt: now.addingTimeInterval(-120),
@@ -230,11 +264,201 @@ final class RoutingAndPairingTests: XCTestCase {
                 step,
                 "Expected demo state to round-trip: \(step)"
             )
+            XCTAssertNil(state.estimatedEndAt)
+            XCTAssertEqual(state.progressKind, "determinate")
+            XCTAssertEqual(state.current, state.progress.map { $0 * 100 })
+            XCTAssertEqual(state.total, 100)
         }
 
-        XCTAssertEqual(CapabilityDemoStep.uploading.previewProgress, 0.92)
-        XCTAssertTrue(CapabilityDemoStep.cancelled.isTerminal)
-        XCTAssertTrue(CapabilityDemoStep.lost.isTerminal)
+        XCTAssertFalse(CapabilityDemoStep.stale.isTerminal)
+        XCTAssertTrue(CapabilityDemoStep.succeeded.isTerminal)
+    }
+}
+
+@MainActor
+final class ActiveRunPresentationTests: XCTestCase {
+    func testHeroOrderingUsesSeverityThenRecencyThenStableID() {
+        let running = makeRun(
+            id: "00000000-0000-0000-0000-000000000005",
+            execution: .running,
+            updatedOffset: 10
+        )
+        let starting = makeRun(
+            id: "00000000-0000-0000-0000-000000000004",
+            execution: .starting,
+            updatedOffset: 20
+        )
+        let offline = makeRun(
+            id: "00000000-0000-0000-0000-000000000003",
+            health: .offline,
+            updatedOffset: 30
+        )
+        let warning = makeRun(
+            id: "00000000-0000-0000-0000-000000000002",
+            attention: .warning,
+            updatedOffset: 40
+        )
+        let action = makeRun(
+            id: "00000000-0000-0000-0000-000000000001",
+            attention: .actionRequired,
+            updatedOffset: 1
+        )
+
+        let sorted = ActiveRunPresentation.sorted(
+            [running, action, offline, starting, warning].map(RunSummaryModel.init)
+        )
+
+        XCTAssertEqual(
+            sorted.map(\.id),
+            [action.id, warning.id, offline.id, starting.id, running.id]
+        )
+
+        let laterID = makeRun(
+            id: "00000000-0000-0000-0000-000000000012",
+            updatedOffset: 50
+        )
+        let earlierID = makeRun(
+            id: "00000000-0000-0000-0000-000000000011",
+            updatedOffset: 50
+        )
+        XCTAssertTrue(ActiveRunPresentation.orderedBefore(earlierID, laterID))
+    }
+
+    func testSystemSummaryReportsActualIssuesAndLatestConfirmation() {
+        let healthy = makeRun(
+            id: "00000000-0000-0000-0000-000000000021",
+            updatedOffset: 20
+        )
+        let warning = makeRun(
+            id: "00000000-0000-0000-0000-000000000022",
+            attention: .warning,
+            updatedOffset: 40
+        )
+        let offline = makeRun(
+            id: "00000000-0000-0000-0000-000000000023",
+            health: .offline,
+            updatedOffset: 30
+        )
+
+        let summary = ActiveSystemSummary(runs: [healthy, warning, offline])
+
+        XCTAssertEqual(summary.activeCount, 3)
+        XCTAssertEqual(summary.issueCount, 2)
+        XCTAssertEqual(summary.lastConfirmedAt, warning.updatedAt)
+        XCTAssertFalse(summary.isHealthy)
+        XCTAssertTrue(ActiveSystemSummary(runs: [healthy]).isHealthy)
+        XCTAssertFalse(ActiveSystemSummary(runs: []).isHealthy)
+    }
+
+    private func makeRun(
+        id: String,
+        execution: ExecutionStatus = .running,
+        health: HealthStatus = .healthy,
+        attention: AttentionStatus = .none,
+        updatedOffset: TimeInterval
+    ) -> RunSnapshot {
+        let startedAt = PreviewFixtures.baseDate
+        return RunSnapshot(
+            id: UUID(uuidString: id)!,
+            machineID: "machine_test",
+            machineName: "Test Mac",
+            title: "Test run",
+            executionStatus: execution,
+            healthStatus: health,
+            attentionStatus: attention,
+            progress: nil,
+            phase: nil,
+            safeMessage: nil,
+            startedAt: startedAt,
+            updatedAt: startedAt.addingTimeInterval(updatedOffset),
+            endedAt: nil,
+            estimatedEndAt: nil,
+            exitCode: nil,
+            safeLogTail: nil,
+            sequence: Int(updatedOffset)
+        )
+    }
+}
+
+@MainActor
+final class SettingsOnboardingMachinesFoundationTests: XCTestCase {
+    func testAdvancedDataHasDedicatedSettingsRoute() {
+        let router = AppRouter()
+
+        router.settingsPath.append(.advancedData)
+
+        XCTAssertEqual(router.settingsPath, [.advancedData])
+        XCTAssertNotEqual(AppRoute.advancedData, .machines)
+    }
+
+    func testAdvancedDataKeepsExactlyTheExistingDangerActions() {
+        XCTAssertEqual(
+            SettingsLifecycleAction.allCases.map(\.accessibilityIdentifier),
+            [
+                "settings.resetDevice",
+                "settings.resetLocalOnly",
+                "settings.deleteWorkspace"
+            ]
+        )
+    }
+
+    func testSettingsConnectionSummaryUsesConfirmedRefreshAndCacheSemantics() {
+        XCTAssertEqual(
+            SettingsConnectionState.resolve(loadState: .loaded, isRefreshing: false),
+            .confirmed
+        )
+        XCTAssertEqual(
+            SettingsConnectionState.resolve(loadState: .loaded, isRefreshing: true),
+            .refreshing
+        )
+        XCTAssertEqual(
+            SettingsConnectionState.resolve(loadState: .offline("cached"), isRefreshing: false),
+            .cached
+        )
+        XCTAssertEqual(
+            SettingsConnectionState.resolve(loadState: .failed("unavailable"), isRefreshing: false),
+            .unavailable
+        )
+    }
+
+    func testOnboardingHasFourOrderedSteps() {
+        XCTAssertEqual(
+            OnboardingStep.allCases,
+            [.welcome, .region, .notifications, .pairMac]
+        )
+        XCTAssertEqual(OnboardingStep.welcome.next, .region)
+        XCTAssertEqual(OnboardingStep.region.next, .notifications)
+        XCTAssertEqual(OnboardingStep.notifications.next, .pairMac)
+        XCTAssertNil(OnboardingStep.pairMac.next)
+    }
+
+    func testMachineVisualStateDoesNotClaimOnlinePresence() {
+        let now = Date(timeIntervalSince1970: 10_000)
+
+        XCTAssertEqual(
+            MachineReceivingVisualState.resolve(
+                isSubscribed: true,
+                lastSeenAt: now.addingTimeInterval(-30),
+                now: now
+            ),
+            .recentConfirmation
+        )
+        XCTAssertEqual(
+            MachineReceivingVisualState.resolve(
+                isSubscribed: true,
+                lastSeenAt: now.addingTimeInterval(-601),
+                now: now
+            ),
+            .awaitingConfirmation
+        )
+        XCTAssertEqual(
+            MachineReceivingVisualState.resolve(
+                isSubscribed: false,
+                lastSeenAt: now,
+                now: now
+            ),
+            .updatesDisabled
+        )
     }
 }
 

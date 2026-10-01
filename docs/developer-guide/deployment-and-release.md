@@ -33,10 +33,14 @@ deploys the exact commit SHA that passed CI.
 6. Deploy backward-compatible Server and protocol changes before releasing
    clients that depend on them.
 
-The PyPI and TestFlight workflows enforce the third and fourth rules before
-they access a publishing environment: the release commit must be an ancestor
-of `main`, and GitHub Actions must report a successful `CI` push run for that
-exact SHA. Human review remains required by the publishing environments.
+PyPI continues to require `main`. TestFlight also permits the user-selected
+`codex/ios-signal-buoy-v3` iOS baseline, without merging it into `main` or
+deploying the Server. For this iOS-only route, rules 3 and 4 use
+`origin/codex/ios-signal-buoy-v3`: create the tag explicitly at its clean,
+successfully tested SHA. The TestFlight workflow requires both ancestry on
+one of these two named branches and a successful `CI` **push** run for that
+exact SHA on the same branch. A PR run or an unrelated branch is insufficient.
+Existing publishing-environment protections still apply.
 
 ## Normal development flow
 

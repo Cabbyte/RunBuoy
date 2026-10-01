@@ -13,9 +13,11 @@ enum AppTab: String, CaseIterable, Identifiable {
 enum AppRoute: Hashable {
     case runDetail(UUID)
     case machines
+    case pluginConnections
     case machine(String)
     case pairMachine
     case capabilityDemo
+    case advancedData
 }
 
 @MainActor
@@ -26,6 +28,7 @@ final class AppRouter {
     var historyPath: [AppRoute] = []
     var settingsPath: [AppRoute] = []
     var pendingPairingCode: PairingCode?
+    var pendingPluginConnection: PluginConnectionCode?
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme?.lowercased() == "runbuoy" else {
@@ -33,6 +36,12 @@ final class AppRouter {
         }
 
         switch url.host?.lowercased() {
+        case "connect":
+            guard let code = try? PluginConnectionCode.decode(url.absoluteString) else { return false }
+            pendingPluginConnection = code
+            selectedTab = .settings
+            settingsPath = [.pluginConnections]
+            return true
         case "pair":
             guard let pairingCode = try? PairingCode.decode(url.absoluteString) else {
                 return false

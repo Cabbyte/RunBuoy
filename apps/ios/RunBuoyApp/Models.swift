@@ -123,8 +123,12 @@ struct RunProgress: Codable, Hashable, Sendable {
     }
 
     var boundedFraction: Double? {
-        guard kind == .determinate, let fraction else { return nil }
-        return min(max(fraction, 0), 1)
+        RunProgressVisualState.trustedFraction(
+            progressKind: kind.rawValue,
+            current: current,
+            total: total,
+            fraction: fraction
+        )
     }
 }
 

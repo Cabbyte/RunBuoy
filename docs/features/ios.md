@@ -91,19 +91,29 @@ App 有三个 Tab：
 
 ## 正在运行页
 
-每条活动 Run 显示：
+页面按信息层级显示：
+
+- System Summary：用当前 active 数量、需要注意的数量和 snapshots 最新 `updatedAt` 计算，不使用手机请求完成时间；
+- 一个确定性 Hero：按 action required → warning → stale/offline → starting/running → 最近确认时间 → stable UUID 排序；
+- Also Active：其余 active Run 使用紧凑卡片。
+
+每张卡片显示：
 
 - 标题；
 - 执行状态；
 - 电脑本地图标和 Server display name；
 - 阶段；
-- 确定进度条、整数百分比、current/total/unit，或不确定进度动画；
+- 只有 `kind=determinate` 且 finite `current/total/fraction`、`total > 0`、`current >= 0` 时才显示确定进度、百分比和 current/total/unit；否则 active Run 显示不确定进度；
 - 非 Healthy 健康状态和非 None 关注状态；
 - `startedAt → updatedAt` 的电脑确认执行时长；
 - 最后 `updatedAt` 的相对心跳时间。
 
-列表可下拉刷新，也有右上角刷新按钮。无活动 Run 时显示“All clear”；加载失败且无缓存时显示不可用状态。
+页面仅使用下拉刷新，不保留常驻刷新按钮。无活动 Run 时显示“All clear”；加载失败且无缓存时显示不可用状态。
 点击进入详情。
+
+Status resolver 在 App、Widget 和 Demo 共用同一语义顺序：terminal outcome 优先；active Run 才可能被
+stale/offline、action required、warning 覆盖；未知值保持 neutral，绝不伪装为 Running。只有真实 Running
+允许 live glow；stale、offline、attention 和所有终态均保持静止。
 
 ## 历史页
 
@@ -112,8 +122,8 @@ App 有三个 Tab：
 - Recent Runs：`SUCCEEDED`、`FAILED`、`CANCELLED`、`LOST` 等非活动 Run。
 - Recent Messages：CLI/API/Webhook 创建的通知记录。
 
-两区各自默认显示前 5 条；超过 5 条时可“显示其余”或收起。Server 每次最多返回 200 Run 和 200 Message，
-App 不做分页，因此“全部”是当前已加载集合，不代表无限历史。
+两区各自默认显示前 5 条；超过 5 条时可“显示其余”或收起。Run 和 Message 分别维护稳定 cursor，支持按当前
+电脑过滤条件继续加载；“全部”仍表示当前已加载集合，不代表无限历史。
 
 ### 按电脑过滤
 
@@ -140,19 +150,20 @@ Message 只在“全部”中出现。
 
 ### 概览
 
-- 标题和电脑名；
-- execution、health badge；
-- 非 None attention badge；
-- 确定/不确定进度、phase、current/total/unit。
+- Hero：标题、电脑名、共享 status badge 和可信确定/不确定进度；
+- stale/offline/action required/warning 使用文字、SF Symbol 和 tone，不只依赖颜色；
+- Latest Confirmed Update 只显示明确 opt-in 的 safe message；
+- Elapsed、Last Confirmed、Started、Updated、Ended 等 metrics 会在大字体时改为单列。
 
 ### 时间线
 
-- Elapsed：活动 Run 每秒用 iPhone 当前时间临时刷新 `startedAt → now`；终态用 `startedAt → endedAt`。
+- Elapsed：只有健康 active Run 会向前更新；stale/offline/非活动 Run 冻结在 `updatedAt`，终态优先冻结在 `endedAt`，不会把旧确认伪装成实时进度。
 - Explicit ETA：只有 snapshot 明确带 `estimated_end_at` 才显示。
 - Started、Updated、Ended；
 - Exit Code。
 
-这里活动详情的 elapsed 是 UI 计时显示，与 Live Activity 的“仅电脑确认时长”不同；状态本身仍来自 Server。
+App 与 Live Activity 都以电脑确认时间为真值边界；手机可以格式化显示，但不能从百分比推导 ETA，也不能让
+stale/offline/terminal 的时间或进度继续推进。
 
 ### 安全消息
 
@@ -184,8 +195,15 @@ Message 只在“全部”中出现。
 
 只有两个本地分享动作：
 
-- 复制 Run UUID；
-- 调用系统 Share Sheet 分享标题、电脑名、原始状态值和可选 safe message。
+- Copy Summary；
+- Share Summary（系统 Share Sheet）。
+
+两个动作使用同一份纯 `SafeRunSummary`，只包含标题、电脑、localized execution、非空 phase、可信进度、
+last confirmed 和用户允许的 safe message；明确排除 Run ID、命令、路径、环境变量、token、raw log/source/feed。
+Unavailable 状态不显示 summary actions。
+
+Run UUID 只在默认折叠的 Technical Details 中显示和复制；`run.copyID` 只代表这里的 Run ID 操作，不能改义为
+Copy Summary。
 
 没有取消、重试、批准、回复、attach、terminal 或打开电脑的按钮。
 
@@ -198,9 +216,10 @@ Message 只在“全部”中出现。
 - Server display name；
 - platform、CLI version；
 - last seen；
-- 当前 Device 是否仍有 subscription。
+- 当前 Device 是否仍有 subscription；
+- Receiving updates / Recent confirmation / Updates Off。它们只表达 subscription 和最后确认事实，不声称电脑实时 Online。
 
-未订阅电脑显示 bell-slash/警告标记。右上角可以刷新、输入配对码或扫描新 QR。
+未订阅电脑显示 bell-slash/警告标记。配对使用明确的 Pair New Machine 主 CTA，进入系统扫描或手动码流程。
 
 ### 详情
 
@@ -257,16 +276,20 @@ runbuoy config set --machine-name "Build Mac"
 
 保存为 iPhone 本地 `@AppStorage`，Server patch 不包含这一字段。当前它会：
 
-- 隐藏详情的 safe message 独立分区；
-- 隐藏历史页全部 Rich Message 分区。
+- 隐藏详情的 Latest Confirmed Update safe message；
+- 隐藏历史页全部 Rich Message；
+- 隐藏 Technical Details feed 中的 event message；
+- 从 Copy/Share Summary 中排除 safe message。
 
-但当前实现仍可能在 Run Feed 事件中显示 event message，分享摘要也会加入 Run 的 safe message。
-因此它不是“彻底隐藏所有安全消息”的隐私总开关。
+safe log tail 是电脑端明确 opt-in 的另一种脱敏片段，不等同于完整日志，也不受该显示偏好改写为 raw log。
 
 ### Storage
 
-“清除本地缓存”删除 App Support 中带文件保护的 `read-cache.json`，并清空当前内存列表。
+“清除本地缓存”位于 Settings → Advanced & Data，删除 App Support 中带文件保护的 `read-cache.json`，并清空当前内存列表。
 它不解除配对、不删除 Keychain、不删 Server 数据；下一次前台自动刷新会重新下载有权读取的数据。
+
+Advanced & Data 也承载 Reset This iPhone、Reset Local Data Only、Delete All Cloud Data。三者分别确认、认证、
+loading 和成功/失败，不能合并语义。页面明确说明这些数据操作不会停止、重试或控制 Mac 上的 Run。
 
 ### About
 
@@ -279,7 +302,7 @@ runbuoy config set --machine-name "Build Mac"
 - 检查 Live Activity 系统开关和通知权限；
 - 能跳转 iOS 系统设置；
 - 创建一个不使用 push token 的本机 ActivityKit Activity；
-- 状态可按顺序或菜单切换：Starting → Indeterminate → 72% Progress → Warning → Stale → Succeeded；
+- 同一 Activity 的连续状态按 Running 35% → Running 72%（含 phase）→ Warning → Stale → Succeeded；
 - 菜单也能直接选择 Failed；
 - 终态在约 60 秒后按 demo dismissal policy 清除；
 - 可立即停止并清除所有 demo activities；
@@ -288,11 +311,39 @@ runbuoy config set --machine-name "Build Mac"
 Demo 属性包含独立 marker，`ActivityTokenCoordinator.shouldSynchronize` 会排除它，因此不注册到 Server，
 也不创建 Run。页面底部只是解释真实链路。
 
+## 自动化与无障碍契约
+
+稳定 accessibility identifiers 是 UI automation 的公开契约，不能用本地化 label 代替 selector。核心包括：
+
+- Tabs/screens：`tab.activeRuns`、`tab.history`、`tab.settings`、`screen.activeRuns`、`screen.history`、
+  `screen.settings`、`screen.runDetail`、`screen.machines`、`screen.advancedData`、`screen.capabilityDemo`；
+- Run/History：`run.row.<uuid>`、`run.timing.execution`、`run.timing.heartbeat`、`history.filter.*`、
+  `history.message.<id>`、`history.runs.loadMore`、`history.messages.loadMore`；
+- Detail：`run.copySummary`、`run.shareSummary`、`run.summaryActions`、`run.technicalDetails`，以及仅复制 UUID 的
+  `run.copyID`；
+- Settings/Machines/Onboarding/Demo：保留 `settings.*`、`machine.row.*`、`pairing.*`、`onboarding.*`、`demo.*`
+  既有 identifier。
+
+合并前测试矩阵至少覆盖：
+
+- shared status priority、unknown、terminal/no-glow、trusted/untrusted progress、Hero 稳定排序；
+- loaded/multi-active/empty/offline/hard failure，History 同步过滤/展开/分页；
+- Detail determinate/indeterminate/stale/offline/terminal/unavailable、安全摘要字段排除和 Technical Details 边界；
+- Settings persistence、Advanced 三个危险操作、四步 onboarding、pair/stop receiving/revoke；
+- ActivityKit starting/running/warning/action-required/stale/offline/succeeded/failed/cancelled/lost，以及 Lock Screen 和
+  Dynamic Island compact/expanded/minimal；
+- en-US/zh-Hans key 和 placeholder parity、核心 UI smoke、`performAccessibilityAudit`、44pt target、Dynamic Type、
+  Increase Contrast、Reduce Transparency、Reduce Motion。
+
+UI test launcher 为确定性测试关闭 UIView 动画，因此真实 motion policy 必须另用启用动画的 Simulator/真机验收；
+Simulator 也不能替代 camera、APNs/token rotation、签名后的 Lock Screen/Dynamic Island 和通知交付真机测试。
+
 ## 刷新、缓存和离线
 
 ### 自动刷新
 
-完成引导、App 在前台且不是 UI Preview 时，每 3 秒：
+完成引导、App 在前台且不是 UI Preview 时，active 状态基础间隔 10 秒、idle 基础间隔 30 秒；请求失败会自适应
+backoff，恢复成功后回到基础间隔。每轮：
 
 1. 并行 GET runs、machines、notifications；
 2. 更新内存模型；
@@ -305,7 +356,6 @@ Demo 属性包含独立 marker，`ActivityTokenCoordinator.shouldSynchronize` �
 
 - App 切回 active；
 - 下拉刷新；
-- 页面刷新按钮；
 - 前台收到通知；
 - 用户点通知；
 - 启动完成。

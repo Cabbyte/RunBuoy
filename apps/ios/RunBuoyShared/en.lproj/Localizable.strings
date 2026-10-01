@@ -162,9 +162,14 @@
 "machines.title" = "Machines";
 "machines.intro" = "Pair the computers that can securely send run status to this iPhone.";
 "machines.paired" = "Paired Machines";
+"machines.paired_count.one" = "%d paired machine";
+"machines.paired_count.other" = "%d paired machines";
+"machines.awaiting_confirmation_count" = "%d not recently confirmed";
+"machines.recent_confirmation_count" = "%d recently confirmed";
+"machines.updates_off_count" = "%d with updates off";
 "machines.footer" = "Pull to refresh machine availability. Pairing and notification preferences stay private to this workspace.";
 "machines.unavailable" = "Machines are unavailable right now.";
-"machines.last_seen_prefix" = "Last seen";
+"machines.last_seen_prefix" = "Last heard";
 "machines.updates_off" = "Updates Off";
 "machines.online" = "Online";
 "machines.idle" = "Idle";
@@ -263,7 +268,7 @@
 "run.started" = "Started";
 "run.timeline" = "Timing";
 "run.unavailable" = "Run unavailable";
-"run.updated" = "Updated";
+"run.updated" = "Snapshot Updated";
 "runs.active" = "Active Runs";
 "runs.active_empty" = "All clear";
 "runs.active_empty_description" = "There are no active runs right now.";
@@ -299,6 +304,7 @@
 "settings.region" = "Data Region";
 "settings.region_locked" = "The selected data region cannot be changed.";
 "settings.server" = "Server";
+"settings.server_accessibility_value" = "Server: %@";
 "settings.storage" = "Storage";
 "settings.support" = "Support";
 "settings.title" = "Settings";
@@ -345,3 +351,91 @@
 "widget.terminal_time" = "Time since run ended";
 "widget.explicit_eta" = "Estimated finish %@";
 "widget.progress" = "Progress";
+"demo.step.running_35" = "Running: 35%";
+"demo.step.running_35_explanation" = "The first confirmed update continues the same Live Activity without inventing an estimate.";
+"machines.receiving_updates" = "Receiving updates";
+"machines.recent_confirmation" = "Recently confirmed";
+"onboarding.benefit_confirmed" = "Confirmed progress";
+"onboarding.benefit_native" = "Native at a glance";
+"onboarding.benefit_privacy" = "Privacy by design";
+"onboarding.hero_body" = "Confirmed progress from terminal to iPhone — without raw logs or remote control.";
+"onboarding.hero_title" = "Stay with every long run";
+"run.copy_summary" = "Copy Summary";
+"run.last_confirmed" = "Last Confirmed";
+"run.latest_confirmed_update" = "Last Received Safe Message";
+"run.safe_fields_only" = "Safe fields only";
+"run.safety_boundary" = "Safe fields only. Raw logs, commands, paths, environment variables, and secrets are never shown.";
+"run.state.action_required" = "The machine reported that attention is required.";
+"run.state.cancelled" = "Cancelled is final. Any progress shown is the last value confirmed before cancellation.";
+"run.state.offline" = "Showing cached data from the last confirmed update. Live emphasis is off.";
+"run.state.stale" = "Showing the last confirmed update. Progress is no longer advancing.";
+"run.state.warning" = "The machine reported a warning. Check the latest confirmed update.";
+"run.summary.execution" = "Execution";
+"run.summary.title" = "Title";
+"run.technical_details" = "Technical Details";
+"runs.also_active" = "Also Active";
+"runs.system_summary.healthy" = "%lld active · no attention reported";
+"runs.system_summary.issues" = "%1$lld active · %2$lld need attention";
+"settings.advanced_data" = "Advanced & Data";
+"settings.connection_awaiting" = "Awaiting confirmation";
+"settings.connection_cached" = "Offline · showing saved data";
+"settings.connection_confirmed" = "Phone connected to server";
+"settings.connection_last_confirmed" = "Last server sync";
+"settings.connection_refreshing" = "Refreshing";
+"settings.connection_unavailable" = "Connection unavailable";
+"settings.destructive_actions" = "Destructive Actions";
+"settings.local_data" = "Local Data";
+"settings.machines_count_suffix" = "machines";
+"settings.machines_paired_suffix" = "paired";
+"settings.read_only_boundary" = "These actions never stop, retry, or control a run on a Mac.";
+"settings.safe_data_only" = "Safe data only";
+"settings.safe_data_only_description" = "Summaries exclude raw logs, commands, paths, environment variables, source code, and complete output.";
+
+"machines.awaiting_confirmation" = "Not recently confirmed";
+
+"machines.updates_on" = "Updates On";
+
+"machines.confirmation_boundary" = "Computer confirmation is separate from this iPhone’s server connection.";
+
+"run.last_reported_progress" = "Last reported progress";
+
+"run.message_reported" = "Message reported";
+
+"run.snapshot_confirmed" = "Snapshot confirmed";
+
+"run.final_result_reported" = "Final result received";
+
+"run.state.failed" = "This run has ended. Progress shows the last reported value.";
+
+"runs.phone_synced" = "Phone synced";
+
+"runs.confirmation_hint" = "Computer confirmation times are shown on each task.";
+
+// ChatGPT connections
+"plugin.title" = "Connected apps";
+"plugin.new" = "Connect ChatGPT";
+"plugin.scan" = "Scan connection QR code";
+"plugin.paste" = "Paste a RunBuoy connection link";
+"plugin.review" = "Review connection";
+"plugin.empty" = "No active connections confirmed by this iPhone.";
+"plugin.read_only" = "Read-only access";
+"plugin.created" = "Connected";
+"plugin.expires" = "Expires";
+"plugin.revoke" = "Revoke connection";
+"plugin.reload" = "Refresh connections";
+"plugin.footer" = "Connections expire after 30 days. Resetting this device also revokes its connections.";
+"plugin.loading" = "Loading connections";
+"plugin.revoke_confirm" = "Revoke this connection?";
+"plugin.revoke_effect" = "Further access from this connection will be denied. Data already shared in a conversation remains in that conversation.";
+"plugin.source" = "RunBuoy server";
+"plugin.workspace" = "Workspace";
+"plugin.permissions" = "Read Runs, machines and messages, including explicitly shared log excerpts. No remote execution permission.";
+"plugin.expired" = "This request has expired or has already been decided. Start a new connection from ChatGPT.";
+"plugin.allow" = "Allow read-only access";
+"plugin.deny" = "Deny";
+"plugin.confirm" = "Confirm ChatGPT connection";
+"plugin.confirm_footer" = "Only confirm a connection you just started in ChatGPT. The workspace shown above will be shared.";
+"plugin.allowed" = "Connected. Return to ChatGPT to finish.";
+"plugin.denied" = "Connection denied.";
+"plugin.unavailable" = "This connection is unavailable. Check the link and whether this workspace is enrolled in the private preview.";
+"plugin.share_workspace" = "Share or copy workspace ID";

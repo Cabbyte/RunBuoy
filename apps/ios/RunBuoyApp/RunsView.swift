@@ -4,48 +4,54 @@ import SwiftUI
 struct ActiveRunsView: View {
     @Environment(RunBuoyStore.self) private var store
 
+    private var sortedModels: [RunSummaryModel] {
+        ActiveRunPresentation.sorted(store.activeRunModels)
+    }
+
     private var isEmpty: Bool {
-        store.activeRunModels.isEmpty
+        sortedModels.isEmpty
     }
 
     var body: some View {
-        List {
-            if case .offline(let message) = store.state {
-                OfflineBanner(message: message)
-                    .listRowSeparator(.hidden)
-            }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 14) {
+                if case .offline(let message) = store.state {
+                    OfflineBanner(message: message)
+                }
 
-            if !store.activeRunModels.isEmpty {
-                Section {
-                    ForEach(store.activeRunModels) { model in
-                        NavigationLink(value: AppRoute.runDetail(model.id)) {
-                            RunRow(model: model, showsLiveTiming: true)
+                if let hero = sortedModels.first {
+                    ActiveSystemSummaryCard(
+                        runs: sortedModels.map(\.snapshot),
+                        lastSyncedAt: store.lastRefreshAt
+                    )
+                    ActiveRunHeroLink(model: hero)
+
+                    let secondary = Array(sortedModels.dropFirst())
+                    if !secondary.isEmpty {
+                        Text("runs.also_active")
+                            .font(.caption.weight(.semibold))
+                            .runBuoySecondaryText()
+                            .textCase(.uppercase)
+                        ForEach(secondary) { model in
+                            ActiveRunCompactLink(model: model)
                         }
-                        .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
                     }
+                } else if store.state == .loading {
+                    ActiveRunsLoadingSkeleton()
+                } else {
+                    ActiveRunsEmptyState(state: store.state, retry: refresh)
+                        .frame(maxWidth: .infinity, minHeight: 360)
                 }
             }
+            .padding(.horizontal)
+            .padding(.bottom)
         }
-        .listStyle(.insetGrouped)
+        .runBuoyCanvas()
+        .runBuoyBottomScrollEdgeStyle()
         .accessibilityIdentifier("screen.activeRuns")
         .navigationTitle("runs.active")
-        .overlay {
-            if store.state == .loading, isEmpty {
-                ProgressView("runs.loading")
-            } else if isEmpty {
-                ActiveRunsEmptyState(state: store.state, retry: refresh)
-            }
-        }
         .refreshable { await reload() }
         .task { await loadIfNeeded() }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                RefreshButton(
-                    isRefreshing: store.isRefreshing,
-                    action: refresh
-                )
-            }
-        }
     }
 
     private func refresh() {
@@ -59,6 +65,220 @@ struct ActiveRunsView: View {
 
     private func reload() async {
         await store.refresh()
+    }
+}
+
+enum ActiveRunPresentation {
+    @MainActor
+    static func sorted(_ models: [RunSummaryModel]) -> [RunSummaryModel] {
+        models.sorted { orderedBefore($0.snapshot, $1.snapshot) }
+    }
+
+    static func orderedBefore(_ lhs: RunSnapshot, _ rhs: RunSnapshot) -> Bool {
+        let leftRank = rank(lhs)
+        let rightRank = rank(rhs)
+        if leftRank != rightRank { return leftRank < rightRank }
+        if lhs.updatedAt != rhs.updatedAt { return lhs.updatedAt > rhs.updatedAt }
+        return lhs.id.uuidString < rhs.id.uuidString
+    }
+
+    static func rank(_ run: RunSnapshot) -> Int {
+        if run.attentionStatus == .actionRequired { return 0 }
+        if run.attentionStatus == .warning { return 1 }
+        if run.healthStatus == .stale || run.healthStatus == .offline { return 2 }
+        if run.executionStatus == .starting || run.executionStatus == .running { return 3 }
+        return 4
+    }
+}
+
+struct ActiveSystemSummary: Equatable {
+    let activeCount: Int
+    let issueCount: Int
+    let lastConfirmedAt: Date?
+
+    init(runs: [RunSnapshot]) {
+        activeCount = runs.count
+        issueCount = runs.filter {
+            let kind = $0.statusVisualState.kind
+            return kind == .actionRequired || kind == .warning || kind == .stale || kind == .offline
+        }.count
+        lastConfirmedAt = runs.map(\.updatedAt).max()
+    }
+
+    var isHealthy: Bool { activeCount > 0 && issueCount == 0 }
+}
+
+private struct ActiveSystemSummaryCard: View {
+    let summary: ActiveSystemSummary
+    let lastSyncedAt: Date?
+
+    init(runs: [RunSnapshot], lastSyncedAt: Date?) {
+        summary = ActiveSystemSummary(runs: runs)
+        self.lastSyncedAt = lastSyncedAt
+    }
+
+    var body: some View {
+        RunStateBanner(
+            tone: summary.isHealthy ? .live : (summary.issueCount > 0 ? .warning : .neutral),
+            symbol: summary.isHealthy ? "waveform.path.ecg" : "exclamationmark.triangle.fill"
+        ) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(summaryTitle)
+                    .font(.subheadline.weight(.semibold))
+                if let lastSyncedAt {
+                    Text("\(String(localized: "runs.phone_synced")) \(lastSyncedAt.formatted(.relative(presentation: .named)))")
+                        .font(.caption)
+                        .runBuoySecondaryText()
+                }
+                Text("runs.confirmation_hint")
+                    .font(.caption)
+                    .runBuoySecondaryText()
+            }
+        }
+        .accessibilityIdentifier("activeRuns.systemSummary")
+    }
+
+    private var summaryTitle: String {
+        if summary.isHealthy {
+            return String(
+                format: String(localized: "runs.system_summary.healthy"),
+                summary.activeCount
+            )
+        }
+        return String(
+            format: String(localized: "runs.system_summary.issues"),
+            summary.activeCount,
+            summary.issueCount
+        )
+    }
+}
+
+private struct ActiveRunHeroLink: View {
+    let model: RunSummaryModel
+
+    var body: some View {
+        NavigationLink(value: AppRoute.runDetail(model.id)) {
+            ActiveRunHero(run: model.snapshot)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
+    }
+}
+
+private struct ActiveRunHero: View {
+    let run: RunSnapshot
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    var body: some View {
+        RunHeroCard(
+            tone: run.statusVisualState.tone,
+            allowsLiveEmphasis: run.statusVisualState.kind == .running
+                && run.statusVisualState.allowsLiveEmphasis
+        ) {
+            VStack(alignment: .leading, spacing: 14) {
+                Group {
+                    if dynamicTypeSize.isAccessibilitySize {
+                        VStack(alignment: .leading, spacing: 8) { status; title }
+                    } else {
+                        HStack(alignment: .firstTextBaseline, spacing: 10) { status; title }
+                    }
+                }
+                Label {
+                    Text(run.machineName)
+                } icon: {
+                    MachineIconImage(machineID: run.machineID).accessibilityHidden(true)
+                }
+                .font(.subheadline)
+                RunProgressView(
+                    progress: run.progress,
+                    phase: run.phase,
+                    status: run.statusVisualState,
+                    emphasis: .prominent
+                )
+                ActiveRunTiming(run: run)
+            }
+            .accessibilityElement(children: .combine)
+        }
+    }
+
+    private var status: some View {
+        StatusBadge(presentation: StatusPresentation(visualState: run.statusVisualState), showsLabel: true)
+    }
+
+    private var title: some View {
+        Text(run.title)
+            .font(.headline)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+private struct ActiveRunCompactLink: View {
+    let model: RunSummaryModel
+
+    var body: some View {
+        NavigationLink(value: AppRoute.runDetail(model.id)) {
+            RunCompactCard(tone: model.snapshot.statusVisualState.tone) {
+                RunRow(model: model, showsLiveTiming: true)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
+    }
+}
+
+private struct ActiveRunTiming: View {
+    let run: RunSnapshot
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 16) { runtime; confirmed }
+            VStack(alignment: .leading, spacing: 6) { runtime; confirmed }
+        }
+        .font(.caption)
+    }
+
+    private var runtime: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "timer").accessibilityHidden(true)
+            (
+                Text("run.execution_time")
+                    + Text(" \(RunDurationText.string(from: run.startedAt, to: run.updatedAt))")
+                    .fontWeight(.semibold)
+            )
+            .font(.caption)
+            .foregroundStyle(.primary)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("run.timing.execution")
+    }
+
+    private var confirmed: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "waveform.path.ecg").accessibilityHidden(true)
+            (
+                Text("run.last_confirmed")
+                    + Text(" \(run.updatedAt, format: .relative(presentation: .named))")
+                    .fontWeight(.semibold)
+            )
+            .font(.caption)
+            .foregroundStyle(.primary)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("run.timing.heartbeat")
+    }
+}
+
+private struct ActiveRunsLoadingSkeleton: View {
+    var body: some View {
+        VStack(spacing: 14) {
+            ForEach([56.0, 230.0, 116.0], id: \.self) { height in
+                RoundedRectangle(cornerRadius: RunBuoyMetrics.cardCornerRadius)
+                    .fill(.quaternary)
+                    .frame(height: height)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("runs.loading")
     }
 }
 
@@ -136,18 +356,6 @@ struct RunHistoryView: View {
         historyListWithFilter
         .accessibilityIdentifier("screen.history")
         .navigationTitle("history.title")
-        .overlay {
-            if store.state == .loading, isEmpty {
-                ProgressView("history.loading")
-            } else if isEmpty {
-                HistoryEmptyState(
-                    state: store.state,
-                    machineID: selectedMachineID,
-                    machineName: selectedMachineName,
-                    retry: refresh
-                )
-            }
-        }
         .refreshable { await reload() }
         .task { await loadIfNeeded() }
         .onChange(of: selectedMachineID) { _, _ in
@@ -162,105 +370,96 @@ struct RunHistoryView: View {
             }
             self.selectedMachineID = nil
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                RefreshButton(
-                    isRefreshing: store.isRefreshing,
-                    action: refresh
-                )
-            }
-        }
     }
 
     private var historyList: some View {
-        List {
-            if case .offline(let message) = store.state {
-                OfflineBanner(message: message)
-                    .listRowSeparator(.hidden)
-            }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 14, pinnedViews: [.sectionHeaders]) {
+                Section {
+                    if case .offline(let message) = store.state {
+                        OfflineBanner(message: message)
+                    }
 
-            if !filteredRunModels.isEmpty || store.canLoadMoreRuns(machineID: selectedMachineID) {
-                Section("runs.recent") {
-                    ForEach(visibleRunModels) { model in
-                        NavigationLink(value: AppRoute.runDetail(model.id)) {
-                            RunRow(model: model)
+                    if !filteredRunModels.isEmpty || store.canLoadMoreRuns(machineID: selectedMachineID) {
+                        HistorySectionTitle("runs.recent")
+                        ForEach(visibleRunModels) { model in
+                            NavigationLink(value: AppRoute.runDetail(model.id)) {
+                                RunCompactCard(tone: model.snapshot.statusVisualState.tone) {
+                                    RunRow(model: model)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
                         }
-                        .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
-                    }
-                    HistoryExpansionButton(
-                        totalCount: filteredRunModels.count,
-                        isExpanded: $areRunsExpanded
-                    )
-                    if store.canLoadMoreRuns(machineID: selectedMachineID) {
-                        HistoryLoadMoreButton(
-                            isLoading: store.isLoadingMoreRuns,
-                            accessibilityID: "history.runs.loadMore"
-                        ) {
-                            await store.loadMoreHistoryRuns(machineID: selectedMachineID)
-                            areRunsExpanded = true
-                        }
-                    }
-                }
-            }
-
-            if !filteredMessages.isEmpty || store.canLoadMoreMessages(machineID: selectedMachineID) {
-                Section("runs.messages") {
-                    ForEach(visibleMessages) { message in
-                        RichMessageRow(message: message)
-                            .accessibilityIdentifier("history.message.\(message.id)")
-                    }
-                    HistoryExpansionButton(
-                        totalCount: filteredMessages.count,
-                        isExpanded: $areMessagesExpanded
-                    )
-                    if store.canLoadMoreMessages(machineID: selectedMachineID) {
-                        HistoryLoadMoreButton(
-                            isLoading: store.isLoadingMoreMessages,
-                            accessibilityID: "history.messages.loadMore"
-                        ) {
-                            await store.loadMoreHistoryMessages(machineID: selectedMachineID)
-                            areMessagesExpanded = true
+                        HistoryExpansionButton(
+                            totalCount: filteredRunModels.count,
+                            isExpanded: $areRunsExpanded
+                        )
+                        if store.canLoadMoreRuns(machineID: selectedMachineID) {
+                            HistoryLoadMoreButton(
+                                isLoading: store.isLoadingMoreRuns,
+                                accessibilityID: "history.runs.loadMore"
+                            ) {
+                                await store.loadMoreHistoryRuns(machineID: selectedMachineID)
+                                areRunsExpanded = true
+                            }
                         }
                     }
-                }
-            }
-        }
-        .listStyle(.insetGrouped)
-    }
 
-    @ViewBuilder
-    private var historyListWithFilter: some View {
-#if compiler(>=6.2)
-        if #available(iOS 26.0, *), !machineOptions.isEmpty {
-            historyList
-                .safeAreaBar(edge: .top) {
-                    HistoryMachineFilterBar(
-                        options: machineOptions,
-                        selection: $selectedMachineID
-                    )
-                }
-        } else {
-            historyListWithLegacyFilter
-        }
-#else
-        historyListWithLegacyFilter
-#endif
-    }
+                    if !filteredMessages.isEmpty || store.canLoadMoreMessages(machineID: selectedMachineID) {
+                        HistorySectionTitle("runs.messages")
+                        ForEach(visibleMessages) { message in
+                            HistoryMessageCard(message: message)
+                                .accessibilityIdentifier("history.message.\(message.id)")
+                        }
+                        HistoryExpansionButton(
+                            totalCount: filteredMessages.count,
+                            isExpanded: $areMessagesExpanded
+                        )
+                        if store.canLoadMoreMessages(machineID: selectedMachineID) {
+                            HistoryLoadMoreButton(
+                                isLoading: store.isLoadingMoreMessages,
+                                accessibilityID: "history.messages.loadMore"
+                            ) {
+                                await store.loadMoreHistoryMessages(machineID: selectedMachineID)
+                                areMessagesExpanded = true
+                            }
+                        }
+                    }
 
-    private var historyListWithLegacyFilter: some View {
-        historyList
-            .safeAreaInset(edge: .top, spacing: 0) {
-                if !machineOptions.isEmpty {
-                    VStack(spacing: 0) {
+                    if isEmpty, store.state == .loading {
+                        HistoryLoadingSkeleton()
+                    } else if isEmpty {
+                        HistoryEmptyState(
+                            state: store.state,
+                            machineID: selectedMachineID,
+                            machineName: selectedMachineName,
+                            retry: refresh
+                        )
+                        .frame(maxWidth: .infinity, minHeight: 320)
+                    }
+                } header: {
+                    if !machineOptions.isEmpty {
                         HistoryMachineFilterBar(
                             options: machineOptions,
                             selection: $selectedMachineID
                         )
-                        Divider()
+                        .padding(.horizontal, -16)
+                        .runBuoyCanvas()
                     }
-                    .background(.ultraThinMaterial)
                 }
             }
+            .padding(.horizontal)
+            .padding(.bottom)
+        }
+        .runBuoyCanvas()
+        .runBuoyBottomScrollEdgeStyle()
+    }
+
+    private var historyListWithFilter: some View {
+        // A native pinned header keeps the filter in the scroll layout instead
+        // of covering the navigation title with a top safe-area inset.
+        historyList
     }
 
     private func refresh() {
@@ -274,6 +473,55 @@ struct RunHistoryView: View {
 
     private func reload() async {
         await store.refresh()
+    }
+}
+
+private struct HistorySectionTitle: View {
+    let title: LocalizedStringKey
+
+    init(_ title: LocalizedStringKey) {
+        self.title = title
+    }
+
+    var body: some View {
+        Text(title)
+            .font(.caption.weight(.semibold))
+            .runBuoySecondaryText()
+            .textCase(.uppercase)
+            .padding(.top, 4)
+    }
+}
+
+private struct HistoryMessageCard: View {
+    let message: RichMessage
+
+    var body: some View {
+        RunCompactCard(tone: messageTone) {
+            RichMessageRow(message: message)
+        }
+    }
+
+    private var messageTone: RunBuoyTone {
+        switch message.level.lowercased() {
+        case "success": .success
+        case "warning": .warning
+        case "error", "failure", "critical": .critical
+        default: .neutral
+        }
+    }
+}
+
+private struct HistoryLoadingSkeleton: View {
+    var body: some View {
+        VStack(spacing: 10) {
+            ForEach(0..<3, id: \.self) { _ in
+                RoundedRectangle(cornerRadius: RunBuoyMetrics.compactCardCornerRadius)
+                    .fill(.quaternary)
+                    .frame(height: 110)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("history.loading")
     }
 }
 
@@ -408,46 +656,45 @@ struct HistoryContentFilter: Equatable {
 private struct HistoryMachineFilterBar: View {
     let options: [HistoryMachineOption]
     @Binding var selection: String?
-    @ScaledMetric(relativeTo: .subheadline) private var height = 54
+
+    private var rowCount: Int { options.count > 1 ? 2 : 1 }
 
     var body: some View {
         ScrollView(.horizontal) {
-            filterGroup
-                .padding(.horizontal)
-                .padding(.vertical, 8)
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(0..<rowCount, id: \.self) { row in
+                    filterRow(row)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 2)
         }
         .scrollIndicators(.hidden)
-        .frame(height: height)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
-    @ViewBuilder
-    private var filterGroup: some View {
-#if compiler(>=6.2)
-        if #available(iOS 26.0, *) {
-            GlassEffectContainer(spacing: 8) {
-                filterButtons
+    private func filterRow(_ row: Int) -> some View {
+        HStack(spacing: 6) {
+            if row == 0 {
+                filterButton(id: nil) {
+                    Text("history.all")
+                }
             }
-        } else {
-            filterButtons
-        }
-#else
-        filterButtons
-#endif
-    }
-
-    private var filterButtons: some View {
-        HStack(spacing: 8) {
-            filterButton(id: nil) {
-                Text("history.all")
-            }
-            ForEach(options) { option in
+            ForEach(
+                options.enumerated().filter { ($0.offset + 1) % rowCount == row },
+                id: \.element.id
+            ) { _, option in
                 filterButton(id: option.id) {
-                    Label {
-                        Text(option.name)
-                    } icon: {
+                    HStack(spacing: 4) {
                         MachineIconImage(machineID: option.id)
+                            .accessibilityHidden(true)
+                        Text(option.name)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                            .frame(maxWidth: 160, alignment: .leading)
                     }
                 }
+                .accessibilityLabel(option.name)
             }
         }
     }
@@ -458,56 +705,35 @@ private struct HistoryMachineFilterBar: View {
         @ViewBuilder label: () -> Content
     ) -> some View {
         let isSelected = selection == id
-        let button = Button {
+        Button {
             selection = id
         } label: {
-            label()
-                .font(.subheadline.weight(.semibold))
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
-                .foregroundStyle(Color.primary)
+            filterCapsule(label(), isSelected: isSelected)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
         }
-
-        Group {
-#if compiler(>=6.2)
-            if #available(iOS 26.0, *) {
-                if isSelected {
-                    button
-                        .buttonStyle(.glassProminent)
-                        .tint(.accentColor)
-                        .buttonBorderShape(.capsule)
-                } else {
-                    button
-                        .buttonStyle(.glass)
-                        .buttonBorderShape(.capsule)
-                }
-            } else {
-                legacyFilterButton(button, isSelected: isSelected)
-            }
-#else
-            legacyFilterButton(button, isSelected: isSelected)
-#endif
-        }
-        .controlSize(.regular)
+        .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .accessibilityIdentifier(id.map { "history.filter.\($0)" } ?? "history.filter.all")
     }
 
-    private func legacyFilterButton<ButtonContent: View>(
-        _ button: ButtonContent,
+    private func filterCapsule<Content: View>(
+        _ content: Content,
         isSelected: Bool
     ) -> some View {
-        button
-            .buttonStyle(.plain)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 9)
-            .contentShape(Capsule())
+        content
+            .font(.caption.weight(.semibold))
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
+            .foregroundStyle(Color.primary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
             .background {
                 Capsule()
                     .fill(
                         isSelected
-                            ? Color.accentColor.opacity(0.2)
-                            : Color.secondary.opacity(0.16)
+                            ? Color(.secondarySystemBackground)
+                            : Color(.tertiarySystemFill)
                     )
             }
             .overlay {
@@ -529,8 +755,15 @@ private struct ActiveRunsEmptyState: View {
             Text(description)
         } actions: {
             if state.isFailure {
-                Button("common.try_again", action: retry)
-                    .runBuoyProminentButtonStyle()
+                Button(action: retry) {
+                    Text("common.try_again")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 18)
+                        .frame(minHeight: 44)
+                        .background(Color.accentColor, in: Capsule())
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding()
@@ -640,6 +873,7 @@ private struct HistoryEmptyState: View {
 
 struct RichMessageRow: View {
     let message: RichMessage
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
@@ -649,31 +883,38 @@ struct RichMessageRow: View {
                     .accessibilityHidden(true)
                 Text(message.title)
                     .font(.headline)
+                    .accessibilityIdentifier("history.message.\(message.id).title")
                 Spacer()
                 Text(message.createdAt, format: .relative(presentation: .named))
                     .font(.caption)
                     .foregroundStyle(.primary)
+                    .accessibilityIdentifier("history.message.\(message.id).date")
             }
             if let subtitle = message.subtitle {
                 Text(subtitle)
                     .font(.subheadline.weight(.medium))
+                    .accessibilityIdentifier("history.message.\(message.id).subtitle")
             }
             Text(message.body)
                 .font(.body)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 10 : 6)
                 .textSelection(.enabled)
+                .accessibilityIdentifier("history.message.\(message.id).body")
             ForEach(message.fields) { field in
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(field.name)
+                        .accessibilityIdentifier("history.message.\(message.id).field.\(field.id).name")
                     Spacer(minLength: 8)
                     Text(field.value)
                         .multilineTextAlignment(.trailing)
+                        .accessibilityIdentifier("history.message.\(message.id).field.\(field.id).value")
                 }
                 .font(.caption)
                 .foregroundStyle(.primary)
             }
         }
         .padding(.vertical, 5)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .contain)
     }
 
     private var messageSymbol: String {

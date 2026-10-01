@@ -45,32 +45,48 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Verify release source is an exactly tested main commit
+      - name: Verify release source is an exactly tested approved branch commit
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           release_sha="$(git rev-parse "${GITHUB_SHA}^{commit}")"
-          ancestry="$(
-            gh api "repos/$GITHUB_REPOSITORY/compare/${release_sha}...main" --jq '.status'
-          )"
-          if [[ "$ancestry" != "ahead" && "$ancestry" != "identical" ]]; then
-            echo "::error::Release commit is not an ancestor of main."
+          tested_branch=""
+          # v3 is the user-selected iOS continuation. It may ship to TestFlight
+          # without merging into main or triggering a server deployment.
+          for release_branch in main codex/ios-signal-buoy-v3; do
+            encoded_branch="$(jq -rn --arg ref "$release_branch" '$ref | @uri')"
+            ancestry="$(
+              gh api "repos/$GITHUB_REPOSITORY/compare/${release_sha}...${encoded_branch}" --jq '.status'
+            )"
+            if [[ "$ancestry" != "ahead" && "$ancestry" != "identical" ]]; then
+              continue
+            fi
+            successful_runs="$(
+              gh api --method GET \
+                "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs" \
+                -f head_sha="$release_sha" \
+                -f branch="$release_branch" \
+                -f event=push \
+                -f status=completed \
+                -f per_page=100 \
+                | jq --arg sha "$release_sha" --arg branch "$release_branch" \
+                  '[.workflow_runs[] | select(
+                    .head_sha == $sha and .head_branch == $branch and
+                    .event == "push" and .status == "completed" and
+                    .conclusion == "success"
+                  )] | length'
+            )"
+            if (( successful_runs > 0 )); then
+              tested_branch="$release_branch"
+              break
+            fi
+          done
+          if [[ -z "$tested_branch" ]]; then
+            echo "::error::Release requires successful push CI for this exact SHA on main or codex/ios-signal-buoy-v3, and ancestry on that branch."
             exit 1
           fi
-          successful_runs="$(
-            gh api --method GET \
-              "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs" \
-              -f head_sha="$release_sha" \
-              -f event=push \
-              -f status=completed \
-              -f per_page=100 \
-              --jq '[.workflow_runs[] | select(.conclusion == "success" and .head_branch == "main")] | length'
-          )"
-          if (( successful_runs < 1 )); then
-            echo "::error::No successful main push CI run exists for $release_sha."
-            exit 1
-          fi
+          echo "Verified $release_sha with successful push CI on $tested_branch."
 
       - name: Install uv and Python
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0

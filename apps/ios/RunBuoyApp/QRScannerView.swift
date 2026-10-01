@@ -152,5 +152,6 @@ struct ScannerSheet: View {
                 }
             }
         }
+        .accessibilityIdentifier("screen.qrScanner")
     }
 }

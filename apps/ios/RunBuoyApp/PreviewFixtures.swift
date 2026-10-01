@@ -692,10 +692,24 @@ enum PreviewFixtures {
             apiSnapshot = loadedSnapshot
             apiEvents = events
             initialState = .failed("UI test failure fixture")
+        case .unavailable:
+            snapshot = CachedSnapshot(
+                runs: [],
+                machines: [],
+                messages: [],
+                savedAt: baseDate
+            )
+            apiSnapshot = loadedSnapshot
+            apiEvents = events
+            initialState = .loaded
         }
 
         return RunBuoyStore(
-            api: PreviewAPI(snapshot: apiSnapshot, events: apiEvents),
+            api: PreviewAPI(
+                snapshot: apiSnapshot,
+                events: apiEvents,
+                detailUnavailable: scenario == .unavailable
+            ),
             identityStore: PreviewIdentityStore(),
             cache: LocalCacheStore(
                 fileURL: FileManager.default.temporaryDirectory
@@ -718,13 +732,21 @@ private struct PreviewIdentityStore: DeviceIdentityStoring {
 private struct PreviewAPI: RunBuoyAPI {
     let snapshot: CachedSnapshot
     let events: [RunFeedEvent]
+    var detailUnavailable = false
+    private let pluginState = PreviewPluginState()
 
     func bootstrap(installationID: String, appVersion: String, osVersion: String) async throws -> DeviceIdentity {
         DeviceIdentity(deviceID: "preview-device", workspaceID: "preview-workspace", credential: "preview")
     }
     func listRuns() async throws -> [RunSnapshot] { snapshot.runs }
     func runDetail(id: UUID) async throws -> RunDetail {
-        RunDetail(run: snapshot.runs.first(where: { $0.id == id }) ?? snapshot.runs[0], feed: events)
+        if detailUnavailable {
+            throw URLError(.resourceUnavailable)
+        }
+        return RunDetail(
+            run: snapshot.runs.first(where: { $0.id == id }) ?? snapshot.runs[0],
+            feed: events
+        )
     }
     func listMachines() async throws -> [MachineSnapshot] { snapshot.machines }
     func listMessages() async throws -> [RichMessage] { snapshot.messages }
@@ -778,4 +800,32 @@ private struct PreviewAPI: RunBuoyAPI {
         WorkspaceDeletionChallenge(challenge: "preview-challenge", expiresAt: Date.distantFuture)
     }
     func deleteWorkspace(challenge: String) async throws {}
+    func pluginConnections() async throws -> [PluginConnection] { await pluginState.connections }
+    func inspectPluginConnection(_ code: PluginConnectionCode) async throws -> PluginConnectionRequest {
+        await pluginState.inspect(code)
+    }
+    func decidePluginConnection(_ code: PluginConnectionCode, allow: Bool) async throws {
+        await pluginState.decide(allow: allow)
+    }
+    func revokePluginConnection(_ id: String) async throws { await pluginState.revoke() }
+}
+
+private actor PreviewPluginState {
+    var connections: [PluginConnection] = []
+    private var decision = "pending"
+    func inspect(_ code: PluginConnectionCode) -> PluginConnectionRequest {
+        PluginConnectionRequest(id: code.id, clientName: "ChatGPT · RunBuoy",
+            origin: "https://api.runbuoy.cloud", workspaceID: "preview-workspace",
+            scopes: ["runs:read", "machines:read", "notifications:read"], status: decision,
+            expiresAt: Date().addingTimeInterval(300))
+    }
+    func decide(allow: Bool) {
+        decision = allow ? "allowed" : "denied"
+        if allow {
+            connections = [PluginConnection(id: "preview-grant", clientName: "ChatGPT · RunBuoy",
+                scopes: ["runs:read", "machines:read", "notifications:read"],
+                createdAt: Date(), expiresAt: Date().addingTimeInterval(30 * 86400))]
+        }
+    }
+    func revoke() { connections = [] }
 }

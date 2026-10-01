@@ -162,9 +162,14 @@
 "machines.title" = "电脑";
 "machines.intro" = "配对可向这台 iPhone 安全发送运行状态的电脑。";
 "machines.paired" = "已配对电脑";
+"machines.paired_count.one" = "%d 台已配对电脑";
+"machines.paired_count.other" = "%d 台已配对电脑";
+"machines.awaiting_confirmation_count" = "%d 台最近未确认";
+"machines.recent_confirmation_count" = "%d 台最近已确认";
+"machines.updates_off_count" = "%d 台已关闭更新";
 "machines.footer" = "下拉可刷新电脑可用状态；配对与通知偏好只属于当前工作区。";
 "machines.unavailable" = "暂时无法加载电脑。";
-"machines.last_seen_prefix" = "最近在线";
+"machines.last_seen_prefix" = "最后收到";
 "machines.updates_off" = "更新已关闭";
 "machines.online" = "在线";
 "machines.idle" = "空闲";
@@ -263,7 +268,7 @@
 "run.started" = "开始时间";
 "run.timeline" = "时间";
 "run.unavailable" = "无法读取运行";
-"run.updated" = "更新时间";
+"run.updated" = "快照更新";
 "runs.active" = "正在运行";
 "runs.active_empty" = "一切正常";
 "runs.active_empty_description" = "当前没有正在运行的任务。";
@@ -299,6 +304,7 @@
 "settings.region" = "数据区域";
 "settings.region_locked" = "选定的数据区域不可更改。";
 "settings.server" = "服务器";
+"settings.server_accessibility_value" = "服务器：%@";
 "settings.storage" = "存储";
 "settings.support" = "支持";
 "settings.title" = "设置";
@@ -345,3 +351,91 @@
 "widget.terminal_time" = "距运行结束";
 "widget.explicit_eta" = "预计完成 %@";
 "widget.progress" = "进度";
+"demo.step.running_35" = "运行中：35%";
+"demo.step.running_35_explanation" = "首次确认更新会继续同一个实时活动，不会虚构预计完成时间。";
+"machines.receiving_updates" = "正在接收更新";
+"machines.recent_confirmation" = "最近已确认";
+"onboarding.benefit_confirmed" = "已确认进度";
+"onboarding.benefit_native" = "原生一览";
+"onboarding.benefit_privacy" = "隐私优先设计";
+"onboarding.hero_body" = "从终端到 iPhone 查看已确认进度，不上传原始日志，也不提供远程控制。";
+"onboarding.hero_title" = "守望每一次长时间运行";
+"run.copy_summary" = "复制摘要";
+"run.last_confirmed" = "最后确认";
+"run.latest_confirmed_update" = "最后收到的安全消息";
+"run.safe_fields_only" = "仅显示安全字段";
+"run.safety_boundary" = "仅显示安全字段；绝不展示原始日志、命令、路径、环境变量或秘密。";
+"run.state.action_required" = "电脑报告需要处理。";
+"run.state.cancelled" = "取消是终态；如显示进度，它是取消前最后确认的数值。";
+"run.state.offline" = "正在显示最后确认更新的缓存数据，实时强调已关闭。";
+"run.state.stale" = "正在显示最后确认的更新，进度不再继续推进。";
+"run.state.warning" = "电脑报告了警告，请查看最近确认更新。";
+"run.summary.execution" = "执行状态";
+"run.summary.title" = "标题";
+"run.technical_details" = "技术详情";
+"runs.also_active" = "其他运行中任务";
+"runs.system_summary.healthy" = "%lld 个运行中 · 暂无待处理提示";
+"runs.system_summary.issues" = "%1$lld 个运行中 · %2$lld 个需要关注";
+"settings.advanced_data" = "高级与数据";
+"settings.connection_awaiting" = "等待确认";
+"settings.connection_cached" = "离线 · 显示已保存数据";
+"settings.connection_confirmed" = "手机已连接服务器";
+"settings.connection_last_confirmed" = "上次服务器同步";
+"settings.connection_refreshing" = "正在刷新";
+"settings.connection_unavailable" = "连接不可用";
+"settings.destructive_actions" = "危险操作";
+"settings.local_data" = "本机数据";
+"settings.machines_count_suffix" = "台电脑";
+"settings.machines_paired_suffix" = "台已配对";
+"settings.read_only_boundary" = "这些操作绝不会停止、重试或控制 Mac 上的运行。";
+"settings.safe_data_only" = "仅安全数据";
+"settings.safe_data_only_description" = "摘要不包含原始日志、命令、路径、环境变量、源代码或完整输出。";
+
+"machines.awaiting_confirmation" = "最近未确认";
+
+"machines.updates_on" = "更新已开启";
+
+"machines.confirmation_boundary" = "电脑最后确认与这台 iPhone 的服务器连接分别显示。";
+
+"run.last_reported_progress" = "上次报告的进度";
+
+"run.message_reported" = "消息报告于";
+
+"run.snapshot_confirmed" = "快照确认于";
+
+"run.final_result_reported" = "已收到最终结果";
+
+"run.state.failed" = "任务已结束，进度显示结束前最后报告的值。";
+
+"runs.phone_synced" = "手机同步于";
+
+"runs.confirmation_hint" = "电脑最后确认时间见各任务。";
+
+// ChatGPT connections
+"plugin.title" = "已连接应用";
+"plugin.new" = "连接 ChatGPT";
+"plugin.scan" = "扫描连接二维码";
+"plugin.paste" = "粘贴 RunBuoy 连接链接";
+"plugin.review" = "查看连接请求";
+"plugin.empty" = "此 iPhone 尚未确认任何有效连接。";
+"plugin.read_only" = "只读访问";
+"plugin.created" = "连接时间";
+"plugin.expires" = "有效期至";
+"plugin.revoke" = "撤销连接";
+"plugin.reload" = "刷新连接列表";
+"plugin.footer" = "连接在 30 天后过期。重置此设备也会撤销其连接。";
+"plugin.loading" = "正在读取连接";
+"plugin.revoke_confirm" = "撤销此连接？";
+"plugin.revoke_effect" = "此连接将无法继续读取数据。已经分享到对话的内容仍保留在该对话中。";
+"plugin.source" = "RunBuoy 服务";
+"plugin.workspace" = "工作区";
+"plugin.permissions" = "读取 Runs、机器和消息，包括明确共享的日志片段。不授予远程执行权限。";
+"plugin.expired" = "请求已过期或已处理，请从 ChatGPT 重新发起连接。";
+"plugin.allow" = "允许只读访问";
+"plugin.deny" = "拒绝";
+"plugin.confirm" = "确认 ChatGPT 连接";
+"plugin.confirm_footer" = "请仅确认你刚在 ChatGPT 中发起的连接。授权将共享上述工作区。";
+"plugin.allowed" = "已确认，请返回 ChatGPT 完成连接。";
+"plugin.denied" = "已拒绝连接。";
+"plugin.unavailable" = "此连接不可用。请检查链接，并确认工作区已加入私有测试。";
+"plugin.share_workspace" = "分享或复制工作区 ID";

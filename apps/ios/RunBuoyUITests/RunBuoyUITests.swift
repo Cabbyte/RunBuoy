@@ -19,6 +19,37 @@ final class RunBuoyUITests: XCTestCase {
         app = nil
     }
 
+    func testPluginConsentRequiresExplicitAllowAndSupportsRevocation() {
+        let link = "runbuoy://connect/pca_" + String(repeating: "a", count: 32)
+            + "?challenge=pcc_" + String(repeating: "b", count: 43)
+        launch(initialURL: link)
+        XCTAssertTrue(element("plugin.allow").waitForExistence(timeout: 5))
+        XCTAssertTrue(element("plugin.workspaceID").exists)
+        XCTAssertFalse(element("plugin.revoke").exists)
+        attachScreenshot(named: "plugin-phone-consent-en")
+        element("plugin.allow").tap()
+        XCTAssertTrue(element("plugin.completion").waitForExistence(timeout: 3))
+        let revoke = element("plugin.revoke")
+        if !revoke.isHittable { app.swipeUp() }
+        XCTAssertTrue(revoke.waitForExistence(timeout: 3))
+        revoke.tap()
+        XCTAssertTrue(element("plugin.confirmRevoke").waitForExistence(timeout: 3))
+        element("plugin.confirmRevoke").tap()
+        XCTAssertTrue(app.staticTexts["No active connections confirmed by this iPhone."].waitForExistence(timeout: 3))
+    }
+
+    func testPluginConsentCanBeDenied() {
+        let link = "runbuoy://connect/pca_" + String(repeating: "a", count: 32)
+            + "?challenge=pcc_" + String(repeating: "b", count: 43)
+        launch(initialURL: link)
+        XCTAssertTrue(element("plugin.deny").waitForExistence(timeout: 5))
+        element("plugin.deny").tap()
+        let completion = app.staticTexts["plugin.completion"]
+        XCTAssertTrue(completion.waitForExistence(timeout: 3))
+        XCTAssertTrue(completion.label.contains("Connection denied."), app.debugDescription)
+        XCTAssertFalse(element("plugin.revoke").exists)
+    }
+
     func testOnboardingCompletesWithSeededPairingCode() {
         launch(
             onboarding: true,
@@ -50,7 +81,7 @@ final class RunBuoyUITests: XCTestCase {
         let activeRow = element("run.row.\(Self.activeRunID)")
         XCTAssertTrue(activeRow.waitForExistence(timeout: 5))
         XCTAssertTrue(activeRow.label.contains("Run time"))
-        XCTAssertTrue(activeRow.label.contains("Heartbeat"))
+        XCTAssertTrue(activeRow.label.contains("Last Confirmed"))
         activeRow.tap()
 
         XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 3))
@@ -195,6 +226,14 @@ final class RunBuoyUITests: XCTestCase {
         launch()
         tapTab("tab.settings", label: "Settings")
 
+        let advancedData = element("settings.advancedData")
+        if !advancedData.exists {
+            element("screen.settings").swipeUp()
+        }
+        XCTAssertTrue(advancedData.waitForExistence(timeout: 3))
+        advancedData.tap()
+        XCTAssertTrue(element("screen.advancedData").waitForExistence(timeout: 3))
+
         let clearButton = element("settings.clearCache")
         XCTAssertTrue(clearButton.waitForExistence(timeout: 3))
         clearButton.tap()
@@ -214,6 +253,85 @@ final class RunBuoyUITests: XCTestCase {
         XCTAssertTrue(element("demo.startLiveActivity").exists)
     }
 
+    func testRunDetailDisclosureUnavailableAndHistoryNavigationBoundaries() {
+        launch()
+
+        element("run.row.\(Self.activeRunID)").tap()
+        XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 3))
+        XCTAssertFalse(element("run.copyID").exists)
+        element("run.technicalDetails").tap()
+        for _ in 0..<3 where !element("run.copyID").exists {
+            element("screen.runDetail").swipeUp()
+        }
+        XCTAssertTrue(element("run.copyID").waitForExistence(timeout: 3))
+
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        tapTab("tab.history", label: "History")
+        XCTAssertTrue(element("screen.history").waitForExistence(timeout: 3))
+        element("run.row.\(Self.failedRunID)").tap()
+        XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 3))
+
+        launch(
+            scenario: "unavailable",
+            initialURL: "runbuoy://runs/\(Self.unavailableRunID)"
+        )
+        XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Run unavailable"].exists)
+        XCTAssertFalse(element("run.summaryActions").exists)
+        XCTAssertFalse(element("run.copySummary").exists)
+        XCTAssertFalse(element("run.shareSummary").exists)
+    }
+
+    func testAdvancedConfirmationsPreferenceTogglesAndScannerSheet() {
+        launch()
+        tapTab("tab.settings", label: "Settings")
+
+        let safeMessages = element("settings.safeMessages")
+        XCTAssertTrue(safeMessages.waitForExistence(timeout: 3))
+        let initialSafeMessagesValue = safeMessages.value as? String ?? "1"
+        safeMessages.coordinate(
+            withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)
+        ).tap()
+        waitForValue(initialSafeMessagesValue == "1" ? "0" : "1", of: safeMessages)
+
+        let liveActivities = element("settings.liveActivities")
+        XCTAssertTrue(liveActivities.exists)
+        if liveActivities.isEnabled {
+            let initialLiveActivitiesValue = liveActivities.value as? String ?? "1"
+            liveActivities.coordinate(
+                withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)
+            ).tap()
+            waitForValue(
+                initialLiveActivitiesValue == "1" ? "0" : "1",
+                of: liveActivities
+            )
+        }
+
+        openAdvancedData()
+        attachScreenshot(named: "advanced-data-en")
+        assertConfirmation(
+            actionID: "settings.resetDevice",
+            messagePrefix: "The server revokes this iPhone’s credential"
+        )
+        assertConfirmation(
+            actionID: "settings.resetLocalOnly",
+            messagePrefix: "Emergency option: local Keychain"
+        )
+        assertConfirmation(
+            actionID: "settings.deleteWorkspace",
+            messagePrefix: "This permanently deletes this workspace’s credentials"
+        )
+
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        openMachines(fromSettings: true)
+        attachScreenshot(named: "machines-en")
+        element("machines.enterPairingCode").tap()
+        XCTAssertTrue(element("screen.pairMachine").waitForExistence(timeout: 3))
+        element("machines.scanPairingCode").tap()
+        XCTAssertTrue(element("screen.qrScanner").waitForExistence(timeout: 3))
+        attachScreenshot(named: "scanner-simulator-unavailable-en")
+    }
+
     func testAccessibilityAuditForCoreScreensAndScenarios() throws {
         launch()
         XCTAssertTrue(element("screen.activeRuns").waitForExistence(timeout: 5))
@@ -230,6 +348,7 @@ final class RunBuoyUITests: XCTestCase {
 
         tapTab("tab.settings", label: "Settings")
         XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
+        waitForValue("Phone connected to server", of: element("settings.connectionSummary"), timeout: 5)
         try auditCurrentScreen()
 
         element("settings.capabilityDemo").tap()
@@ -238,15 +357,21 @@ final class RunBuoyUITests: XCTestCase {
         app.navigationBars.buttons.element(boundBy: 0).tap()
         XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
 
-        app.swipeUp()
+        let advancedData = element("settings.advancedData")
+        if !advancedData.exists {
+            element("screen.settings").swipeUp()
+        }
+        waitForHittable(advancedData)
+        advancedData.tap()
+        XCTAssertTrue(element("screen.advancedData").waitForExistence(timeout: 3))
         waitForHittable(element("settings.clearCache"))
         try auditCurrentScreen()
 
         app.swipeUp()
         try auditCurrentScreen()
 
-        app.swipeDown()
-        app.swipeDown()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
         waitForHittable(element("settings.machines"))
         openMachines(fromSettings: true)
         try auditCurrentScreen()
@@ -290,7 +415,10 @@ final class RunBuoyUITests: XCTestCase {
             app.launchArguments += ["-runbuoy-ui-url", initialURL]
         }
         app.launch()
-        XCTAssertEqual(app.state, .runningForeground)
+        XCTAssertTrue(
+            app.wait(for: .runningForeground, timeout: 5),
+            "RunBuoy did not reach the foreground after launch. Current state: \(app.state.rawValue)"
+        )
     }
 
     private func openMachines(fromSettings: Bool = false) {
@@ -300,6 +428,41 @@ final class RunBuoyUITests: XCTestCase {
         }
         element("settings.machines").tap()
         XCTAssertTrue(element("screen.machines").waitForExistence(timeout: 3))
+    }
+
+    private func openAdvancedData() {
+        let advancedData = element("settings.advancedData")
+        for _ in 0..<4 where !advancedData.isHittable {
+            element("screen.settings").swipeUp()
+        }
+        waitForHittable(advancedData)
+        advancedData.tap()
+        XCTAssertTrue(element("screen.advancedData").waitForExistence(timeout: 3))
+    }
+
+    private func assertConfirmation(actionID: String, messagePrefix: String) {
+        let action = element(actionID)
+        if !action.isHittable {
+            element("screen.advancedData").swipeUp()
+        }
+        waitForHittable(action)
+        action.tap()
+        XCTAssertTrue(
+            app.staticTexts.matching(
+                NSPredicate(format: "label BEGINSWITH %@", messagePrefix)
+            ).firstMatch.waitForExistence(timeout: 2)
+        )
+        app.terminate()
+        launch(resetState: false)
+        tapTab("tab.settings", label: "Settings")
+        openAdvancedData()
+    }
+
+    private func attachScreenshot(named name: String) {
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
 
     private func element(_ identifier: String) -> XCUIElement {
@@ -359,8 +522,35 @@ final class RunBuoyUITests: XCTestCase {
                             Self.knownSystemSectionHeaderLabels.contains($0.label)
                         } == true
                 )
-            let isKnownSwiftUIDynamicTypeIssue = issue.auditType == .dynamicType
+            let isUnmappedSwiftUIRootContrastIssue = issue.auditType == .contrast
+                && (
+                    (
+                        issue.element?.elementType == .application
+                            && issue.element?.label == "RunBuoy"
+                            && issue.detailedDescription.contains("SwiftUI.AccessibilityNode1")
+                    )
+                        || (
+                            issue.element == nil
+                                && (
+                                    self.element("screen.settings").exists
+                                        || self.element("screen.capabilityDemo").exists
+                                        || self.element("screen.machines").exists
+                                )
+                                && issue.detailedDescription
+                                == "Contrast failed for SwiftUI.AccessibilityNode"
+                        )
+                )
+            let isSemanticallyScalingSwiftUIContainerIssue = issue.auditType == .dynamicType
                 && issue.detailedDescription.contains("SwiftUI.AccessibilityNode")
+                && issue.element.map { element in
+                    Self.semanticallyScalingIdentifiers.contains(element.identifier)
+                        || element.identifier.hasPrefix("history.message.")
+                        || element.identifier.hasPrefix("settings.connectionSummary.")
+                        || Self.knownSystemSectionHeaderLabels.contains(element.label)
+                        || Self.semanticallyScalingLabelPrefixes.contains {
+                            element.label.hasPrefix($0)
+                        }
+                } == true
             let tabBar = self.app.tabBars.firstMatch
             let isCoveredBySystemTabBar = issue.auditType == .contrast
                 && issue.element.map {
@@ -376,10 +566,14 @@ final class RunBuoyUITests: XCTestCase {
             let isUnmappedOffscreenSettingsIssue =
                 issue.compactDescription == "Text clipped"
                     && issue.element == nil
-                    && self.element("screen.settings").exists
+                    && (
+                        self.element("screen.settings").exists
+                            || self.element("screen.advancedData").exists
+                    )
             let isKnownToolIssue =
                 isKnownSystemSectionHeaderIssue
-                    || isKnownSwiftUIDynamicTypeIssue
+                    || isUnmappedSwiftUIRootContrastIssue
+                    || isSemanticallyScalingSwiftUIContainerIssue
                     || isCoveredBySystemTabBar
                     || isCoveredBySystemNavigationBar
                     || isUnmappedOffscreenSettingsIssue
@@ -405,8 +599,37 @@ final class RunBuoyUITests: XCTestCase {
 
     private static let activeRunID = "018f0d8a-8c0a-7000-8000-000000000001"
     private static let failedRunID = "018f0d8a-8c0a-7000-8000-000000000002"
+    private static let unavailableRunID = "018f0d8a-8c0a-7000-8000-000000000099"
     private static let pairingURL =
         "runbuoy://pair/session_ui_test?challenge=once-only&machine=UI%20Test%20Mac&platform=macOS&region=global"
+    private static let semanticallyScalingIdentifiers: Set<String> = [
+        "run.timing.execution",
+        "run.timing.heartbeat",
+        "run.timing.completion",
+        "run.metric.elapsed",
+        "run.metric.lastConfirmed",
+        "settings.regionLock",
+        "demo.liveActivityIntro",
+        "demo.startLiveActivity",
+        "demo.nextStep",
+        "demo.chooseState",
+        "demo.stopLiveActivity",
+        "demo.startAgain",
+        "demo.sendNotification",
+        "run.copySummary",
+        "run.shareSummary"
+    ]
+    private static let semanticallyScalingLabelPrefixes = [
+        "Run time",
+        "Heartbeat",
+        "Elapsed",
+        "Last Confirmed",
+        "Completed",
+        "The selected data region cannot be changed.",
+        "Start Live Activity",
+        "Copy Summary",
+        "Share Summary"
+    ]
     private static let knownSystemSectionHeaderLabels: Set<String> = [
         "Active Runs",
         "Timing",
@@ -418,6 +641,13 @@ final class RunBuoyUITests: XCTestCase {
         "Recent Messages",
         "Connections",
         "Notifications and Display",
+        "Local Data",
+        "Destructive Actions",
+        "These actions never stop, retry, or control a run on a Mac.",
+        "Paired Machines",
+        "Pull to refresh machine availability. Pairing and notification preferences stay private to this workspace.",
+        "Pair New Machine",
+        "Try Again",
         "Storage",
         "Identity and Data",
         "About"
