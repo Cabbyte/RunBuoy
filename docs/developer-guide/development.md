@@ -1,5 +1,18 @@
 # Development
 
+## Development baseline
+
+As of 2026-10-01, use `codex/ios-signal-buoy-v3` as the starting point for
+future RunBuoy development and new task branches. The user selected baseline A:
+`origin/codex/ios-signal-buoy-v2` at
+`19e69b443fdc8da6dad9aad8308b3902a819825a`.
+
+Baseline B, `origin/codex/ios-signal-buoy-v2-20260813-205116` at
+`3a699aad17a4dd58a9e7a19aad4995a92602a77f`, is temporarily deprecated as a
+development baseline. Preserve that branch and its unique commits for reference;
+any useful fixes can be evaluated separately before being carried forward.
+This baseline decision does not merge or delete B.
+
 ## Prerequisites
 
 - Python 3.12+ managed with `uv`
