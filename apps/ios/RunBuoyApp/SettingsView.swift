@@ -113,11 +113,12 @@ struct SettingsView: View {
             .accessibilityIdentifier("settings.regionLock")
         } header: {
             Text("settings.connections")
+                .runBuoySecondaryText()
         }
     }
 
     private var preferencesSection: some View {
-        Section("settings.notifications") {
+        Section {
             Toggle(isOn: $notificationsEnabled) {
                 Label("settings.notifications_enabled", systemImage: "bell.badge")
                     .foregroundStyle(.primary)
@@ -157,6 +158,9 @@ struct SettingsView: View {
                 Button("settings.open_system_settings", action: openSystemSettings)
                     .accessibilityIdentifier("settings.openSystemSettings")
             }
+        } header: {
+            Text("settings.notifications")
+                .runBuoySecondaryText()
         }
     }
 
@@ -168,7 +172,7 @@ struct SettingsView: View {
     }
 
     private var productSection: some View {
-        Section("settings.product") {
+        Section {
             NavigationLink(value: AppRoute.capabilityDemo) {
                 Label("demo.settings_entry", systemImage: "sparkles")
                     .foregroundStyle(.primary)
@@ -180,11 +184,14 @@ struct SettingsView: View {
                     .foregroundStyle(.primary)
             }
             .accessibilityIdentifier("settings.advancedData")
+        } header: {
+            Text("settings.product")
+                .runBuoySecondaryText()
         }
     }
 
     private var aboutSection: some View {
-        Section("settings.about") {
+        Section {
             settingsLink(
                 title: "settings.website",
                 symbol: "globe",
@@ -205,6 +212,9 @@ struct SettingsView: View {
                 symbol: "server.rack",
                 destination: RunBuoyLinks.privateDeployment
             )
+        } header: {
+            Text("settings.about")
+                .runBuoySecondaryText()
         }
     }
 
