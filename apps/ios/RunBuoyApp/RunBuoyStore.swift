@@ -377,6 +377,22 @@ final class RunBuoyStore {
         try await api.runDetail(id: id)
     }
 
+    func pluginConnections() async throws -> [PluginConnection] {
+        try await api.pluginConnections()
+    }
+
+    func inspectPluginConnection(_ code: PluginConnectionCode) async throws -> PluginConnectionRequest {
+        try await api.inspectPluginConnection(code)
+    }
+
+    func decidePluginConnection(_ code: PluginConnectionCode, allow: Bool) async throws {
+        try await api.decidePluginConnection(code, allow: allow)
+    }
+
+    func revokePluginConnection(_ id: String) async throws {
+        try await api.revokePluginConnection(id)
+    }
+
     func claim(_ code: PairingCode) async throws {
         try code.requireSelectedRegion()
         try await api.claimPairing(code)

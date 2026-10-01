@@ -733,6 +733,7 @@ private struct PreviewAPI: RunBuoyAPI {
     let snapshot: CachedSnapshot
     let events: [RunFeedEvent]
     var detailUnavailable = false
+    private let pluginState = PreviewPluginState()
 
     func bootstrap(installationID: String, appVersion: String, osVersion: String) async throws -> DeviceIdentity {
         DeviceIdentity(deviceID: "preview-device", workspaceID: "preview-workspace", credential: "preview")
@@ -799,4 +800,32 @@ private struct PreviewAPI: RunBuoyAPI {
         WorkspaceDeletionChallenge(challenge: "preview-challenge", expiresAt: Date.distantFuture)
     }
     func deleteWorkspace(challenge: String) async throws {}
+    func pluginConnections() async throws -> [PluginConnection] { await pluginState.connections }
+    func inspectPluginConnection(_ code: PluginConnectionCode) async throws -> PluginConnectionRequest {
+        await pluginState.inspect(code)
+    }
+    func decidePluginConnection(_ code: PluginConnectionCode, allow: Bool) async throws {
+        await pluginState.decide(allow: allow)
+    }
+    func revokePluginConnection(_ id: String) async throws { await pluginState.revoke() }
+}
+
+private actor PreviewPluginState {
+    var connections: [PluginConnection] = []
+    private var decision = "pending"
+    func inspect(_ code: PluginConnectionCode) -> PluginConnectionRequest {
+        PluginConnectionRequest(id: code.id, clientName: "ChatGPT · RunBuoy",
+            origin: "https://api.runbuoy.cloud", workspaceID: "preview-workspace",
+            scopes: ["runs:read", "machines:read", "notifications:read"], status: decision,
+            expiresAt: Date().addingTimeInterval(300))
+    }
+    func decide(allow: Bool) {
+        decision = allow ? "allowed" : "denied"
+        if allow {
+            connections = [PluginConnection(id: "preview-grant", clientName: "ChatGPT · RunBuoy",
+                scopes: ["runs:read", "machines:read", "notifications:read"],
+                createdAt: Date(), expiresAt: Date().addingTimeInterval(30 * 86400))]
+        }
+    }
+    func revoke() { connections = [] }
 }

@@ -41,6 +41,23 @@ final class RoutingAndPairingTests: XCTestCase {
         XCTAssertEqual(router.pendingPairingCode?.challenge, "once-only")
     }
 
+    func testPluginLinkOnlyOpensConsentAndRejectsAmbiguousLinks() throws {
+        let router = AppRouter()
+        let id = "pca_" + String(repeating: "a", count: 32)
+        let challenge = "pcc_" + String(repeating: "b", count: 43)
+        let link = "runbuoy://connect/\(id)?challenge=\(challenge)"
+        XCTAssertTrue(router.handle(URL(string: link)!))
+        XCTAssertEqual(router.selectedTab, .settings)
+        XCTAssertEqual(router.settingsPath, [.pluginConnections])
+        XCTAssertEqual(router.pendingPluginConnection?.id, id)
+        XCTAssertEqual(router.pendingPluginConnection?.challenge, challenge)
+        for invalid in [link + "&challenge=other", link + "&server=https://evil.example",
+                        link + "#fragment", link.replacingOccurrences(of: "runbuoy:", with: "https:"),
+                        "runbuoy://connect/../../runs?challenge=x"] {
+            XCTAssertThrowsError(try PluginConnectionCode.decode(invalid))
+        }
+    }
+
     func testHomeTabsDoNotIncludeMachines() {
         XCTAssertEqual(AppTab.allCases, [.activeRuns, .history, .settings])
     }

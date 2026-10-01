@@ -221,6 +221,8 @@ jobs:
             -only-testing:RunBuoyUITests/RunBuoyUITests/testOnboardingCompletesWithSeededPairingCode \
             -only-testing:RunBuoyUITests/RunBuoyUITests/testActiveRunOpensDetailAndNavigatesBack \
             -only-testing:RunBuoyUITests/RunBuoyUITests/testMachineStopReceivingAndRevokeHaveDistinctDestructiveConfirmations \
+            -only-testing:RunBuoyUITests/RunBuoyUITests/testPluginConsentRequiresExplicitAllowAndSupportsRevocation \
+            -only-testing:RunBuoyUITests/RunBuoyUITests/testPluginConsentCanBeDenied \
             test
       - name: Collect iOS 18 simulator diagnostics
         if: failure()
