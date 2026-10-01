@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator, Iterator
 from contextlib import asynccontextmanager, contextmanager
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request, Response
@@ -14,6 +15,7 @@ from .config import Settings
 from .database import get_session
 from .lifecycle import router as lifecycle_router
 from .observability import install_observability
+from .plugin_auth import authorization_metadata
 from .plugin_auth import router as plugin_router
 
 
@@ -49,6 +51,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
         server, mcp_app = create_plugin(configured, plugin_sessions)
         application.state.plugin_server = server
+        metadata = authorization_metadata(configured)
+
+        @application.get("/.well-known/oauth-authorization-server", include_in_schema=False)
+        def plugin_metadata() -> JSONResponse:
+            return JSONResponse(metadata, headers={"Access-Control-Allow-Origin": "*"})
 
         @asynccontextmanager
         async def plugin_lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -92,6 +99,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                             headers={"Cache-Control": "no-store"},
                         )
             response = await call_next(request)
+            if path == "/authorize" and response.status_code in {302, 303, 307}:
+                # The SDK validates the registered redirect before emitting an
+                # error callback, but does not yet include RFC 9207 issuer data.
+                target = urlsplit(response.headers.get("location", ""))
+                params = parse_qsl(target.query, keep_blank_values=True)
+                if any(key == "error" for key, _ in params):
+                    params = [(key, value) for key, value in params if key != "iss"]
+                    params.append(("iss", metadata["issuer"]))
+                    response.headers["location"] = urlunsplit(
+                        target._replace(query=urlencode(params))
+                    )
             if path.startswith("/v1/plugin-connections"):
                 response.headers["Cache-Control"] = "no-store"
             return response

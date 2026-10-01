@@ -129,8 +129,12 @@ def test_oauth_mcp_ui_and_separate_credentials(plugin):
     client, _, device, machine, _, settings = plugin
     metadata = client.get("/.well-known/oauth-authorization-server").json()
     assert "S256" in metadata["code_challenge_methods_supported"]
+    assert metadata["token_endpoint_auth_methods_supported"] == ["none"]
+    assert metadata["revocation_endpoint_auth_methods_supported"] == ["none"]
+    assert metadata["authorization_response_iss_parameter_supported"] is True
     resource = client.get("/.well-known/oauth-protected-resource/mcp").json()
     assert resource["resource"].rstrip("/") == settings.plugin_public_url + "/mcp"
+    assert resource["authorization_servers"] == [metadata["issuer"]]
     page, request_id, challenge = start(plugin)
     html = client.get(page)
     assert html.status_code == 200 and "<svg" in html.text and "runbuoy://connect/" in html.text
@@ -228,6 +232,9 @@ def test_deny_expiry_pkce_redirect_resource_and_scope(plugin):
         assert "/connect/" not in response.headers.get("location", "")
         if location := response.headers.get("location"):
             redirect = urlsplit(location)
+            assert parse_qs(redirect.query)["iss"] == [
+                client.get("/.well-known/oauth-authorization-server").json()["issuer"]
+            ]
             registered = urlsplit(settings.plugin_redirect_uris[0])
             assert (redirect.scheme, redirect.netloc, redirect.path) == (
                 registered.scheme,

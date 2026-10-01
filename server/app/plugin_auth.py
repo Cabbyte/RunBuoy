@@ -28,8 +28,10 @@ from mcp.server.auth.provider import (
     RegistrationError,
     TokenError,
 )
+from mcp.server.auth.routes import build_metadata
+from mcp.server.auth.settings import ClientRegistrationOptions, RevocationOptions
 from mcp.shared.auth import OAuthClientInformationFull, OAuthToken
-from pydantic import AnyUrl, BaseModel, ConfigDict, Field
+from pydantic import AnyHttpUrl, AnyUrl, BaseModel, ConfigDict, Field
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
@@ -52,6 +54,21 @@ READ_SCOPES = ["runs:read", "machines:read", "notifications:read"]
 SessionFactory = Callable[[], AbstractContextManager[Session]]
 router = APIRouter()
 NO_STORE = {"Cache-Control": "no-store", "Referrer-Policy": "no-referrer"}
+
+
+def authorization_metadata(settings: Settings) -> dict[str, Any]:
+    # The SDK defaults advertise confidential clients; our pre-registered client
+    # uses PKCE without a secret. Keep endpoint construction shared with the SDK.
+    metadata = build_metadata(
+        AnyHttpUrl(settings.plugin_public_url),
+        None,
+        ClientRegistrationOptions(enabled=False, valid_scopes=READ_SCOPES),
+        RevocationOptions(enabled=True),
+    ).model_dump(mode="json", exclude_none=True)
+    metadata["token_endpoint_auth_methods_supported"] = ["none"]
+    metadata["revocation_endpoint_auth_methods_supported"] = ["none"]
+    metadata["authorization_response_iss_parameter_supported"] = True
+    return metadata
 
 
 def valid_grant(session: Session, grant_id: str, settings: Settings) -> PluginGrant | None:
