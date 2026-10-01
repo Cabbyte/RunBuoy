@@ -62,29 +62,52 @@ final class TypographyDiagnosticsTests: XCTestCase {
     }
 
     func testRuntimeFontSwitchPreservesAppAndMachineNavigation() throws {
-        launch()
-        try verifyRenderedTextAndNavigation(category: .large)
         let settings = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
         settings.launch()
-        tapSettingsEntry("Accessibility", in: settings)
-        tapSettingsEntry("Display & Text Size", in: settings)
-        tapSettingsEntry("Larger Text", in: settings)
+        if !settings.switches["Larger Accessibility Sizes"].exists {
+            tapSettingsEntry("Accessibility", in: settings)
+            tapSettingsEntry("Display & Text Size", in: settings)
+            tapSettingsEntry("Larger Text", in: settings)
+        }
         let expandedSizes = settings.switches["Larger Accessibility Sizes"]
         XCTAssertTrue(expandedSizes.waitForExistence(timeout: 5), settings.debugDescription)
-        setSystemSwitch(expandedSizes, to: "1", in: settings)
-        let slider = settings.sliders.firstMatch
-        XCTAssertTrue(slider.waitForExistence(timeout: 5), settings.debugDescription)
-        slider.adjust(toNormalizedSliderPosition: 1)
-        XCTAssertEqual(slider.normalizedSliderPosition, 1, accuracy: 0.01)
+        XCTAssertTrue(settings.sliders.firstMatch.waitForExistence(timeout: 5))
+        let originalSwitch = try XCTUnwrap(expandedSizes.value as? String)
+        let originalPosition = settings.sliders.firstMatch.normalizedSliderPosition
+        XCTAssertTrue(["0", "1"].contains(originalSwitch))
+        XCTAssertTrue((0...1).contains(originalPosition))
+        print("SYSTEM SIZE SNAPSHOT switch=\(originalSwitch) slider=\(originalPosition)")
+
+        // Registered before the first change. XCTest runs this even when an
+        // assertion aborts the test, before tearDownWithError terminates the app.
+        addTeardownBlock { [self] in
+            continueAfterFailure = true
+            attachScreenshot("runtime-before-state-restoration")
+            settings.activate()
+            XCTAssertTrue(setSystemSwitch(expandedSizes, to: originalSwitch, in: settings))
+            XCTAssertTrue(setSystemSlider(in: settings, to: originalPosition))
+            XCTAssertEqual(expandedSizes.value as? String, originalSwitch)
+            XCTAssertEqual(settings.sliders.firstMatch.normalizedSliderPosition,
+                           originalPosition, accuracy: 0.01)
+            print("SYSTEM SIZE RESTORED switch=\(String(describing: expandedSizes.value)) slider=\(settings.sliders.firstMatch.normalizedSliderPosition) expectedSwitch=\(originalSwitch) expectedSlider=\(originalPosition)")
+            attachScreenshot("system-settings-restored-original-size")
+        }
+
+        XCTAssertTrue(setSystemSwitch(expandedSizes, to: "0", in: settings))
+        XCTAssertTrue(setSystemSlider(in: settings, to: 0.5))
+        launch()
+        try verifyRenderedTextAndNavigation(category: .large)
+        settings.activate()
+        XCTAssertTrue(setSystemSwitch(expandedSizes, to: "1", in: settings))
+        XCTAssertTrue(setSystemSlider(in: settings, to: 1))
         attachScreenshot("system-settings-maximum-accessibility-size")
         XCTAssertTrue(app.state == .runningBackground || app.state == .runningBackgroundSuspended,
                       "RunBuoy must remain alive during the system setting change")
         app.activate()
         try verifyRenderedTextAndNavigation(category: .accessibilityExtraExtraExtraLarge)
         settings.activate()
-        setSystemSwitch(expandedSizes, to: "0", in: settings)
-        slider.adjust(toNormalizedSliderPosition: 0.5)
-        XCTAssertEqual(slider.normalizedSliderPosition, 0.5, accuracy: 0.05)
+        XCTAssertTrue(setSystemSwitch(expandedSizes, to: "0", in: settings))
+        XCTAssertTrue(setSystemSlider(in: settings, to: 0.5))
         attachScreenshot("system-settings-restored-default-size")
         XCTAssertTrue(app.state == .runningBackground || app.state == .runningBackgroundSuspended)
         app.activate()
@@ -93,7 +116,8 @@ final class TypographyDiagnosticsTests: XCTestCase {
     }
 
     private func setSystemSwitch(_ control: XCUIElement, to value: String,
-                                 in settings: XCUIApplication) {
+                                 in settings: XCUIApplication) -> Bool {
+        guard control.waitForExistence(timeout: 5) else { return false }
         print("SYSTEM SWITCH before=\(String(describing: control.value)) target=\(value) frame=\(control.frame)")
         if control.value as? String != value {
             // Settings exposes the whole row as a switch. Its center can hit
@@ -103,9 +127,44 @@ final class TypographyDiagnosticsTests: XCTestCase {
         let expectation = XCTNSPredicateExpectation(
             predicate: NSPredicate(format: "value == %@", value), object: control
         )
-        XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: 5), .completed,
-                       settings.debugDescription)
+        let matched = XCTWaiter.wait(for: [expectation], timeout: 5) == .completed
         print("SYSTEM SWITCH after=\(String(describing: control.value))")
+        return matched
+    }
+
+    private func setSystemSlider(in settings: XCUIApplication, to target: CGFloat) -> Bool {
+        guard settings.sliders.firstMatch.waitForExistence(timeout: 5) else { return false }
+        for attempt in 0..<4 {
+            // Re-query after changing the switch: the slider now has 12 stops,
+            // whereas the standard range has 7. Never assume adjust succeeded.
+            let slider = settings.sliders.firstMatch
+            let before = slider.normalizedSliderPosition
+            print("SYSTEM SLIDER attempt=\(attempt) before=\(before) target=\(target) value=\(String(describing: slider.value)) frame=\(slider.frame)")
+            if abs(before - target) <= 0.01 { return true }
+            if attempt == 0 {
+                slider.adjust(toNormalizedSliderPosition: target)
+            } else {
+                // iOS 26.5's adjust can stop at 6/11 despite a requested 1.0.
+                // Drag the visible thumb, then require the same strict readback.
+                let start = slider.coordinate(withNormalizedOffset: CGVector(dx: before, dy: 0.5))
+                let end = slider.coordinate(withNormalizedOffset: CGVector(
+                    dx: min(0.99, max(0.01, target)), dy: 0.5
+                ))
+                start.press(forDuration: 0.1, thenDragTo: end)
+            }
+            let expectation = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                abs(settings.sliders.firstMatch.normalizedSliderPosition - target) <= 0.01
+            }, object: nil)
+            let matched = XCTWaiter.wait(for: [expectation], timeout: 2) == .completed
+            print("SYSTEM SLIDER readback=\(settings.sliders.firstMatch.normalizedSliderPosition) target=\(target) matched=\(matched)")
+            if matched { return true }
+        }
+        let attachment = XCTAttachment(string: settings.debugDescription)
+        attachment.name = "System slider failed readback"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        attachScreenshot("system-slider-failed-readback")
+        return false
     }
 
     private func tapSettingsEntry(_ label: String, in settings: XCUIApplication) {

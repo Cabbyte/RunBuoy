@@ -35,6 +35,26 @@ def main() -> None:
         ["/usr/bin/git", "rev-parse", "HEAD"], cwd=worktree, text=True
     ).strip()
     results = []
+    positive_controls = {}
+    expected_cases = [f"mutation-{kind}-{node}" for kind in ("fixed", "capped") for node in NODES]
+
+    def save_results(reason: str = "Not reached yet") -> None:
+        completed_cases = {result["case"] for result in results}
+        (evidence / "mutation-results.json").write_text(
+            json.dumps(
+                {
+                    "base_revision": revision,
+                    "positive_controls": positive_controls,
+                    "results": results,
+                    "not_run": [
+                        {"case": name, "reason": reason}
+                        for name in expected_cases
+                        if name not in completed_cases
+                    ],
+                },
+                indent=2,
+            )
+        )
 
     def run_test(case_name: str) -> tuple[int, list[str]]:
         command = [
@@ -71,9 +91,14 @@ def main() -> None:
         failures = [line for line in log_path.read_text().splitlines() if "error:" in line]
         return completed.returncode, failures
 
-    baseline_code, _ = run_test("mutation-positive-before")
-    if baseline_code:
-        raise SystemExit("Unmodified positive control failed; no mutations applied")
+    save_results()
+    baseline_code, baseline_failures = run_test("mutation-positive-before")
+    positive_controls["before"] = {
+        "xcodebuild_exit_code": baseline_code,
+        "failure_lines": baseline_failures,
+    }
+    save_results()
+    interruption = "Run did not complete"
     try:
         for kind, modifier in [
             ("fixed", ".font(.system(size: 17))"),
@@ -128,16 +153,17 @@ def main() -> None:
                             "mutant_source_sha256": digest(mutant.encode()),
                         }
                     )
-                    (evidence / "mutation-results.json").write_text(
-                        json.dumps({"base_revision": revision, "results": results}, indent=2)
-                    )
+                    save_results()
                     print(f"{case_name}: target assertion rejected mutation={killed}", flush=True)
                 finally:
                     if target.read_text() != mutant:
                         raise RuntimeError(f"External edit; refusing to overwrite: {path}")
                     target.write_bytes(originals[path])
-                if not killed:
-                    raise SystemExit(f"Mutation survived or failed for another reason: {case_name}")
+                # A surviving mutation or unrelated build failure must not hide
+                # the other nodes. Report all eight, then fail the overall check.
+    except BaseException as error:
+        interruption = f"{type(error).__name__}: {error}"
+        raise
     finally:
         restored = all((worktree / path).read_bytes() == data for path, data in originals.items())
         (evidence / "mutation-restoration.json").write_text(
@@ -146,9 +172,20 @@ def main() -> None:
                 indent=2,
             )
         )
-    restored_code, _ = run_test("mutation-positive-after")
-    if restored_code:
-        raise SystemExit("Restored positive control failed")
+        save_results(reason=interruption)
+    restored_code, restored_failures = run_test("mutation-positive-after")
+    positive_controls["after"] = {
+        "xcodebuild_exit_code": restored_code,
+        "failure_lines": restored_failures,
+    }
+    save_results()
+    all_rejected = len(results) == 8 and all(
+        result["killed_by_target_glyph_assertion"] for result in results
+    )
+    if baseline_code or restored_code or not restored or not all_rejected:
+        raise SystemExit(
+            "Typography controls failed; see separate positive and all eight mutation results"
+        )
     print(
         "All eight mutations rejected; exact sources restored; positive control passed", flush=True
     )

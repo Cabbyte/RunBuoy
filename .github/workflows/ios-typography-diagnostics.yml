@@ -22,13 +22,21 @@ jobs:
           xcodebuild -version
           xcrun simctl list runtimes
           mkdir -p "$RUNNER_TEMP/typography-evidence"
+          simulator_id=$(xcrun simctl list devices available --json | python3 -c 'import json,sys; devices=json.load(sys.stdin)["devices"]["com.apple.CoreSimulator.SimRuntime.iOS-26-5"]; print(next(d["udid"] for d in devices if d["name"] == "iPhone 17"))')
+          xcrun simctl bootstatus "$simulator_id" -b
+          original_size=$(xcrun simctl ui "$simulator_id" content_size)
+          test "$original_size" != unknown
+          test "$original_size" != unsupported
+          echo "TYPOGRAPHY_SIMULATOR_ID=$simulator_id" >> "$GITHUB_ENV"
+          echo "TYPOGRAPHY_ORIGINAL_SIZE=$original_size" >> "$GITHUB_ENV"
+          printf 'simulator=%s\noriginal_content_size=%s\n' "$simulator_id" "$original_size" > "$RUNNER_TEMP/typography-evidence/system-size-before.txt"
       - name: Verify glyphs, complete text, navigation, runtime switching and history quantities
         run: |
           set -o pipefail
           xcodebuild \
             -project apps/ios/RunBuoy.xcodeproj \
             -scheme RunBuoy \
-            -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' \
+            -destination "platform=iOS Simulator,id=$TYPOGRAPHY_SIMULATOR_ID" \
             -derivedDataPath "$RUNNER_TEMP/typography-derived-data" \
             -resultBundlePath "$RUNNER_TEMP/typography-evidence/PositiveControls.xcresult" \
             -parallel-testing-enabled NO \
@@ -38,11 +46,44 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             test 2>&1 | tee "$RUNNER_TEMP/typography-evidence/positive-controls.log"
       - name: Reject all eight fixed-font and capped-size mutations
+        if: ${{ !cancelled() && env.TYPOGRAPHY_SIMULATOR_ID != '' }}
         run: |
           python3 scripts/check_ios_typography_mutations.py \
             --evidence-dir "$RUNNER_TEMP/typography-evidence" \
             --derived-data-path "$RUNNER_TEMP/typography-derived-data" \
-            --destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5'
+            --destination "platform=iOS Simulator,id=$TYPOGRAPHY_SIMULATOR_ID"
+      - name: Restore and read back original simulator content size
+        if: ${{ always() && env.TYPOGRAPHY_SIMULATOR_ID != '' }}
+        run: |
+          xcrun simctl ui "$TYPOGRAPHY_SIMULATOR_ID" content_size "$TYPOGRAPHY_ORIGINAL_SIZE"
+          actual_size=$(xcrun simctl ui "$TYPOGRAPHY_SIMULATOR_ID" content_size)
+          printf 'expected_content_size=%s\nactual_content_size=%s\n' "$TYPOGRAPHY_ORIGINAL_SIZE" "$actual_size" > "$RUNNER_TEMP/typography-evidence/system-size-restored.txt"
+          test "$actual_size" = "$TYPOGRAPHY_ORIGINAL_SIZE"
+      - name: Summarize positive and negative controls separately
+        if: always()
+        env:
+          EVIDENCE_DIR: ${{ runner.temp }}/typography-evidence
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          evidence = Path(os.environ['EVIDENCE_DIR'])
+          path = evidence / 'mutation-results.json'
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('## Typography controls\n\n')
+              summary.write('Full positive controls: see the preceding positive-control step and `PositiveControls.xcresult`.\n\n')
+              if not path.exists():
+                  summary.write('Negative controls: no result file; execution was interrupted or could not start. This is not a pass.\n')
+              else:
+                  report = json.loads(path.read_text())
+                  summary.write(f"Revision: `{report['base_revision']}`\n\n")
+                  for name, result in report['positive_controls'].items():
+                      summary.write(f"Mutation-suite positive {name}: xcodebuild exit {result['xcodebuild_exit_code']}\n\n")
+                  for result in report['results']:
+                      summary.write(f"- {result['case']}: target glyph rejection = {result['killed_by_target_glyph_assertion']}; exit {result['xcodebuild_exit_code']}\n")
+                  for result in report['not_run']:
+                      summary.write(f"- {result['case']}: NOT RUN — {result['reason']}\n")
+          PY
       - name: Verify source restoration
         if: always()
         run: git diff --exit-code
