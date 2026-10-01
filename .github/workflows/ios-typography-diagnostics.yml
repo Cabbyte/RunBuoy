@@ -2,6 +2,12 @@ name: iOS typography diagnostics
 
 on:
   workflow_dispatch:
+    inputs:
+      scope:
+        description: Validation scope
+        type: choice
+        default: all-controls
+        options: [all-controls, system-size-and-e2e]
   push:
     branches: ["codex/a11y-diagnostics-20261001"]
 
@@ -10,6 +16,7 @@ permissions:
 
 jobs:
   glyphs-and-negative-controls:
+    if: ${{ inputs.scope != 'system-size-and-e2e' }}
     runs-on: macos-26
     timeout-minutes: 45
     steps:
@@ -94,3 +101,83 @@ jobs:
           name: iOS26.5-typography-${{ github.sha }}
           path: ${{ runner.temp }}/typography-evidence
           retention-days: 14
+
+  system-size:
+    if: ${{ inputs.scope == 'system-size-and-e2e' }}
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: Select exact iOS 26.5 simulator and preserve original size
+        run: |
+          mkdir -p "$RUNNER_TEMP/system-size-evidence"
+          git rev-parse HEAD > "$RUNNER_TEMP/system-size-evidence/revision.txt"
+          xcodebuild -version > "$RUNNER_TEMP/system-size-evidence/xcode.txt"
+          simulator_id=$(xcrun simctl list devices available --json | python3 -c 'import json,sys; devices=json.load(sys.stdin)["devices"]["com.apple.CoreSimulator.SimRuntime.iOS-26-5"]; print(next(d["udid"] for d in devices if d["name"] == "iPhone 17"))')
+          xcrun simctl bootstatus "$simulator_id" -b
+          original_size=$(xcrun simctl ui "$simulator_id" content_size)
+          echo "SIZE_SIMULATOR_ID=$simulator_id" >> "$GITHUB_ENV"
+          echo "SIZE_ORIGINAL=$original_size" >> "$GITHUB_ENV"
+          printf 'simulator=%s\nruntime=iOS26.5\noriginal=%s\n' "$simulator_id" "$original_size" > "$RUNNER_TEMP/system-size-evidence/environment.txt"
+      - name: Build and install sample app
+        run: |
+          xcodebuild -project apps/ios/RunBuoy.xcodeproj -scheme RunBuoy \
+            -destination "platform=iOS Simulator,id=$SIZE_SIMULATOR_ID" \
+            -derivedDataPath "$RUNNER_TEMP/system-size-derived-data" \
+            CODE_SIGNING_ALLOWED=NO build > "$RUNNER_TEMP/system-size-evidence/build.log" 2>&1
+          xcrun simctl install "$SIZE_SIMULATOR_ID" "$RUNNER_TEMP/system-size-derived-data/Build/Products/Debug-iphonesimulator/RunBuoy.app"
+      - name: Verify system and live app/window sizes without relaunch
+        run: |
+          python3 scripts/check_ios_system_size.py --device "$SIZE_SIMULATOR_ID" \
+            --evidence-dir "$RUNNER_TEMP/system-size-evidence/positive"
+      - name: Verify live-app restoration after an injected failure
+        if: ${{ !cancelled() && env.SIZE_SIMULATOR_ID != '' }}
+        run: |
+          python3 scripts/check_ios_system_size.py --device "$SIZE_SIMULATOR_ID" \
+            --evidence-dir "$RUNNER_TEMP/system-size-evidence/failure-recovery" --inject-failure
+      - name: Final independent restoration
+        if: ${{ always() && env.SIZE_SIMULATOR_ID != '' }}
+        run: |
+          xcrun simctl ui "$SIZE_SIMULATOR_ID" content_size "$SIZE_ORIGINAL"
+          actual=$(xcrun simctl ui "$SIZE_SIMULATOR_ID" content_size)
+          printf 'expected=%s\nactual=%s\n' "$SIZE_ORIGINAL" "$actual" > "$RUNNER_TEMP/system-size-evidence/final-restoration.txt"
+          test "$actual" = "$SIZE_ORIGINAL"
+      - name: Save compact size-control evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: system-size-${{ github.sha }}
+          path: ${{ runner.temp }}/system-size-evidence
+          retention-days: 14
+
+  targeted-e2e:
+    if: ${{ inputs.scope == 'system-size-and-e2e' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - run: sudo apt-get update && sudo apt-get install -y tmux
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - run: docker compose --env-file infra/.env.example -f infra/docker-compose.yml up -d --build
+      - name: Run real E2E smoke with terminal projection wait
+        run: |
+          set -o pipefail
+          ./scripts/e2e_smoke.sh 2>&1 | tee "$RUNNER_TEMP/targeted-e2e.log"
+      - name: Save E2E output
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: targeted-e2e-${{ github.sha }}
+          path: ${{ runner.temp }}/targeted-e2e.log
+          retention-days: 14
+      - if: always()
+        run: docker compose --env-file infra/.env.example -f infra/docker-compose.yml logs
+      - if: always()
+        run: docker compose --env-file infra/.env.example -f infra/docker-compose.yml down -v
