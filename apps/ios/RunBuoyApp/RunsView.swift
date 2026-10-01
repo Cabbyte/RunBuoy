@@ -705,16 +705,21 @@ private struct HistoryMachineFilterBar: View {
         @ViewBuilder label: () -> Content
     ) -> some View {
         let isSelected = selection == id
-        Button {
+        let button = Button {
             selection = id
         } label: {
-            filterCapsule(label(), isSelected: isSelected)
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Rectangle())
+            label()
+                .font(.caption.weight(.semibold))
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+                .foregroundStyle(Color.primary)
         }
-        .buttonStyle(.plain)
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityIdentifier(id.map { "history.filter.\($0)" } ?? "history.filter.all")
+
+        filterCapsule(button, isSelected: isSelected)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
+            .accessibilityIdentifier(id.map { "history.filter.\($0)" } ?? "history.filter.all")
     }
 
     private func filterCapsule<Content: View>(
@@ -722,12 +727,12 @@ private struct HistoryMachineFilterBar: View {
         isSelected: Bool
     ) -> some View {
         content
-            .font(.caption.weight(.semibold))
-            .lineLimit(1)
-            .fixedSize(horizontal: true, vertical: false)
-            .foregroundStyle(Color.primary)
+            .buttonStyle(.plain)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
+            // Keep the visible surface as wide as the minimum hit target.
+            .frame(minWidth: 44)
+            .contentShape(Capsule())
             .background {
                 Capsule()
                     .fill(

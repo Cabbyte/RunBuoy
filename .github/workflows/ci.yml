@@ -281,6 +281,19 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -only-testing:RunBuoyTests \
             test
+      - name: Run latest iOS UI tests and accessibility audits
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project apps/ios/RunBuoy.xcodeproj \
+            -scheme RunBuoy \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+            -derivedDataPath "$RUNNER_TEMP/RunBuoy-iOS-latest-DerivedData" \
+            -resultBundlePath "$RUNNER_TEMP/$IOS_RESULT_DIR/RunBuoyUITests.xcresult" \
+            -parallel-testing-enabled NO \
+            CODE_SIGNING_ALLOWED=NO \
+            -only-testing:RunBuoyUITests \
+            test
       - name: Archive app and embedded widget without signing
         run: |
           set -o pipefail

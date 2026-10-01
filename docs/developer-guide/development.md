@@ -2,8 +2,13 @@
 
 ## Development baseline
 
-As of 2026-10-01, use `codex/ios-signal-buoy-v3` as the starting point for
-future RunBuoy development and new task branches. The user selected baseline A:
+As of the 2026-10-01 cleanup, use `main` as the starting point for future
+RunBuoy development and new task branches. It includes the selected v3
+continuation at `39111560d68b7c014cdab92a38ccdcdc4095a5c2` and the approved
+machine layout, compact history filters, and settings icon refinements at
+`17e0d3cbfc7fc39084c30e089989ee15871bd073`.
+
+The user originally selected baseline A:
 `origin/codex/ios-signal-buoy-v2` at
 `19e69b443fdc8da6dad9aad8308b3902a819825a`.
 

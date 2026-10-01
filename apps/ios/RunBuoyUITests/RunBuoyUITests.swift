@@ -113,6 +113,13 @@ final class RunBuoyUITests: XCTestCase {
         XCTAssertTrue(ciMessage.waitForExistence(timeout: 2))
         XCTAssertTrue(macMessage.waitForNonExistence(timeout: 2))
         XCTAssertTrue(element("run.row.\(Self.failedRunID)").exists)
+
+        let allFilter = element("history.filter.all")
+        XCTAssertGreaterThanOrEqual(allFilter.frame.width, 44)
+        XCTAssertGreaterThanOrEqual(allFilter.frame.height, 44)
+        allFilter.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.1)).tap()
+        XCTAssertTrue(macMessage.waitForExistence(timeout: 2))
+        XCTAssertTrue(ciMessage.exists)
     }
 
     func testHistoryLoadsMachineFiltersWhenInitialSnapshotIsEmpty() {
@@ -245,11 +252,7 @@ final class RunBuoyUITests: XCTestCase {
         launch()
         tapTab("tab.settings", label: "Settings")
 
-        let featureTour = element("settings.capabilityDemo")
-        XCTAssertTrue(featureTour.waitForExistence(timeout: 3))
-        featureTour.tap()
-
-        XCTAssertTrue(element("screen.capabilityDemo").waitForExistence(timeout: 3))
+        openCapabilityDemo()
         XCTAssertTrue(element("demo.startLiveActivity").exists)
     }
 
@@ -351,8 +354,7 @@ final class RunBuoyUITests: XCTestCase {
         waitForValue("Phone connected to server", of: element("settings.connectionSummary"), timeout: 5)
         try auditCurrentScreen()
 
-        element("settings.capabilityDemo").tap()
-        XCTAssertTrue(element("screen.capabilityDemo").waitForExistence(timeout: 3))
+        openCapabilityDemo()
         try auditCurrentScreen()
         app.navigationBars.buttons.element(boundBy: 0).tap()
         XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
@@ -372,7 +374,6 @@ final class RunBuoyUITests: XCTestCase {
 
         app.navigationBars.buttons.element(boundBy: 0).tap()
         XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
-        waitForHittable(element("settings.machines"))
         openMachines(fromSettings: true)
         try auditCurrentScreen()
 
@@ -426,8 +427,25 @@ final class RunBuoyUITests: XCTestCase {
             tapTab("tab.settings", label: "Settings")
             XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
         }
-        element("settings.machines").tap()
+        let machines = element("settings.machines")
+        for _ in 0..<4 where !machines.isHittable {
+            element("screen.settings").swipeDown()
+        }
+        XCTAssertTrue(machines.waitForExistence(timeout: 3))
+        waitForHittable(machines)
+        machines.tap()
         XCTAssertTrue(element("screen.machines").waitForExistence(timeout: 3))
+    }
+
+    private func openCapabilityDemo() {
+        let featureTour = element("settings.capabilityDemo")
+        for _ in 0..<4 where !featureTour.isHittable {
+            element("screen.settings").swipeUp()
+        }
+        XCTAssertTrue(featureTour.waitForExistence(timeout: 3))
+        waitForHittable(featureTour)
+        featureTour.tap()
+        XCTAssertTrue(element("screen.capabilityDemo").waitForExistence(timeout: 3))
     }
 
     private func openAdvancedData() {

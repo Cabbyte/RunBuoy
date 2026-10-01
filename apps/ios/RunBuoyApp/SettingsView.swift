@@ -76,6 +76,7 @@ struct SettingsView: View {
 
             NavigationLink(value: AppRoute.pluginConnections) {
                 Label("plugin.title", systemImage: "rectangle.connected.to.line.below")
+                    .foregroundStyle(.primary)
             }
             .accessibilityIdentifier("settings.pluginConnections")
 
