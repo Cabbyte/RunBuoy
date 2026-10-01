@@ -20,7 +20,10 @@ struct ActiveRunsView: View {
                 }
 
                 if let hero = sortedModels.first {
-                    ActiveSystemSummaryCard(runs: sortedModels.map(\.snapshot))
+                    ActiveSystemSummaryCard(
+                        runs: sortedModels.map(\.snapshot),
+                        lastSyncedAt: store.lastRefreshAt
+                    )
                     ActiveRunHeroLink(model: hero)
 
                     let secondary = Array(sortedModels.dropFirst())
@@ -107,9 +110,11 @@ struct ActiveSystemSummary: Equatable {
 
 private struct ActiveSystemSummaryCard: View {
     let summary: ActiveSystemSummary
+    let lastSyncedAt: Date?
 
-    init(runs: [RunSnapshot]) {
+    init(runs: [RunSnapshot], lastSyncedAt: Date?) {
         summary = ActiveSystemSummary(runs: runs)
+        self.lastSyncedAt = lastSyncedAt
     }
 
     var body: some View {
@@ -120,11 +125,14 @@ private struct ActiveSystemSummaryCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(summaryTitle)
                     .font(.subheadline.weight(.semibold))
-                if let date = summary.lastConfirmedAt {
-                    Text("\(String(localized: "run.last_confirmed")) \(date.formatted(.relative(presentation: .named)))")
+                if let lastSyncedAt {
+                    Text("\(String(localized: "runs.phone_synced")) \(lastSyncedAt.formatted(.relative(presentation: .named)))")
                         .font(.caption)
                         .runBuoySecondaryText()
                 }
+                Text("runs.confirmation_hint")
+                    .font(.caption)
+                    .runBuoySecondaryText()
             }
         }
         .accessibilityIdentifier("activeRuns.systemSummary")
@@ -248,7 +256,7 @@ private struct ActiveRunTiming: View {
         HStack(spacing: 4) {
             Image(systemName: "waveform.path.ecg").accessibilityHidden(true)
             (
-                Text("run.heartbeat_time")
+                Text("run.last_confirmed")
                     + Text(" \(run.updatedAt, format: .relative(presentation: .named))")
                     .fontWeight(.semibold)
             )
@@ -366,68 +374,79 @@ struct RunHistoryView: View {
 
     private var historyList: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 14) {
-                if case .offline(let message) = store.state {
-                    OfflineBanner(message: message)
-                }
+            LazyVStack(alignment: .leading, spacing: 14, pinnedViews: [.sectionHeaders]) {
+                Section {
+                    if case .offline(let message) = store.state {
+                        OfflineBanner(message: message)
+                    }
 
-                if !filteredRunModels.isEmpty || store.canLoadMoreRuns(machineID: selectedMachineID) {
-                    HistorySectionTitle("runs.recent")
-                    ForEach(visibleRunModels) { model in
-                        NavigationLink(value: AppRoute.runDetail(model.id)) {
-                            RunCompactCard(tone: model.snapshot.statusVisualState.tone) {
-                                RunRow(model: model)
+                    if !filteredRunModels.isEmpty || store.canLoadMoreRuns(machineID: selectedMachineID) {
+                        HistorySectionTitle("runs.recent")
+                        ForEach(visibleRunModels) { model in
+                            NavigationLink(value: AppRoute.runDetail(model.id)) {
+                                RunCompactCard(tone: model.snapshot.statusVisualState.tone) {
+                                    RunRow(model: model)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
+                        }
+                        HistoryExpansionButton(
+                            totalCount: filteredRunModels.count,
+                            isExpanded: $areRunsExpanded
+                        )
+                        if store.canLoadMoreRuns(machineID: selectedMachineID) {
+                            HistoryLoadMoreButton(
+                                isLoading: store.isLoadingMoreRuns,
+                                accessibilityID: "history.runs.loadMore"
+                            ) {
+                                await store.loadMoreHistoryRuns(machineID: selectedMachineID)
+                                areRunsExpanded = true
                             }
                         }
-                        .buttonStyle(.plain)
-                        .accessibilityIdentifier("run.row.\(model.id.uuidString.lowercased())")
                     }
-                    HistoryExpansionButton(
-                        totalCount: filteredRunModels.count,
-                        isExpanded: $areRunsExpanded
-                    )
-                    if store.canLoadMoreRuns(machineID: selectedMachineID) {
-                        HistoryLoadMoreButton(
-                            isLoading: store.isLoadingMoreRuns,
-                            accessibilityID: "history.runs.loadMore"
-                        ) {
-                            await store.loadMoreHistoryRuns(machineID: selectedMachineID)
-                            areRunsExpanded = true
+
+                    if !filteredMessages.isEmpty || store.canLoadMoreMessages(machineID: selectedMachineID) {
+                        HistorySectionTitle("runs.messages")
+                        ForEach(visibleMessages) { message in
+                            HistoryMessageCard(message: message)
+                                .accessibilityIdentifier("history.message.\(message.id)")
+                        }
+                        HistoryExpansionButton(
+                            totalCount: filteredMessages.count,
+                            isExpanded: $areMessagesExpanded
+                        )
+                        if store.canLoadMoreMessages(machineID: selectedMachineID) {
+                            HistoryLoadMoreButton(
+                                isLoading: store.isLoadingMoreMessages,
+                                accessibilityID: "history.messages.loadMore"
+                            ) {
+                                await store.loadMoreHistoryMessages(machineID: selectedMachineID)
+                                areMessagesExpanded = true
+                            }
                         }
                     }
-                }
 
-                if !filteredMessages.isEmpty || store.canLoadMoreMessages(machineID: selectedMachineID) {
-                    HistorySectionTitle("runs.messages")
-                    ForEach(visibleMessages) { message in
-                        HistoryMessageCard(message: message)
-                            .accessibilityIdentifier("history.message.\(message.id)")
+                    if isEmpty, store.state == .loading {
+                        HistoryLoadingSkeleton()
+                    } else if isEmpty {
+                        HistoryEmptyState(
+                            state: store.state,
+                            machineID: selectedMachineID,
+                            machineName: selectedMachineName,
+                            retry: refresh
+                        )
+                        .frame(maxWidth: .infinity, minHeight: 320)
                     }
-                    HistoryExpansionButton(
-                        totalCount: filteredMessages.count,
-                        isExpanded: $areMessagesExpanded
-                    )
-                    if store.canLoadMoreMessages(machineID: selectedMachineID) {
-                        HistoryLoadMoreButton(
-                            isLoading: store.isLoadingMoreMessages,
-                            accessibilityID: "history.messages.loadMore"
-                        ) {
-                            await store.loadMoreHistoryMessages(machineID: selectedMachineID)
-                            areMessagesExpanded = true
-                        }
+                } header: {
+                    if !machineOptions.isEmpty {
+                        HistoryMachineFilterBar(
+                            options: machineOptions,
+                            selection: $selectedMachineID
+                        )
+                        .padding(.horizontal, -16)
+                        .background(Color(.systemBackground))
                     }
-                }
-
-                if isEmpty, store.state == .loading {
-                    HistoryLoadingSkeleton()
-                } else if isEmpty {
-                    HistoryEmptyState(
-                        state: store.state,
-                        machineID: selectedMachineID,
-                        machineName: selectedMachineName,
-                        retry: refresh
-                    )
-                    .frame(maxWidth: .infinity, minHeight: 320)
                 }
             }
             .padding(.horizontal)
@@ -437,29 +456,10 @@ struct RunHistoryView: View {
         .runBuoyBottomScrollEdgeStyle()
     }
 
-    @ViewBuilder
     private var historyListWithFilter: some View {
-        // The system safe-area glass bar can become almost transparent while
-        // the accessibility audit snapshots a scrolled screen. Use the same
-        // native inset hierarchy on every supported OS so filter labels have a
-        // stable surface and reading order.
-        historyListWithLegacyFilter
-    }
-
-    private var historyListWithLegacyFilter: some View {
+        // A native pinned header keeps the filter in the scroll layout instead
+        // of covering the navigation title with a top safe-area inset.
         historyList
-            .safeAreaInset(edge: .top, spacing: 0) {
-                if !machineOptions.isEmpty {
-                    VStack(spacing: 0) {
-                        HistoryMachineFilterBar(
-                            options: machineOptions,
-                            selection: $selectedMachineID
-                        )
-                        Divider()
-                    }
-                    .background(Color(.systemBackground))
-                }
-            }
     }
 
     private func refresh() {
@@ -681,6 +681,9 @@ private struct HistoryMachineFilterBar: View {
                 filterButton(id: option.id) {
                     Label {
                         Text(option.name)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                            .frame(maxWidth: 200, alignment: .leading)
                     } icon: {
                         MachineIconImage(machineID: option.id)
                     }
@@ -705,33 +708,16 @@ private struct HistoryMachineFilterBar: View {
                 .foregroundStyle(Color.primary)
         }
 
-        Group {
-#if compiler(>=6.2)
-            if #available(iOS 26.0, *) {
-                if isSelected {
-                    // A filled glass tint can reduce text contrast as the
-                    // content behind it changes. The selected capsule keeps a
-                    // stable semantic fill, outline, and selected trait.
-                    legacyFilterButton(button, isSelected: true)
-                } else {
-                    button
-                        .buttonStyle(.glass)
-                        .buttonBorderShape(.capsule)
-                }
-            } else {
-                legacyFilterButton(button, isSelected: isSelected)
-            }
-#else
-            legacyFilterButton(button, isSelected: isSelected)
-#endif
-        }
+        // A stable semantic surface avoids vibrancy-dependent contrast in
+        // horizontally clipped labels, including during accessibility audits.
+        filterCapsule(button, isSelected: isSelected)
         .controlSize(.regular)
         .frame(minHeight: 44)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .accessibilityIdentifier(id.map { "history.filter.\($0)" } ?? "history.filter.all")
     }
 
-    private func legacyFilterButton<ButtonContent: View>(
+    private func filterCapsule<ButtonContent: View>(
         _ button: ButtonContent,
         isSelected: Bool
     ) -> some View {

@@ -397,6 +397,29 @@ final class ModelDecodingTests: XCTestCase {
         XCTAssertEqual(RunDetailTiming.elapsedEndDate(for: succeeded), succeeded.endedAt)
     }
 
+    func testSafeMessageTimeUsesItsEventInsteadOfANewerHeartbeat() {
+        let run = summaryRun(safeMessage: "Safe checkpoint confirmed.")
+        let messageTime = run.updatedAt.addingTimeInterval(-120)
+        let feed = [
+            RunFeedEvent(
+                id: UUID(), sequence: 98, type: "run.message", occurredAt: messageTime,
+                phase: nil, message: run.safeMessage, progress: nil
+            ),
+            RunFeedEvent(
+                id: UUID(), sequence: 99, type: "run.heartbeat", occurredAt: run.updatedAt,
+                phase: nil, message: nil, progress: nil
+            ),
+            RunFeedEvent(
+                id: UUID(), sequence: 100, type: "run.message", occurredAt: run.updatedAt,
+                phase: nil, message: run.safeMessage, progress: nil
+            )
+        ]
+
+        XCTAssertEqual(RunDetailMessageTiming.eventDate(for: run, in: feed), messageTime)
+        XCTAssertNil(RunDetailMessageTiming.eventDate(for: run, in: []))
+        XCTAssertNil(RunDetailMessageTiming.eventDate(for: summaryRun(safeMessage: "Other message"), in: feed))
+    }
+
     private func summaryRun(
         executionStatus: ExecutionStatus = .running,
         healthStatus: HealthStatus = .healthy,

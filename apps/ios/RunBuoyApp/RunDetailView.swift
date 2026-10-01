@@ -102,8 +102,6 @@ struct RunDetailContent: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 14) {
-                RunDetailHero(run: detail.run)
-
                 if let banner = stateBanner {
                     RunStateBanner(tone: banner.tone, symbol: banner.symbol) {
                         VStack(alignment: .leading, spacing: 3) {
@@ -117,11 +115,16 @@ struct RunDetailContent: View {
                     .accessibilityIdentifier("run.stateBanner")
                 }
 
+                RunDetailHero(run: detail.run)
+
                 if let safeMessage {
                     LatestConfirmedUpdateCard(
                         phase: detail.run.phase,
                         message: safeMessage,
-                        confirmedAt: detail.run.updatedAt,
+                        messageEventAt: RunDetailMessageTiming.eventDate(
+                            for: detail.run, in: orderedFeed
+                        ),
+                        snapshotConfirmedAt: detail.run.updatedAt,
                         tone: detail.run.statusVisualState.tone
                     )
                 }
@@ -188,6 +191,13 @@ struct RunDetailContent: View {
                 symbol: state.symbolName,
                 title: "status.cancelled",
                 message: String(localized: "run.state.cancelled")
+            )
+        case .failed:
+            return RunDetailBanner(
+                tone: .critical,
+                symbol: state.symbolName,
+                title: "run.final_result_reported",
+                message: String(localized: "run.state.failed")
             )
         case .actionRequired:
             return RunDetailBanner(
@@ -365,10 +375,21 @@ private struct RunDetailHeroSurface<Content: View>: View {
     }
 }
 
+enum RunDetailMessageTiming {
+    static func eventDate(for run: RunSnapshot, in feed: [RunFeedEvent]) -> Date? {
+        guard let message = run.safeMessage?.trimmedNonempty else { return nil }
+        // A newer snapshot or a heartbeat must not invent a new message time.
+        return feed.filter {
+            $0.sequence <= run.sequence && $0.message?.trimmedNonempty == message
+        }.max { $0.sequence < $1.sequence }?.occurredAt
+    }
+}
+
 private struct LatestConfirmedUpdateCard: View {
     let phase: String?
     let message: String
-    let confirmedAt: Date
+    let messageEventAt: Date?
+    let snapshotConfirmedAt: Date
     let tone: RunBuoyTone
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
@@ -388,7 +409,11 @@ private struct LatestConfirmedUpdateCard: View {
                 .runBuoySecondaryText()
                 .textSelection(.enabled)
             Label {
-                RelativeConfirmedText(date: confirmedAt, font: .caption)
+                RelativeConfirmedText(
+                    date: messageEventAt ?? snapshotConfirmedAt,
+                    label: messageEventAt == nil ? "run.snapshot_confirmed" : "run.message_reported",
+                    font: .caption
+                )
             } icon: {
                 Image(systemName: "clock")
             }

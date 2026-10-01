@@ -1,7 +1,7 @@
 import SwiftUI
 
-enum MachineReceivingVisualState: Equatable {
-    case receiving
+enum MachineReceivingVisualState: Hashable {
+    case awaitingConfirmation
     case recentConfirmation
     case updatesDisabled
 
@@ -15,12 +15,12 @@ enum MachineReceivingVisualState: Equatable {
         guard now.timeIntervalSince(lastSeenAt) >= recentInterval else {
             return .recentConfirmation
         }
-        return .receiving
+        return .awaitingConfirmation
     }
 
     var tone: RunBuoyTone {
         switch self {
-        case .receiving: .live
+        case .awaitingConfirmation: .neutral
         case .recentConfirmation: .success
         case .updatesDisabled: .warning
         }
@@ -28,7 +28,7 @@ enum MachineReceivingVisualState: Equatable {
 
     var symbol: String {
         switch self {
-        case .receiving: "antenna.radiowaves.left.and.right"
+        case .awaitingConfirmation: "clock"
         case .recentConfirmation: "checkmark.seal.fill"
         case .updatesDisabled: "bell.slash.fill"
         }
@@ -36,7 +36,7 @@ enum MachineReceivingVisualState: Equatable {
 
     var title: LocalizedStringKey {
         switch self {
-        case .receiving: "machines.receiving_updates"
+        case .awaitingConfirmation: "machines.awaiting_confirmation"
         case .recentConfirmation: "machines.recent_confirmation"
         case .updatesDisabled: "machines.updates_off"
         }
@@ -169,18 +169,19 @@ private struct MachinesSummary: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("machines.paired", systemImage: "desktopcomputer.and.macbook")
-                .font(.headline)
-
-            Text(machines.count, format: .number)
-                .font(.system(.largeTitle, design: .rounded, weight: .bold))
+            HStack(spacing: 10) {
+                Label("machines.paired", systemImage: "desktopcomputer.and.macbook")
+                    .font(.headline)
+                Text(machines.count, format: .number)
+                    .font(.system(.title2, design: .rounded, weight: .bold))
+            }
 
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 14) { stateCounts }
                 VStack(alignment: .leading, spacing: 6) { stateCounts }
             }
 
-            Text("machines.intro")
+            Text("machines.confirmation_boundary")
                 .font(.footnote)
                 .runBuoySecondaryText()
         }
@@ -190,18 +191,11 @@ private struct MachinesSummary: View {
 
     @ViewBuilder
     private var stateCounts: some View {
-        MachineStateCount(
-            state: .recentConfirmation,
-            count: count(for: .recentConfirmation)
-        )
-        MachineStateCount(
-            state: .receiving,
-            count: count(for: .receiving)
-        )
-        MachineStateCount(
-            state: .updatesDisabled,
-            count: count(for: .updatesDisabled)
-        )
+        ForEach([MachineReceivingVisualState.recentConfirmation, .awaitingConfirmation, .updatesDisabled], id: \.self) { state in
+            if count(for: state) > 0 {
+                MachineStateCount(state: state, count: count(for: state))
+            }
+        }
     }
 
     private func count(for state: MachineReceivingVisualState) -> Int {
@@ -296,6 +290,9 @@ struct MachineRow: View {
                 .font(.caption)
                 .runBuoySecondaryText()
                 .fixedSize(horizontal: false, vertical: true)
+                Text(machine.isSubscribed ? "machines.updates_on" : "machines.updates_off")
+                    .font(.caption)
+                    .runBuoySecondaryText()
             }
             Spacer(minLength: 4)
             HStack(spacing: 4) {
@@ -409,16 +406,18 @@ private struct MachineDetailContent: View {
     var body: some View {
         Form {
             Section {
-                VStack(spacing: 10) {
-                    MachineStatusIcon(machineID: machine.id, state: state, size: 72)
-                    Text(machine.displayName)
-                        .font(.title2.bold())
-                        .multilineTextAlignment(.center)
-                    Label(state.title, systemImage: state.symbol)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 14) {
+                    MachineStatusIcon(machineID: machine.id, state: state, size: 48)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(machine.displayName)
+                            .font(.title2.bold())
+                            .fixedSize(horizontal: false, vertical: true)
+                        Label(state.title, systemImage: state.symbol)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 8)
                 .accessibilityElement(children: .combine)
             }

@@ -313,6 +313,11 @@ struct RunProgressView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: emphasis.spacing) {
+            if status.kind == .stale || status.kind == .offline {
+                Text("run.last_reported_progress")
+                    .font(.caption.weight(.semibold))
+                    .accessibilityIdentifier("run.progress.lastReported")
+            }
             if visualState.kind == .determinate, let fraction = visualState.fraction {
                 if emphasis == .prominent {
                     prominentDeterminateContent(fraction: fraction)
@@ -1177,7 +1182,7 @@ private struct RunRowMetadataFooter: View {
                 .foregroundStyle(theme.status(run.healthStatus.presentation.tone))
                 .accessibilityHidden(true)
             (
-                Text("run.heartbeat_time")
+                Text("run.last_confirmed")
                     + Text(" \(run.updatedAt, style: .relative)")
                     .fontWeight(.semibold)
             )

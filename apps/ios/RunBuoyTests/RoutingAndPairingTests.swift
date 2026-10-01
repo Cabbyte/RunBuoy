@@ -432,7 +432,7 @@ final class SettingsOnboardingMachinesFoundationTests: XCTestCase {
                 lastSeenAt: now.addingTimeInterval(-601),
                 now: now
             ),
-            .receiving
+            .awaitingConfirmation
         )
         XCTAssertEqual(
             MachineReceivingVisualState.resolve(

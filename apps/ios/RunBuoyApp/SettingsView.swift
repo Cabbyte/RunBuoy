@@ -322,6 +322,7 @@ private struct SettingsConnectionSummary: View {
         VStack(alignment: .leading, spacing: 3) {
             Text(state.title)
                 .font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
                 .accessibilityIdentifier("settings.connectionSummary.title")
             HStack(spacing: 4) {
                 Text(machineCount, format: .number)
@@ -341,7 +342,7 @@ private struct SettingsConnectionSummary: View {
             .runBuoySecondaryText()
             .fixedSize(horizontal: false, vertical: true)
 
-            HStack(spacing: 4) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(serverAddress)
                     .font(.caption)
                     .accessibilityIdentifier("settings.connectionSummary.server")
@@ -352,22 +353,20 @@ private struct SettingsConnectionSummary: View {
                         )
                     )
                 if let lastConfirmedAt {
-                    Circle()
-                        .fill(Color.primary)
-                        .frame(width: 3, height: 3)
-                        .accessibilityHidden(true)
-                    Text("settings.connection_last_confirmed")
-                        .font(.caption)
-                        .accessibilityIdentifier("settings.connectionSummary.confirmedLabel")
-                    Text(
-                        lastConfirmedAt,
-                        format: .relative(
-                            presentation: .numeric,
-                            unitsStyle: .abbreviated
+                    HStack(spacing: 4) {
+                        Text("settings.connection_last_confirmed")
+                            .font(.caption)
+                            .accessibilityIdentifier("settings.connectionSummary.confirmedLabel")
+                        Text(
+                            lastConfirmedAt,
+                            format: .relative(
+                                presentation: .numeric,
+                                unitsStyle: .abbreviated
+                            )
                         )
-                    )
-                    .font(.caption)
-                    .accessibilityIdentifier("settings.connectionSummary.confirmedDate")
+                        .font(.caption)
+                        .accessibilityIdentifier("settings.connectionSummary.confirmedDate")
+                    }
                 }
             }
             .runBuoySecondaryText()

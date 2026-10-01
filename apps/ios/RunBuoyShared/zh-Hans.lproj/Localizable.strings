@@ -164,7 +164,7 @@
 "machines.paired" = "已配对电脑";
 "machines.footer" = "下拉可刷新电脑可用状态；配对与通知偏好只属于当前工作区。";
 "machines.unavailable" = "暂时无法加载电脑。";
-"machines.last_seen_prefix" = "最近在线";
+"machines.last_seen_prefix" = "最后收到";
 "machines.updates_off" = "更新已关闭";
 "machines.online" = "在线";
 "machines.idle" = "空闲";
@@ -263,7 +263,7 @@
 "run.started" = "开始时间";
 "run.timeline" = "时间";
 "run.unavailable" = "无法读取运行";
-"run.updated" = "更新时间";
+"run.updated" = "快照更新";
 "runs.active" = "正在运行";
 "runs.active_empty" = "一切正常";
 "runs.active_empty_description" = "当前没有正在运行的任务。";
@@ -357,7 +357,7 @@
 "onboarding.hero_title" = "守望每一次长时间运行";
 "run.copy_summary" = "复制摘要";
 "run.last_confirmed" = "最后确认";
-"run.latest_confirmed_update" = "最近确认更新";
+"run.latest_confirmed_update" = "最后收到的安全消息";
 "run.safe_fields_only" = "仅显示安全字段";
 "run.safety_boundary" = "仅显示安全字段；绝不展示原始日志、命令、路径、环境变量或秘密。";
 "run.state.action_required" = "电脑报告需要处理。";
@@ -369,13 +369,13 @@
 "run.summary.title" = "标题";
 "run.technical_details" = "技术详情";
 "runs.also_active" = "其他运行中任务";
-"runs.system_summary.healthy" = "%lld 个运行中 · 全部正常";
+"runs.system_summary.healthy" = "%lld 个运行中 · 暂无待处理提示";
 "runs.system_summary.issues" = "%1$lld 个运行中 · %2$lld 个需要关注";
 "settings.advanced_data" = "高级与数据";
 "settings.connection_awaiting" = "等待确认";
-"settings.connection_cached" = "缓存连接";
-"settings.connection_confirmed" = "已连接";
-"settings.connection_last_confirmed" = "已确认";
+"settings.connection_cached" = "离线 · 显示已保存数据";
+"settings.connection_confirmed" = "手机已连接服务器";
+"settings.connection_last_confirmed" = "上次服务器同步";
 "settings.connection_refreshing" = "正在刷新";
 "settings.connection_unavailable" = "连接不可用";
 "settings.destructive_actions" = "危险操作";
@@ -385,3 +385,23 @@
 "settings.read_only_boundary" = "这些操作绝不会停止、重试或控制 Mac 上的运行。";
 "settings.safe_data_only" = "仅安全数据";
 "settings.safe_data_only_description" = "摘要不包含原始日志、命令、路径、环境变量、源代码或完整输出。";
+
+"machines.awaiting_confirmation" = "最近未确认";
+
+"machines.updates_on" = "更新已开启";
+
+"machines.confirmation_boundary" = "电脑最后确认与这台 iPhone 的服务器连接分别显示。";
+
+"run.last_reported_progress" = "上次报告的进度";
+
+"run.message_reported" = "消息报告于";
+
+"run.snapshot_confirmed" = "快照确认于";
+
+"run.final_result_reported" = "已收到最终结果";
+
+"run.state.failed" = "任务已结束，进度显示结束前最后报告的值。";
+
+"runs.phone_synced" = "手机同步于";
+
+"runs.confirmation_hint" = "电脑最后确认时间见各任务。";

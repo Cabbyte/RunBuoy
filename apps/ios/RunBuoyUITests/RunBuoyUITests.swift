@@ -50,7 +50,7 @@ final class RunBuoyUITests: XCTestCase {
         let activeRow = element("run.row.\(Self.activeRunID)")
         XCTAssertTrue(activeRow.waitForExistence(timeout: 5))
         XCTAssertTrue(activeRow.label.contains("Run time"))
-        XCTAssertTrue(activeRow.label.contains("Heartbeat"))
+        XCTAssertTrue(activeRow.label.contains("Last Confirmed"))
         activeRow.tap()
 
         XCTAssertTrue(element("screen.runDetail").waitForExistence(timeout: 3))
@@ -317,7 +317,7 @@ final class RunBuoyUITests: XCTestCase {
 
         tapTab("tab.settings", label: "Settings")
         XCTAssertTrue(element("screen.settings").waitForExistence(timeout: 3))
-        waitForValue("Connected", of: element("settings.connectionSummary"), timeout: 5)
+        waitForValue("Phone connected to server", of: element("settings.connectionSummary"), timeout: 5)
         try auditCurrentScreen()
 
         element("settings.capabilityDemo").tap()
