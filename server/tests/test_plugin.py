@@ -226,7 +226,14 @@ def test_deny_expiry_pkce_redirect_resource_and_scope(plugin):
         )
         assert response.status_code in (400, 302, 307)
         assert "/connect/" not in response.headers.get("location", "")
-        assert not response.headers.get("location", "").startswith("https://evil.example")
+        if location := response.headers.get("location"):
+            redirect = urlsplit(location)
+            registered = urlsplit(settings.plugin_redirect_uris[0])
+            assert (redirect.scheme, redirect.netloc, redirect.path) == (
+                registered.scheme,
+                registered.netloc,
+                registered.path,
+            )
 
 
 def test_refresh_rotation_and_replay_revoke_connection(plugin):
