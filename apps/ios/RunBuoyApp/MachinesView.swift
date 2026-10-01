@@ -41,54 +41,94 @@ enum MachineReceivingVisualState: Hashable {
         case .updatesDisabled: "machines.updates_off"
         }
     }
+
+    func countTitle(_ count: Int) -> String {
+        let format: String
+        switch self {
+        case .awaitingConfirmation:
+            format = String(localized: "machines.awaiting_confirmation_count")
+        case .recentConfirmation:
+            format = String(localized: "machines.recent_confirmation_count")
+        case .updatesDisabled:
+            format = String(localized: "machines.updates_off_count")
+        }
+        return String(format: format, count)
+    }
+}
+
+private enum MachineListMetrics {
+    static let pageInset: CGFloat = 16
+    static let rowInset: CGFloat = 16
+    static let iconSize: CGFloat = 48
+    static let iconSpacing: CGFloat = 16
+
+    static func textInset(for dynamicTypeSize: DynamicTypeSize) -> CGFloat {
+        rowInset + (dynamicTypeSize.isAccessibilitySize ? 0 : iconSize + iconSpacing)
+    }
 }
 
 struct MachinesView: View {
     @Environment(RunBuoyStore.self) private var store
     @Environment(AppRouter.self) private var router
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        List {
-            if !store.machines.isEmpty {
-                Section {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                if !store.machines.isEmpty {
                     MachinesSummary(machines: store.machines)
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
+                        .padding(.bottom, 24)
 
                     Button(action: showPairingCode) {
                         Label("settings.pair_machine", systemImage: "qrcode.viewfinder")
                             .font(.headline)
                             .foregroundStyle(.white)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
-                            .frame(minHeight: 44)
+                            .padding(.vertical, 12)
+                            .frame(minHeight: 50)
                             .frame(maxWidth: .infinity)
                             .background(Color.accentColor, in: Capsule())
                     }
                     .labelStyle(.titleAndIcon)
                     .buttonStyle(.plain)
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
                     .accessibilityIdentifier("machines.enterPairingCode")
-                }
+                    .padding(.bottom, 28)
 
-                Section {
-                    Text("machines.paired")
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    ForEach(store.machines) { machine in
-                        NavigationLink(value: AppRoute.machine(machine.id)) {
-                            MachineRow(machine: machine)
+                    LazyVStack(spacing: 0) {
+                        ForEach(store.machines) { machine in
+                            NavigationLink(value: AppRoute.machine(machine.id)) {
+                                MachineRow(machine: machine)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("machine.row.\(machine.id)")
+
+                            if machine.id != store.machines.last?.id {
+                                Divider()
+                                    .padding(.leading, MachineListMetrics.textInset(for: dynamicTypeSize))
+                                    .padding(.trailing, MachineListMetrics.rowInset)
+                            }
                         }
-                        .accessibilityIdentifier("machine.row.\(machine.id)")
                     }
-                } footer: {
-                    Text("machines.footer")
-                        .foregroundStyle(.primary)
+                    .background(
+                        Color(.secondarySystemGroupedBackground),
+                        in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    )
+
+                    Text("machines.confirmation_boundary")
+                        .font(.footnote)
+                        .runBuoySecondaryText()
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 16)
                 }
             }
+            .padding(.horizontal, MachineListMetrics.pageInset)
+            .padding(.top, 12)
+            .padding(.bottom, 24)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .listStyle(.insetGrouped)
+        .runBuoyCanvas()
         .accessibilityIdentifier("screen.machines")
         .navigationTitle("machines.title")
         .toolbar(.hidden, for: .tabBar)
@@ -168,32 +208,29 @@ private struct MachinesSummary: View {
     let machines: [MachineSnapshot]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 10) {
-                Label("machines.paired", systemImage: "desktopcomputer.and.macbook")
-                    .font(.headline)
-                Text(machines.count, format: .number)
-                    .font(.system(.title2, design: .rounded, weight: .bold))
-            }
-
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 14) { stateCounts }
-                VStack(alignment: .leading, spacing: 6) { stateCounts }
-            }
-
-            Text("machines.confirmation_boundary")
-                .font(.footnote)
-                .runBuoySecondaryText()
+        VStack(alignment: .leading, spacing: 4) {
+            Text(pairedCount)
+                .font(.title3.weight(.semibold))
+            stateCounts
         }
-        .padding(.vertical, 4)
+        .fixedSize(horizontal: false, vertical: true)
         .accessibilityElement(children: .combine)
+    }
+
+    private var pairedCount: String {
+        let format = machines.count == 1
+            ? String(localized: "machines.paired_count.one")
+            : String(localized: "machines.paired_count.other")
+        return String(format: format, machines.count)
     }
 
     @ViewBuilder
     private var stateCounts: some View {
         ForEach([MachineReceivingVisualState.recentConfirmation, .awaitingConfirmation, .updatesDisabled], id: \.self) { state in
             if count(for: state) > 0 {
-                MachineStateCount(state: state, count: count(for: state))
+                Text(state.countTitle(count(for: state)))
+                    .font(.subheadline)
+                    .runBuoySecondaryText()
             }
         }
     }
@@ -208,121 +245,78 @@ private struct MachinesSummary: View {
     }
 }
 
-private struct MachineStateCount: View {
-    @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
-    @Environment(\.colorSchemeContrast) private var contrast
-    let state: MachineReceivingVisualState
-    let count: Int
-
-    var body: some View {
-        Label {
-            HStack(spacing: 3) {
-                Text(count, format: .number)
-                Text(state.title)
-            }
-        } icon: {
-            Image(systemName: state.symbol)
-                .foregroundStyle(theme.status(state.tone))
-        }
-        .font(.caption.weight(.semibold))
-        .foregroundStyle(.primary)
-    }
-
-    private var theme: RunBuoyTheme {
-        RunBuoyTheme(
-            colorScheme: colorScheme,
-            reduceTransparency: reduceTransparency,
-            increasedContrast: contrast == .increased
-        )
-    }
-}
-
 struct MachineRow: View {
     let machine: MachineSnapshot
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
-    @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
-        Group {
-            if dynamicTypeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: 8) {
-                    machineIcon
-                    machineMetadata
-                }
-            } else {
-                HStack(spacing: 12) {
-                    machineIcon
-                    machineMetadata
+        HStack(spacing: 12) {
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: 12) {
+                        machineIcon
+                        machineMetadata
+                    }
+                } else {
+                    HStack(alignment: .top, spacing: MachineListMetrics.iconSpacing) {
+                        machineIcon
+                        machineMetadata
+                    }
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.tertiary)
+                .accessibilityHidden(true)
         }
-        .padding(.vertical, 4)
+        .padding(.horizontal, MachineListMetrics.rowInset)
+        .padding(.vertical, 16)
+        .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
     }
 
     private var machineIcon: some View {
-        MachineStatusIcon(machineID: machine.id, state: state, size: 48)
+        MachineStatusIcon(
+            machineID: machine.id,
+            state: state,
+            size: MachineListMetrics.iconSize,
+            showsStatus: false
+        )
     }
 
     private var machineMetadata: some View {
-        HStack(alignment: .top, spacing: 8) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(machine.displayName)
-                    .font(.headline)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                HStack(spacing: 4) {
-                    Text(machine.platform)
-                    Text("·")
-                        .accessibilityHidden(true)
-                    Text("machines.last_seen_prefix")
-                    Text(
-                        machine.lastSeenAt,
-                        format: .relative(
-                            presentation: .numeric,
-                            unitsStyle: .abbreviated
-                        )
-                    )
-                }
-                .font(.caption)
-                .runBuoySecondaryText()
+        VStack(alignment: .leading, spacing: 4) {
+            Text(machine.displayName)
+                .font(.headline)
+                .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
-                Text(machine.isSubscribed ? "machines.updates_on" : "machines.updates_off")
-                    .font(.caption)
-                    .runBuoySecondaryText()
+
+            VStack(alignment: .leading, spacing: 4) {
+                (
+                    Text("\(machine.platform) · ")
+                        + Text(machine.isSubscribed ? "machines.updates_on" : "machines.updates_off")
+                )
+                (
+                    Text("machines.last_seen_prefix")
+                        + Text(" \(machine.lastSeenAt, format: .relative(presentation: .numeric, unitsStyle: .abbreviated))")
+                )
+
+                if machine.isSubscribed {
+                    Text(state.title)
+                }
             }
-            Spacer(minLength: 4)
-            HStack(spacing: 4) {
-                Image(systemName: state.symbol)
-                    .foregroundStyle(stateColor)
-                    .accessibilityHidden(true)
-                Text(state.title)
-                    .font(.caption2.weight(.medium))
-                    .foregroundStyle(.primary)
-            }
-            .fixedSize(horizontal: true, vertical: false)
+            .font(.footnote)
+            .runBuoySecondaryText()
+            .fixedSize(horizontal: false, vertical: true)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .fixedSize(horizontal: false, vertical: true)
-        .layoutPriority(1)
     }
 
     private var state: MachineReceivingVisualState {
         .resolve(isSubscribed: machine.isSubscribed, lastSeenAt: machine.lastSeenAt)
-    }
-
-    private var stateColor: Color {
-        theme.status(state.tone)
-    }
-
-    private var theme: RunBuoyTheme {
-        RunBuoyTheme(
-            colorScheme: colorScheme,
-            reduceTransparency: reduceTransparency,
-            increasedContrast: contrast == .increased
-        )
     }
 }
 
@@ -333,23 +327,29 @@ private struct MachineStatusIcon: View {
     let machineID: String
     let state: MachineReceivingVisualState
     let size: CGFloat
+    var showsStatus = true
 
     var body: some View {
         MachineIconImage(machineID: machineID)
             .font(.system(size: size * 0.44, weight: .semibold))
-            .foregroundStyle(theme.status(state.tone))
+            .foregroundStyle(theme.status(showsStatus ? state.tone : .neutral))
             .frame(width: size, height: size)
-            .background(theme.elevatedSurface, in: RoundedRectangle(cornerRadius: size * 0.28, style: .continuous))
+            .background(
+                showsStatus ? theme.elevatedSurface : theme.canvas,
+                in: RoundedRectangle(cornerRadius: size * 0.28, style: .continuous)
+            )
             .overlay {
                 RoundedRectangle(cornerRadius: size * 0.28, style: .continuous)
-                    .stroke(theme.border(state.tone), lineWidth: contrast == .increased ? 2 : 1)
+                    .stroke(theme.border(showsStatus ? state.tone : .neutral), lineWidth: contrast == .increased ? 2 : 1)
             }
             .overlay(alignment: .bottomTrailing) {
-                Image(systemName: state.symbol)
-                    .font(.system(size: size * 0.22, weight: .bold))
-                    .foregroundStyle(theme.status(state.tone))
-                    .padding(3)
-                    .background(theme.surface, in: Circle())
+                if showsStatus {
+                    Image(systemName: state.symbol)
+                        .font(.system(size: size * 0.22, weight: .bold))
+                        .foregroundStyle(theme.status(state.tone))
+                        .padding(3)
+                        .background(theme.surface, in: Circle())
+                }
             }
             .accessibilityHidden(true)
     }

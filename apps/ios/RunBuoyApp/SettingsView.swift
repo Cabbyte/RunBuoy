@@ -57,6 +57,7 @@ struct SettingsView: View {
                     .runBuoySecondaryText()
             } label: {
                 Label("settings.region", systemImage: "globe")
+                    .foregroundStyle(.primary)
             }
 
             LabeledContent {
@@ -70,6 +71,7 @@ struct SettingsView: View {
                     )
             } label: {
                 Label("settings.server", systemImage: "server.rack")
+                    .foregroundStyle(.primary)
             }
 
             NavigationLink(value: AppRoute.machines) {
@@ -81,6 +83,7 @@ struct SettingsView: View {
                     .runBuoySecondaryText()
                 } label: {
                     Label("settings.machines", systemImage: "desktopcomputer")
+                        .foregroundStyle(.primary)
                 }
             }
             .accessibilityIdentifier("settings.machines")
@@ -104,18 +107,21 @@ struct SettingsView: View {
         Section("settings.notifications") {
             Toggle(isOn: $notificationsEnabled) {
                 Label("settings.notifications_enabled", systemImage: "bell.badge")
+                    .foregroundStyle(.primary)
             }
             .disabled(notificationsSystemDenied)
             .accessibilityIdentifier("settings.notifications")
 
             Toggle(isOn: $liveActivitiesEnabled) {
                 Label("settings.live_activities", systemImage: "shippingbox.fill")
+                    .foregroundStyle(.primary)
             }
             .disabled(!liveActivitiesAvailable)
             .accessibilityIdentifier("settings.liveActivities")
 
             Toggle(isOn: $safeMessagesEnabled) {
                 Label("settings.safe_messages", systemImage: "lock.shield.fill")
+                    .foregroundStyle(.primary)
             }
             .accessibilityIdentifier("settings.safeMessages")
 
@@ -152,11 +158,13 @@ struct SettingsView: View {
         Section("settings.product") {
             NavigationLink(value: AppRoute.capabilityDemo) {
                 Label("demo.settings_entry", systemImage: "sparkles")
+                    .foregroundStyle(.primary)
             }
             .accessibilityIdentifier("settings.capabilityDemo")
 
             NavigationLink(value: AppRoute.advancedData) {
                 Label("settings.advanced_data", systemImage: "gearshape.fill")
+                    .foregroundStyle(.primary)
             }
             .accessibilityIdentifier("settings.advancedData")
         }

@@ -162,6 +162,11 @@
 "machines.title" = "Machines";
 "machines.intro" = "Pair the computers that can securely send run status to this iPhone.";
 "machines.paired" = "Paired Machines";
+"machines.paired_count.one" = "%d paired machine";
+"machines.paired_count.other" = "%d paired machines";
+"machines.awaiting_confirmation_count" = "%d not recently confirmed";
+"machines.recent_confirmation_count" = "%d recently confirmed";
+"machines.updates_off_count" = "%d with updates off";
 "machines.footer" = "Pull to refresh machine availability. Pairing and notification preferences stay private to this workspace.";
 "machines.unavailable" = "Machines are unavailable right now.";
 "machines.last_seen_prefix" = "Last heard";

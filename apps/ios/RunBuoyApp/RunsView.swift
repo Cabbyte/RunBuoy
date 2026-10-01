@@ -445,7 +445,7 @@ struct RunHistoryView: View {
                             selection: $selectedMachineID
                         )
                         .padding(.horizontal, -16)
-                        .background(Color(.systemBackground))
+                        .runBuoyCanvas()
                     }
                 }
             }
@@ -656,38 +656,45 @@ struct HistoryContentFilter: Equatable {
 private struct HistoryMachineFilterBar: View {
     let options: [HistoryMachineOption]
     @Binding var selection: String?
-    @ScaledMetric(relativeTo: .subheadline) private var height = 54
+
+    private var rowCount: Int { options.count > 1 ? 2 : 1 }
 
     var body: some View {
         ScrollView(.horizontal) {
-            filterGroup
-                .padding(.horizontal)
-                .padding(.vertical, 8)
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(0..<rowCount, id: \.self) { row in
+                    filterRow(row)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 2)
         }
         .scrollIndicators(.hidden)
-        .frame(height: height)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
-    private var filterGroup: some View {
-        filterButtons
-    }
-
-    private var filterButtons: some View {
-        HStack(spacing: 8) {
-            filterButton(id: nil) {
-                Text("history.all")
+    private func filterRow(_ row: Int) -> some View {
+        HStack(spacing: 6) {
+            if row == 0 {
+                filterButton(id: nil) {
+                    Text("history.all")
+                }
             }
-            ForEach(options) { option in
+            ForEach(
+                options.enumerated().filter { ($0.offset + 1) % rowCount == row },
+                id: \.element.id
+            ) { _, option in
                 filterButton(id: option.id) {
-                    Label {
+                    HStack(spacing: 4) {
+                        MachineIconImage(machineID: option.id)
+                            .accessibilityHidden(true)
                         Text(option.name)
                             .lineLimit(1)
                             .truncationMode(.middle)
-                            .frame(maxWidth: 200, alignment: .leading)
-                    } icon: {
-                        MachineIconImage(machineID: option.id)
+                            .frame(maxWidth: 160, alignment: .leading)
                     }
                 }
+                .accessibilityLabel(option.name)
             }
         }
     }
@@ -698,34 +705,29 @@ private struct HistoryMachineFilterBar: View {
         @ViewBuilder label: () -> Content
     ) -> some View {
         let isSelected = selection == id
-        let button = Button {
+        Button {
             selection = id
         } label: {
-            label()
-                .font(.subheadline.weight(.semibold))
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
-                .foregroundStyle(Color.primary)
+            filterCapsule(label(), isSelected: isSelected)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
         }
-
-        // A stable semantic surface avoids vibrancy-dependent contrast in
-        // horizontally clipped labels, including during accessibility audits.
-        filterCapsule(button, isSelected: isSelected)
-        .controlSize(.regular)
-        .frame(minHeight: 44)
+        .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .accessibilityIdentifier(id.map { "history.filter.\($0)" } ?? "history.filter.all")
     }
 
-    private func filterCapsule<ButtonContent: View>(
-        _ button: ButtonContent,
+    private func filterCapsule<Content: View>(
+        _ content: Content,
         isSelected: Bool
     ) -> some View {
-        button
-            .buttonStyle(.plain)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 9)
-            .contentShape(Capsule())
+        content
+            .font(.caption.weight(.semibold))
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
+            .foregroundStyle(Color.primary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
             .background {
                 Capsule()
                     .fill(

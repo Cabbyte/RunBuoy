@@ -162,6 +162,11 @@
 "machines.title" = "电脑";
 "machines.intro" = "配对可向这台 iPhone 安全发送运行状态的电脑。";
 "machines.paired" = "已配对电脑";
+"machines.paired_count.one" = "%d 台已配对电脑";
+"machines.paired_count.other" = "%d 台已配对电脑";
+"machines.awaiting_confirmation_count" = "%d 台最近未确认";
+"machines.recent_confirmation_count" = "%d 台最近已确认";
+"machines.updates_off_count" = "%d 台已关闭更新";
 "machines.footer" = "下拉可刷新电脑可用状态；配对与通知偏好只属于当前工作区。";
 "machines.unavailable" = "暂时无法加载电脑。";
 "machines.last_seen_prefix" = "最后收到";
