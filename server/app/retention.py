@@ -13,6 +13,9 @@ from .models import (
     LiveActivityBinding,
     Notification,
     PairingSession,
+    PluginAuthorization,
+    PluginGrant,
+    PluginToken,
     PushAttempt,
     PushOutbox,
     Run,
@@ -233,6 +236,25 @@ def cleanup_retention(
             update(Notification).where(Notification.run_id.in_(old_run_ids)).values(run_id=None)
         )
         old_runs = _delete_ids(session, Run, old_run_ids)
+
+    # Preserve consumed refresh tokens until their grant expires to detect replay.
+    for model in (PluginAuthorization, PluginGrant):
+        expired_ids = _limited_ids(
+            session,
+            select(model.id).where(model.expires_at < current).order_by(model.expires_at),
+            batch_size,
+        )
+        _delete_ids(session, model, expired_ids)
+    expired_access = list(
+        session.scalars(
+            select(PluginToken.token_hash)
+            .where(PluginToken.kind == "access", PluginToken.expires_at < current)
+            .order_by(PluginToken.expires_at)
+            .limit(batch_size)
+        )
+    )
+    if expired_access:
+        session.execute(delete(PluginToken).where(PluginToken.token_hash.in_(expired_access)))
 
     abuse_cleanup = cleanup_abuse_state(session, settings, now=current)
 
