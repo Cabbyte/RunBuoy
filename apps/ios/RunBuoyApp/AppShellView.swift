@@ -48,6 +48,8 @@ private extension View {
                 RunDetailView(runID: id)
             case .machine(let id):
                 MachineDetailView(machineID: id)
+            case .pluginConnections:
+                PluginConnectionsView()
             case .machines:
                 MachinesView()
             case .pairMachine:

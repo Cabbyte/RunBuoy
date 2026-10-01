@@ -83,11 +83,27 @@ class Settings:
     worker_heartbeat_max_age_seconds: int = 90
     worker_heartbeat_interval_seconds: int = 15
     worker_heartbeat_required: bool = True
+    plugin_enabled: bool = False
+    plugin_public_url: str = "https://api.runbuoy.cloud"
+    plugin_client_id: str = "runbuoy-chatgpt"
+    plugin_redirect_uris: tuple[str, ...] = (
+        "https://chatgpt.com/connector_platform_oauth_redirect",
+    )
+    plugin_workspace_allowlist: tuple[str, ...] = ()
 
     @classmethod
     def from_env(cls) -> Settings:
         defaults = cls()
         return cls(
+            plugin_enabled=_env_bool("RUNBUOY_PLUGIN_ENABLED", defaults.plugin_enabled),
+            plugin_public_url=os.getenv(
+                "RUNBUOY_PLUGIN_PUBLIC_URL", defaults.plugin_public_url
+            ).rstrip("/"),
+            plugin_client_id=os.getenv("RUNBUOY_PLUGIN_CLIENT_ID", defaults.plugin_client_id),
+            plugin_redirect_uris=_env_csv(
+                "RUNBUOY_PLUGIN_REDIRECT_URIS", defaults.plugin_redirect_uris
+            ),
+            plugin_workspace_allowlist=_env_csv("RUNBUOY_PLUGIN_WORKSPACES", ()),
             deployment_environment=os.getenv(
                 "RUNBUOY_ENVIRONMENT", defaults.deployment_environment
             ),
@@ -283,6 +299,31 @@ class Settings:
 
     def configuration_errors(self) -> list[str]:
         errors: list[str] = []
+        if self.plugin_enabled:
+            from urllib.parse import urlsplit
+
+            origin = urlsplit(self.plugin_public_url)
+            if (
+                origin.scheme != "https"
+                or not origin.netloc
+                or origin.path
+                or origin.query
+                or origin.fragment
+                or origin.username
+            ):
+                errors.append("RUNBUOY_PLUGIN_PUBLIC_URL")
+            if not self.plugin_client_id or not self.plugin_redirect_uris:
+                errors.append("RUNBUOY_PLUGIN_CLIENT_ID/REDIRECT_URIS")
+            for value in self.plugin_redirect_uris:
+                redirect = urlsplit(value)
+                if (
+                    redirect.scheme != "https"
+                    or not redirect.netloc
+                    or redirect.fragment
+                    or redirect.username
+                    or "*" in value
+                ):
+                    errors.append("RUNBUOY_PLUGIN_REDIRECT_URIS")
         if self.deployment_environment not in {"development", "test", "production"}:
             errors.append("RUNBUOY_ENVIRONMENT")
         if self.region not in {"global", "cn"}:

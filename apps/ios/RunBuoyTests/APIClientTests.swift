@@ -8,6 +8,37 @@ final class APIClientTests: XCTestCase {
         super.tearDown()
     }
 
+    func testPluginConnectionAPIsUseDeviceIdentityAndExplicitDecision() async throws {
+        let code = PluginConnectionCode(id: "pca_test", challenge: "pcc_test")
+        let api = makeAPI { request in
+            XCTAssertNotNil(request.value(forHTTPHeaderField: "Authorization"))
+            XCTAssertFalse(request.url!.absoluteString.contains("pcc_test"))
+            switch request.url?.path {
+            case "/v1/plugin-connections":
+                XCTAssertEqual(request.httpMethod, "GET")
+                return (200, Data("[]".utf8))
+            case "/v1/plugin-connections/requests/pca_test/inspect":
+                XCTAssertEqual(request.httpMethod, "POST")
+                return (200, Data(#"{"id":"pca_test","client_name":"ChatGPT","origin":"https://api.runbuoy.cloud","workspace_id":"workspace_1","scopes":["runs:read","machines:read","notifications:read"],"status":"pending","expires_at":"2026-10-01T12:00:00Z"}"#.utf8))
+            case "/v1/plugin-connections/requests/pca_test/decision":
+                XCTAssertEqual(request.httpMethod, "POST")
+                let body = try JSONSerialization.jsonObject(with: try XCTUnwrap(request.httpBody)) as! [String: String]
+                XCTAssertEqual(body, ["challenge": "pcc_test", "decision": "deny"])
+                return (204, Data())
+            case "/v1/plugin-connections/grant_1":
+                XCTAssertEqual(request.httpMethod, "DELETE")
+                return (204, Data())
+            default: return (404, Data())
+            }
+        }
+        let connections = try await api.pluginConnections()
+        XCTAssertTrue(connections.isEmpty)
+        let inspection = try await api.inspectPluginConnection(code)
+        XCTAssertTrue(inspection.hasReadOnlyScopes)
+        try await api.decidePluginConnection(code, allow: false)
+        try await api.revokePluginConnection("grant_1")
+    }
+
     func testReadCollectionsAndDetailUseCanonicalShapes() async throws {
         let api = makeAPI { request in
             switch request.url?.path {

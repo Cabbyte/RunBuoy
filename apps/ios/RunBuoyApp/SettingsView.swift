@@ -72,6 +72,11 @@ struct SettingsView: View {
                 Label("settings.server", systemImage: "server.rack")
             }
 
+            NavigationLink(value: AppRoute.pluginConnections) {
+                Label("plugin.title", systemImage: "rectangle.connected.to.line.below")
+            }
+            .accessibilityIdentifier("settings.pluginConnections")
+
             NavigationLink(value: AppRoute.machines) {
                 LabeledContent {
                     HStack(spacing: 4) {

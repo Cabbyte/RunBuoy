@@ -1,6 +1,10 @@
 import Foundation
 
 enum DeviceAPIEndpoint: Equatable, Sendable {
+    case pluginConnections
+    case inspectPluginConnection(String)
+    case decidePluginConnection(String)
+    case revokePluginConnection(String)
     case bootstrap
     case runs
     case run(UUID)
@@ -23,21 +27,26 @@ enum DeviceAPIEndpoint: Equatable, Sendable {
 
     var method: String {
         switch self {
-        case .runs, .run, .machines, .messages, .sync, .historyRuns, .historyMessages:
+        case .runs, .run, .machines, .messages, .sync, .historyRuns, .historyMessages, .pluginConnections:
             "GET"
         case .notificationToken, .pushToStartToken, .activityToken:
             "PUT"
         case .preferences:
             "PATCH"
-        case .subscription, .resetDevice, .deleteWorkspace:
+        case .subscription, .resetDevice, .deleteWorkspace, .revokePluginConnection:
             "DELETE"
-        case .bootstrap, .claimPairing, .activitySync, .revokeMachine, .workspaceDeletionChallenge:
+        case .bootstrap, .claimPairing, .activitySync, .revokeMachine, .workspaceDeletionChallenge,
+             .inspectPluginConnection, .decidePluginConnection:
             "POST"
         }
     }
 
     var path: String {
         switch self {
+        case .pluginConnections: "/v1/plugin-connections"
+        case .inspectPluginConnection(let id): "/v1/plugin-connections/requests/\(id.pathComponent)/inspect"
+        case .decidePluginConnection(let id): "/v1/plugin-connections/requests/\(id.pathComponent)/decision"
+        case .revokePluginConnection(let id): "/v1/plugin-connections/\(id.pathComponent)"
         case .bootstrap: "/v1/devices/bootstrap"
         case .runs: "/v1/runs"
         case .run(let id): "/v1/runs/\(id.uuidString.lowercased())"
@@ -70,6 +79,10 @@ private extension String {
 }
 
 protocol RunBuoyAPI: Sendable {
+    func pluginConnections() async throws -> [PluginConnection]
+    func inspectPluginConnection(_ code: PluginConnectionCode) async throws -> PluginConnectionRequest
+    func decidePluginConnection(_ code: PluginConnectionCode, allow: Bool) async throws
+    func revokePluginConnection(_ id: String) async throws
     func bootstrap(installationID: String, appVersion: String, osVersion: String) async throws -> DeviceIdentity
     func listRuns() async throws -> [RunSnapshot]
     func runDetail(id: UUID) async throws -> RunDetail
@@ -445,6 +458,24 @@ struct URLSessionRunBuoyAPI: RunBuoyAPI, @unchecked Sendable {
             .deleteWorkspace(identity.workspaceID),
             body: WorkspaceDeleteBody(challenge: challenge)
         )
+    }
+
+    func pluginConnections() async throws -> [PluginConnection] {
+        try await request(.pluginConnections, body: Optional<EmptyBody>.none)
+    }
+
+    func inspectPluginConnection(_ code: PluginConnectionCode) async throws -> PluginConnectionRequest {
+        try await request(.inspectPluginConnection(code.id), body: ClaimBody(challenge: code.challenge))
+    }
+
+    func decidePluginConnection(_ code: PluginConnectionCode, allow: Bool) async throws {
+        struct Decision: Encodable { let challenge: String; let decision: String }
+        try await requestWithoutResponse(.decidePluginConnection(code.id),
+            body: Decision(challenge: code.challenge, decision: allow ? "allow" : "deny"))
+    }
+
+    func revokePluginConnection(_ id: String) async throws {
+        try await requestWithoutResponse(.revokePluginConnection(id), body: Optional<EmptyBody>.none)
     }
 
     private func request<Response: Decodable, Body: Encodable>(

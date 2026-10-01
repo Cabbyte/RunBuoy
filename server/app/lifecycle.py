@@ -25,6 +25,7 @@ from .models import (
     MachineDeviceSubscription,
     Notification,
     PairingSession,
+    PluginGrant,
     PushAttempt,
     PushOutbox,
     QuotaLock,
@@ -360,6 +361,9 @@ def reset_device(
     )
     session.execute(
         delete(WorkspaceDeletionChallenge).where(WorkspaceDeletionChallenge.device_id == device_id)
+    )
+    session.execute(
+        update(PluginGrant).where(PluginGrant.device_id == device_id).values(revoked_at=now)
     )
     device.notification_token_encrypted = None
     device.push_to_start_token_encrypted = None
