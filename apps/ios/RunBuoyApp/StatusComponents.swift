@@ -970,11 +970,20 @@ private struct RunRowContent: View {
     }
 
     private var machineAndProgressSummary: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-            machineLabel
-                .layoutPriority(2)
-            Spacer(minLength: 4)
-            progressSummary
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 6) {
+                    machineLabel
+                    progressSummary
+                }
+            } else {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    machineLabel
+                        .layoutPriority(2)
+                    Spacer(minLength: 4)
+                    progressSummary
+                }
+            }
         }
         .font(.subheadline)
         .foregroundStyle(.primary)
@@ -983,7 +992,7 @@ private struct RunRowContent: View {
     private var machineLabel: some View {
         Label {
             Text(run.machineName)
-                .lineLimit(1)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
                 .truncationMode(.tail)
         } icon: {
             MachineIconImage(machineID: run.machineID)
@@ -1002,6 +1011,7 @@ private struct RunRowContent: View {
                         count: progressCount(progress, current: current, total: total),
                         fraction: fraction
                     )
+                    .lineLimit(1)
                     progressText(
                         count: compactProgressCount(
                             progress,
@@ -1010,13 +1020,20 @@ private struct RunRowContent: View {
                         ),
                         fraction: fraction
                     )
+                    .lineLimit(1)
+                    progressText(
+                        count: progressCount(progress, current: current, total: total),
+                        fraction: fraction
+                    )
+                    .fixedSize(horizontal: false, vertical: true)
+                } else {
+                    progressText(count: nil, fraction: fraction)
                 }
-                progressText(count: nil, fraction: fraction)
             }
             .monospacedDigit()
-            .lineLimit(1)
             .layoutPriority(1)
             .accessibilityLabel(fullProgressAccessibilityLabel(progress, fraction: fraction))
+            .accessibilityIdentifier("run.progress.summary.\(run.id.uuidString.lowercased())")
         }
     }
 
@@ -1154,7 +1171,7 @@ private struct RunRowMetadataFooter: View {
             )
             .font(.caption)
         }
-        .fixedSize(horizontal: true, vertical: false)
+        .fixedSize(horizontal: false, vertical: true)
         .accessibilityIdentifier("run.timing.completion")
     }
 
