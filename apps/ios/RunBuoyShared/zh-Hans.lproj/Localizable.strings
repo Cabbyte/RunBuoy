@@ -410,3 +410,32 @@
 "runs.phone_synced" = "手机同步于";
 
 "runs.confirmation_hint" = "电脑最后确认时间见各任务。";
+
+// ChatGPT connections
+"plugin.title" = "已连接应用";
+"plugin.new" = "连接 ChatGPT";
+"plugin.scan" = "扫描连接二维码";
+"plugin.paste" = "粘贴 RunBuoy 连接链接";
+"plugin.review" = "查看连接请求";
+"plugin.empty" = "此 iPhone 尚未确认任何有效连接。";
+"plugin.read_only" = "只读访问";
+"plugin.created" = "连接时间";
+"plugin.expires" = "有效期至";
+"plugin.revoke" = "撤销连接";
+"plugin.reload" = "刷新连接列表";
+"plugin.footer" = "连接在 30 天后过期。重置此设备也会撤销其连接。";
+"plugin.loading" = "正在读取连接";
+"plugin.revoke_confirm" = "撤销此连接？";
+"plugin.revoke_effect" = "此连接将无法继续读取数据。已经分享到对话的内容仍保留在该对话中。";
+"plugin.source" = "RunBuoy 服务";
+"plugin.workspace" = "工作区";
+"plugin.permissions" = "读取 Runs、机器和消息，包括明确共享的日志片段。不授予远程执行权限。";
+"plugin.expired" = "请求已过期或已处理，请从 ChatGPT 重新发起连接。";
+"plugin.allow" = "允许只读访问";
+"plugin.deny" = "拒绝";
+"plugin.confirm" = "确认 ChatGPT 连接";
+"plugin.confirm_footer" = "请仅确认你刚在 ChatGPT 中发起的连接。授权将共享上述工作区。";
+"plugin.allowed" = "已确认，请返回 ChatGPT 完成连接。";
+"plugin.denied" = "已拒绝连接。";
+"plugin.unavailable" = "此连接不可用。请检查链接，并确认工作区已加入私有测试。";
+"plugin.share_workspace" = "分享或复制工作区 ID";

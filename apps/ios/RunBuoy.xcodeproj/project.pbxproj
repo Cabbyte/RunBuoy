@@ -15,6 +15,7 @@
 		A10000000000000000000006 /* ReadOnlyAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* ReadOnlyAPIClient.swift */; };
 		A10000000000000000000007 /* RunBuoyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* RunBuoyStore.swift */; };
 		A10000000000000000000008 /* Routing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* Routing.swift */; };
+		A10000000000000000000071 /* PluginConnectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000071 /* PluginConnectionsView.swift */; };
 		A10000000000000000000009 /* NotificationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000009 /* NotificationCoordinator.swift */; };
 		A1000000000000000000000A /* ActivityTokenCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* ActivityTokenCoordinator.swift */; };
 		A1000000000000000000000B /* StatusComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* StatusComponents.swift */; };
@@ -109,6 +110,7 @@
 		B10000000000000000000006 /* ReadOnlyAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyAPIClient.swift; sourceTree = "<group>"; };
 		B10000000000000000000007 /* RunBuoyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBuoyStore.swift; sourceTree = "<group>"; };
 		B10000000000000000000008 /* Routing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routing.swift; sourceTree = "<group>"; };
+		B10000000000000000000071 /* PluginConnectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginConnectionsView.swift; sourceTree = "<group>"; };
 		B10000000000000000000009 /* NotificationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCoordinator.swift; sourceTree = "<group>"; };
 		B1000000000000000000000A /* ActivityTokenCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTokenCoordinator.swift; sourceTree = "<group>"; };
 		B1000000000000000000000B /* StatusComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusComponents.swift; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 				B10000000000000000000006 /* ReadOnlyAPIClient.swift */,
 				B10000000000000000000007 /* RunBuoyStore.swift */,
 				B10000000000000000000008 /* Routing.swift */,
+				B10000000000000000000071 /* PluginConnectionsView.swift */,
 				B10000000000000000000009 /* NotificationCoordinator.swift */,
 				B1000000000000000000000A /* ActivityTokenCoordinator.swift */,
 				B1000000000000000000000B /* StatusComponents.swift */,
@@ -495,6 +498,7 @@
 				A10000000000000000000006 /* ReadOnlyAPIClient.swift in Sources */,
 				A10000000000000000000007 /* RunBuoyStore.swift in Sources */,
 				A10000000000000000000008 /* Routing.swift in Sources */,
+				A10000000000000000000071 /* PluginConnectionsView.swift in Sources */,
 				A10000000000000000000009 /* NotificationCoordinator.swift in Sources */,
 				A1000000000000000000000A /* ActivityTokenCoordinator.swift in Sources */,
 				A1000000000000000000000B /* StatusComponents.swift in Sources */,

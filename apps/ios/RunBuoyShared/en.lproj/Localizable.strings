@@ -410,3 +410,32 @@
 "runs.phone_synced" = "Phone synced";
 
 "runs.confirmation_hint" = "Computer confirmation times are shown on each task.";
+
+// ChatGPT connections
+"plugin.title" = "Connected apps";
+"plugin.new" = "Connect ChatGPT";
+"plugin.scan" = "Scan connection QR code";
+"plugin.paste" = "Paste a RunBuoy connection link";
+"plugin.review" = "Review connection";
+"plugin.empty" = "No active connections confirmed by this iPhone.";
+"plugin.read_only" = "Read-only access";
+"plugin.created" = "Connected";
+"plugin.expires" = "Expires";
+"plugin.revoke" = "Revoke connection";
+"plugin.reload" = "Refresh connections";
+"plugin.footer" = "Connections expire after 30 days. Resetting this device also revokes its connections.";
+"plugin.loading" = "Loading connections";
+"plugin.revoke_confirm" = "Revoke this connection?";
+"plugin.revoke_effect" = "Further access from this connection will be denied. Data already shared in a conversation remains in that conversation.";
+"plugin.source" = "RunBuoy server";
+"plugin.workspace" = "Workspace";
+"plugin.permissions" = "Read Runs, machines and messages, including explicitly shared log excerpts. No remote execution permission.";
+"plugin.expired" = "This request has expired or has already been decided. Start a new connection from ChatGPT.";
+"plugin.allow" = "Allow read-only access";
+"plugin.deny" = "Deny";
+"plugin.confirm" = "Confirm ChatGPT connection";
+"plugin.confirm_footer" = "Only confirm a connection you just started in ChatGPT. The workspace shown above will be shared.";
+"plugin.allowed" = "Connected. Return to ChatGPT to finish.";
+"plugin.denied" = "Connection denied.";
+"plugin.unavailable" = "This connection is unavailable. Check the link and whether this workspace is enrolled in the private preview.";
+"plugin.share_workspace" = "Share or copy workspace ID";

@@ -31,3 +31,5 @@ website/node_modules/
 website/doc_build/
 .playwright-cli/
 output/
+
+apps/chatgpt/node_modules/

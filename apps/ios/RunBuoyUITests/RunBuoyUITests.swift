@@ -19,6 +19,37 @@ final class RunBuoyUITests: XCTestCase {
         app = nil
     }
 
+    func testPluginConsentRequiresExplicitAllowAndSupportsRevocation() {
+        let link = "runbuoy://connect/pca_" + String(repeating: "a", count: 32)
+            + "?challenge=pcc_" + String(repeating: "b", count: 43)
+        launch(initialURL: link)
+        XCTAssertTrue(element("plugin.allow").waitForExistence(timeout: 5))
+        XCTAssertTrue(element("plugin.workspaceID").exists)
+        XCTAssertFalse(element("plugin.revoke").exists)
+        attachScreenshot(named: "plugin-phone-consent-en")
+        element("plugin.allow").tap()
+        XCTAssertTrue(element("plugin.completion").waitForExistence(timeout: 3))
+        let revoke = element("plugin.revoke")
+        if !revoke.isHittable { app.swipeUp() }
+        XCTAssertTrue(revoke.waitForExistence(timeout: 3))
+        revoke.tap()
+        XCTAssertTrue(element("plugin.confirmRevoke").waitForExistence(timeout: 3))
+        element("plugin.confirmRevoke").tap()
+        XCTAssertTrue(app.staticTexts["No active connections confirmed by this iPhone."].waitForExistence(timeout: 3))
+    }
+
+    func testPluginConsentCanBeDenied() {
+        let link = "runbuoy://connect/pca_" + String(repeating: "a", count: 32)
+            + "?challenge=pcc_" + String(repeating: "b", count: 43)
+        launch(initialURL: link)
+        XCTAssertTrue(element("plugin.deny").waitForExistence(timeout: 5))
+        element("plugin.deny").tap()
+        let completion = app.staticTexts["plugin.completion"]
+        XCTAssertTrue(completion.waitForExistence(timeout: 3))
+        XCTAssertTrue(completion.label.contains("Connection denied."), app.debugDescription)
+        XCTAssertFalse(element("plugin.revoke").exists)
+    }
+
     func testOnboardingCompletesWithSeededPairingCode() {
         launch(
             onboarding: true,
