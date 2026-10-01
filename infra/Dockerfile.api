@@ -1,3 +1,10 @@
+FROM node:24-bookworm-slim AS chatgpt-ui
+WORKDIR /build
+COPY apps/chatgpt/package.json apps/chatgpt/package-lock.json ./
+RUN npm ci
+COPY apps/chatgpt/ ./
+RUN npm run build
+
 FROM python:3.12-slim@sha256:646fb0bca3dd3ea1bcc6feb72c17ed16eed6e10cffc732fcc1478bd3e7f02d7b AS runtime
 ARG PIP_INDEX_URL=https://pypi.org/simple
 ARG PIP_DEFAULT_TIMEOUT=120
@@ -6,6 +13,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 COPY server/pyproject.toml ./
 COPY server/app ./app
 COPY server/worker ./worker
+COPY --from=chatgpt-ui /build/dist/index.html ./app/static/chatgpt.html
 COPY server/alembic.ini ./
 COPY server/migrations ./migrations
 RUN pip install --no-cache-dir --default-timeout "$PIP_DEFAULT_TIMEOUT" \

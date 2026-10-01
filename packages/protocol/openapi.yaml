@@ -1,13 +1,117 @@
 openapi: 3.1.0
 info:
   title: RunBuoy API
-  version: 1.1.0
+  version: 1.2.0
   description: >-
     One-way synchronization API. Machines may write safe execution events;
     devices may read projections and manage only their own receiving plane.
 servers:
   - url: https://api.example.runbuoy.dev
 paths:
+  /v1/runs/{run_id}/events:
+    get:
+      operationId: listRunEvents
+      summary: Read retained events, newest page by default and oldest-first within each page
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/RunId' }
+        - name: before_seq
+          in: query
+          description: Exclusive upper sequence boundary; mutually exclusive with after_seq
+          schema: { type: integer, minimum: 0 }
+        - name: after_seq
+          in: query
+          description: Exclusive lower sequence boundary for forward pagination
+          schema: { type: integer, minimum: 0 }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 100 }
+      responses:
+        '200':
+          description: Retained page; a missing Run or another workspace returns 404
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RunEventPage' }
+        '400': { description: Invalid or mutually exclusive sequence boundaries }
+        '404': { description: Run not found }
+  /v1/plugin-connections:
+    get:
+      operationId: listPluginConnections
+      summary: List active read-only connections confirmed by this device
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Device-owned connections; no token material
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/PluginConnection' }
+        '403': { description: Device identity and enrolled workspace required }
+        '404': { description: Private preview disabled }
+  /v1/plugin-connections/{connection_id}:
+    delete:
+      operationId: revokePluginConnection
+      summary: Revoke this device's connection and all its OAuth tokens
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: connection_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: Connection revoked }
+        '404': { description: Connection is not owned by this device }
+  /v1/plugin-connections/requests/{request_id}/inspect:
+    post:
+      operationId: inspectPluginConnection
+      summary: Inspect a QR challenge without granting access
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: request_id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PluginConnectionChallenge' }
+      responses:
+        '200':
+          description: Server-verified client, workspace, read scopes and expiry for consent
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PluginConnectionRequest' }
+        '404': { description: Request or challenge not found }
+        '410': { description: Five-minute request expired }
+  /v1/plugin-connections/requests/{request_id}/decision:
+    post:
+      operationId: decidePluginConnection
+      summary: Explicitly allow or deny a connection after phone consent
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: request_id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge, decision]
+              additionalProperties: false
+              properties:
+                challenge: { type: string, minLength: 16, maxLength: 256 }
+                decision: { enum: [allow, deny] }
+      responses:
+        '204': { description: Decision recorded once; return to the authorization browser }
+        '403': { description: Enrolled device required }
+        '404': { description: Request or challenge not found }
+        '409': { description: Request already decided }
+        '410': { description: Request expired }
   /v1/devices/bootstrap:
     post:
       operationId: bootstrapDevice
@@ -476,6 +580,57 @@ components:
         application/json:
           schema: { $ref: "#/components/schemas/AbuseError" }
   schemas:
+    RunEventPage:
+      type: object
+      required: [items, has_more, before_seq, after_seq, sequence]
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            required: [event_id, seq, type, occurred_at, received_at, payload]
+            properties:
+              event_id: { type: string, format: uuid }
+              seq: { type: integer, minimum: 1 }
+              type: { type: string }
+              occurred_at: { type: string, format: date-time }
+              received_at: { type: string, format: date-time }
+              payload: { type: object }
+        has_more: { type: boolean }
+        before_seq: { type: [integer, 'null'] }
+        after_seq: { type: [integer, 'null'] }
+        sequence: { type: integer, minimum: 0 }
+    PluginConnectionChallenge:
+      type: object
+      required: [challenge]
+      additionalProperties: false
+      properties:
+        challenge: { type: string, minLength: 16, maxLength: 256 }
+    PluginConnection:
+      type: object
+      required: [id, client_name, scopes, created_at, expires_at]
+      properties:
+        id: { type: string }
+        client_name: { type: string }
+        scopes:
+          type: array
+          items: { enum: ['runs:read', 'machines:read', 'notifications:read'] }
+        created_at: { type: string, format: date-time }
+        expires_at: { type: string, format: date-time }
+    PluginConnectionRequest:
+      type: object
+      required: [id, client_name, origin, workspace_id, scopes, status, expires_at]
+      properties:
+        id: { type: string }
+        client_name: { type: string }
+        origin: { type: string, format: uri }
+        workspace_id: { type: string }
+        scopes:
+          type: array
+          items: { enum: ['runs:read', 'machines:read', 'notifications:read'] }
+        status: { enum: [pending, allowed, denied] }
+        expires_at: { type: string, format: date-time }
     ErrorEnvelope:
       type: object
       required: [detail]

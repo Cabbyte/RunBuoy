@@ -21,7 +21,7 @@ from tests.conftest import Harness
 def _mark_schema_current(harness: Harness) -> None:
     with harness.session_factory() as session:
         session.execute(text("CREATE TABLE alembic_version (version_num VARCHAR(32) NOT NULL)"))
-        session.execute(text("INSERT INTO alembic_version (version_num) VALUES ('d001_sync')"))
+        session.execute(text("INSERT INTO alembic_version (version_num) VALUES ('0007_plugin')"))
         session.commit()
 
 
@@ -44,7 +44,7 @@ def test_healthz_is_liveness_and_readyz_checks_all_dependencies(harness: Harness
     report = response.json()
     assert report["status"] == "ready"
     assert report["checks"]["database"] == {"status": "ok"}
-    assert report["checks"]["migration"]["current"] == "d001_sync"
+    assert report["checks"]["migration"]["current"] == "0007_plugin"
     assert report["checks"]["worker"]["fresh_healthy_instances"] == 1
     assert report["checks"]["worker"]["failed_instances"] == 1
     assert "worker-a" not in response.text
