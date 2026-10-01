@@ -35,6 +35,7 @@
 		A10000000000000000000019 /* PairMachineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000018 /* PairMachineView.swift */; };
 		A1000000000000000000001A /* icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000019 /* icon.icon */; };
 		A1000000000000000000001B /* UITestConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001A /* UITestConfiguration.swift */; };
+		A100000000000000000001AA /* UITypographyProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000001AA /* UITypographyProbe.swift */; };
 		A1000000000000000000001C /* CapabilityDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001B /* CapabilityDemoView.swift */; };
 		A1000000000000000000001D /* IOSCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001C /* IOSCompatibility.swift */; };
 		A1000000000000000000001E /* App PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001D /* App PrivacyInfo.xcprivacy */; };
@@ -61,6 +62,8 @@
 		A3000000000000000000000C /* IOSCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4000000000000000000000C /* IOSCompatibilityTests.swift */; };
 		A3000000000000000000000D /* RunVisualStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4000000000000000000000D /* RunVisualStateTests.swift */; };
 		A40000000000000000000001 /* RunBuoyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000001 /* RunBuoyUITests.swift */; };
+		A400000000000000000001AA /* TypographyDiagnosticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B600000000000000000001AA /* TypographyDiagnosticsTests.swift */; };
+		A400000000000000000001AB /* GlyphEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = B600000000000000000001AB /* GlyphEvidence.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,6 +132,7 @@
 		B10000000000000000000018 /* PairMachineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairMachineView.swift; sourceTree = "<group>"; };
 		B10000000000000000000019 /* icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = icon.icon; sourceTree = "<group>"; };
 		B1000000000000000000001A /* UITestConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestConfiguration.swift; sourceTree = "<group>"; };
+		B100000000000000000001AA /* UITypographyProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITypographyProbe.swift; sourceTree = "<group>"; };
 		B1000000000000000000001B /* CapabilityDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityDemoView.swift; sourceTree = "<group>"; };
 		B1000000000000000000001C /* IOSCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSCompatibility.swift; sourceTree = "<group>"; };
 		B1000000000000000000001D /* App PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -162,6 +166,8 @@
 		B50000000000000000000003 /* RunBuoyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunBuoyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B50000000000000000000004 /* RunBuoyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunBuoyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B60000000000000000000001 /* RunBuoyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBuoyUITests.swift; sourceTree = "<group>"; };
+		B600000000000000000001AA /* TypographyDiagnosticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypographyDiagnosticsTests.swift; sourceTree = "<group>"; };
+		B600000000000000000001AB /* GlyphEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlyphEvidence.swift; sourceTree = "<group>"; };
 		B60000000000000000000002 /* RunBuoy.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text.plist.json.xctestplan; path = RunBuoy.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -239,6 +245,7 @@
 				B10000000000000000000018 /* PairMachineView.swift */,
 				B10000000000000000000013 /* PreviewFixtures.swift */,
 				B1000000000000000000001A /* UITestConfiguration.swift */,
+				B100000000000000000001AA /* UITypographyProbe.swift */,
 				B10000000000000000000014 /* Assets.xcassets */,
 				B10000000000000000000015 /* Info.plist */,
 				B10000000000000000000016 /* RunBuoyApp.Debug.entitlements */,
@@ -315,6 +322,8 @@
 			isa = PBXGroup;
 			children = (
 				B60000000000000000000001 /* RunBuoyUITests.swift */,
+				B600000000000000000001AA /* TypographyDiagnosticsTests.swift */,
+				B600000000000000000001AB /* GlyphEvidence.swift */,
 			);
 			path = RunBuoyUITests;
 			sourceTree = "<group>";
@@ -515,6 +524,7 @@
 				A10000000000000000000019 /* PairMachineView.swift in Sources */,
 				A10000000000000000000013 /* PreviewFixtures.swift in Sources */,
 				A1000000000000000000001B /* UITestConfiguration.swift in Sources */,
+				A100000000000000000001AA /* UITypographyProbe.swift in Sources */,
 				A10000000000000000000014 /* RunActivityAttributes.swift in Sources */,
 				A1000000000000000000001F /* RunVisualState.swift in Sources */,
 			);
@@ -552,6 +562,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A40000000000000000000001 /* RunBuoyUITests.swift in Sources */,
+				A400000000000000000001AA /* TypographyDiagnosticsTests.swift in Sources */,
+				A400000000000000000001AB /* GlyphEvidence.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

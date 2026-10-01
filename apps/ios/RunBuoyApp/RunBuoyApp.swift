@@ -59,18 +59,16 @@ struct RunBuoyApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if shouldShowAppShell {
-                    AppShellView()
+#if DEBUG
+                if uiTestConfiguration.isEnabled,
+                   ProcessInfo.processInfo.arguments.contains("-runbuoy-ui-typography-probe") {
+                    UITypographyProbe()
                 } else {
-                    OnboardingView(
-                        notificationCoordinator: notificationCoordinator,
-                        bypassesSystemPermissions: uiTestConfiguration.isEnabled,
-                        onFinished: {
-                            onboardingComplete = true
-                            didFinishUITestOnboarding = true
-                        }
-                    )
+                    appContent
                 }
+#else
+                appContent
+#endif
             }
             .environment(store)
             .environment(router)
@@ -114,6 +112,22 @@ struct RunBuoyApp: App {
                 guard automaticRefreshIsEnabled else { return }
                 await runAutomaticRefreshLoop()
             }
+        }
+    }
+
+    @ViewBuilder
+    private var appContent: some View {
+        if shouldShowAppShell {
+            AppShellView()
+        } else {
+            OnboardingView(
+                notificationCoordinator: notificationCoordinator,
+                bypassesSystemPermissions: uiTestConfiguration.isEnabled,
+                onFinished: {
+                    onboardingComplete = true
+                    didFinishUITestOnboarding = true
+                }
+            )
         }
     }
 

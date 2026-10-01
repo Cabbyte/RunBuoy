@@ -84,12 +84,19 @@ struct SettingsView: View {
                 LabeledContent {
                     HStack(spacing: 4) {
                         Text(store.machines.count, format: .number)
+                            .accessibilityIdentifier("settings.machines.count")
                         Text("settings.machines_paired_suffix")
+                            .accessibilityIdentifier("settings.machines.suffix")
                     }
                     .runBuoySecondaryText()
                 } label: {
-                    Label("settings.machines", systemImage: "desktopcomputer")
-                        .foregroundStyle(.primary)
+                    Label {
+                        Text("settings.machines")
+                            .accessibilityIdentifier("settings.machines.title")
+                    } icon: {
+                        Image(systemName: "desktopcomputer")
+                    }
+                    .foregroundStyle(.primary)
                 }
             }
             .accessibilityIdentifier("settings.machines")

@@ -1,0 +1,55 @@
+name: iOS typography diagnostics
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["codex/a11y-diagnostics-20261001"]
+
+permissions:
+  contents: read
+
+jobs:
+  glyphs-and-negative-controls:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: Record exact revision and iOS 26.5 environment
+        run: |
+          git rev-parse HEAD
+          xcodebuild -version
+          xcrun simctl list runtimes
+          mkdir -p "$RUNNER_TEMP/typography-evidence"
+      - name: Verify glyphs, complete text, navigation, runtime switching and history quantities
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project apps/ios/RunBuoy.xcodeproj \
+            -scheme RunBuoy \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' \
+            -derivedDataPath "$RUNNER_TEMP/typography-derived-data" \
+            -resultBundlePath "$RUNNER_TEMP/typography-evidence/PositiveControls.xcresult" \
+            -parallel-testing-enabled NO \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRenderedGlyphsAndMachineNavigationAtAllSystemSizes \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchPreservesAppAndMachineNavigation \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testHistoryCompletedQuantityRemainsVisibleAtLargeType \
+            CODE_SIGNING_ALLOWED=NO \
+            test 2>&1 | tee "$RUNNER_TEMP/typography-evidence/positive-controls.log"
+      - name: Reject all eight fixed-font and capped-size mutations
+        run: |
+          python3 scripts/check_ios_typography_mutations.py \
+            --evidence-dir "$RUNNER_TEMP/typography-evidence" \
+            --derived-data-path "$RUNNER_TEMP/typography-derived-data" \
+            --destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5'
+      - name: Verify source restoration
+        if: always()
+        run: git diff --exit-code
+      - name: Save raw diagnostic results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: iOS26.5-typography-${{ github.sha }}
+          path: ${{ runner.temp }}/typography-evidence
+          retention-days: 14

@@ -133,6 +133,7 @@ private struct ActiveSystemSummaryCard: View {
                 Text("runs.confirmation_hint")
                     .font(.caption)
                     .runBuoySecondaryText()
+                    .accessibilityIdentifier("activeRuns.confirmationHint")
             }
         }
         .accessibilityIdentifier("activeRuns.systemSummary")
