@@ -43,6 +43,7 @@ export function Dashboard() {
   const [expanded, setExpanded] = useState(false);
   const [hostMode, setHostMode] = useState("inline");
   const [language, setLanguage] = useState<Language>("en");
+  const languagePreference = useRef<Language | null>(null);
   const [demo, setDemo] = useState(false);
   const [checked, setChecked] = useState<Date | null>(null);
   const [now, setNow] = useState(Date.now());
@@ -120,7 +121,8 @@ export function Dashboard() {
     const host = (ctx: BridgeState) => {
       if (!alive) return;
       if (ctx.theme) document.documentElement.dataset.theme = ctx.theme;
-      if (ctx.locale)
+      // Host updates include locale when the display mode changes, too.
+      if (ctx.locale && languagePreference.current === null)
         setLanguage(ctx.locale.toLowerCase().startsWith("zh") ? "zh" : "en");
       if (ctx.displayMode) setHostMode(ctx.displayMode);
     };
@@ -662,7 +664,11 @@ export function Dashboard() {
         <div className="toolbar">
           <button
             className="text-button"
-            onClick={() => setLanguage((v) => (v === "en" ? "zh" : "en"))}
+            onClick={() => {
+              const next = language === "en" ? "zh" : "en";
+              languagePreference.current = next;
+              setLanguage(next);
+            }}
           >
             {language === "en" ? "中文" : "EN"}
           </button>
