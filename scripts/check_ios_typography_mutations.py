@@ -90,7 +90,13 @@ def main() -> None:
                     raise RuntimeError(f"Expected unique node anchor: {identifier}")
                 line = next(line for line in source.splitlines() if anchor in line)
                 indent = line[: len(line) - len(line.lstrip())]
-                mutant = source.replace(line, f"{indent}{modifier}\n{line}", 1)
+                node_modifier = modifier
+                if kind == "capped" and short_name in {"count", "suffix"}:
+                    # LabeledContent supplies its value's font from the parent.
+                    # Resolve the same body style inside the cap so the mutation
+                    # actually limits these two rendered values.
+                    node_modifier = f".font(.body)\n{indent}{modifier}"
+                mutant = source.replace(line, f"{indent}{node_modifier}\n{line}", 1)
                 if kind == "fixed" and short_name == "hint":
                     # An outer font modifier cannot replace this Text's inner caption.
                     # Replace the declaration itself so this is an actual fixed font.
@@ -114,7 +120,7 @@ def main() -> None:
                         {
                             "case": case_name,
                             "node": identifier,
-                            "mutation": modifier,
+                            "mutation": node_modifier,
                             "xcodebuild_exit_code": code,
                             "killed_by_target_glyph_assertion": killed,
                             "failure_lines": failures,
