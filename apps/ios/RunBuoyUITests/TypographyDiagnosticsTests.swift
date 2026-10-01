@@ -141,7 +141,10 @@ final class TypographyDiagnosticsTests: XCTestCase {
             let before = slider.normalizedSliderPosition
             print("SYSTEM SLIDER attempt=\(attempt) before=\(before) target=\(target) value=\(String(describing: slider.value)) frame=\(slider.frame)")
             if abs(before - target) <= 0.01 { return true }
-            if attempt == 0 {
+            if attempt == 0 || (target > 0 && target < 1) {
+                // The slider's AX frame includes insets outside its thumb track.
+                // A hand-calculated midpoint drag can alternate between 1/3 and
+                // 2/3. Let XCTest re-resolve interior positions from fresh state.
                 slider.adjust(toNormalizedSliderPosition: target)
             } else {
                 // iOS 26.5's adjust can stop at 6/11 despite a requested 1.0.
