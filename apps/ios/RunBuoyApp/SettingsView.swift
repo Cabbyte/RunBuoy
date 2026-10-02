@@ -96,10 +96,8 @@ struct SettingsView: View {
                     } icon: {
                         Image(systemName: "desktopcomputer")
                     }
-                    .labelStyle(SettingsMachinesLabelStyle())
                     .foregroundStyle(.primary)
                 }
-                .labeledContentStyle(SettingsMachinesContentStyle())
             }
             .accessibilityIdentifier("settings.machines")
 
@@ -258,39 +256,6 @@ struct SettingsView: View {
     private var selectedRegionName: String {
         AppConfiguration.selectedRegion()?.displayName
             ?? String(localized: "region.private_deployment")
-    }
-}
-
-private struct SettingsMachinesLabelStyle: LabelStyle {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
-    func makeBody(configuration: Configuration) -> some View {
-        let layout = dynamicTypeSize.isAccessibilitySize
-            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
-            : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 12))
-
-        layout {
-            configuration.icon
-            configuration.title
-                .fixedSize(horizontal: false, vertical: true)
-        }
-    }
-}
-
-private struct SettingsMachinesContentStyle: LabeledContentStyle {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
-    func makeBody(configuration: Configuration) -> some View {
-        let layout = dynamicTypeSize.isAccessibilitySize
-            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
-            : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 12))
-
-        layout {
-            configuration.label
-                .frame(maxWidth: .infinity, alignment: .leading)
-            configuration.content
-                .fixedSize(horizontal: false, vertical: true)
-        }
     }
 }
 

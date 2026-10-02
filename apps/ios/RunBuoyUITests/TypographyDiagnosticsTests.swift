@@ -101,21 +101,6 @@ final class TypographyDiagnosticsTests: XCTestCase {
         print("INJECTED FAILURE RESTORED ORIGINAL SYSTEM / APP / WINDOW SIZE pid=\(session.pid)")
     }
 
-    func testMachinesLayoutAcrossAccessibilityBoundary() throws {
-        launch()
-        let session = try beginSystemSizeSession()
-        try withSystemSizeSession(session) {
-            try session.set("extra-extra-extra-large", expected: .extraExtraExtraLarge)
-            try verifyRenderedTextAndNavigation(category: .extraExtraExtraLarge)
-            attachScreenshot("settings-layout-boundary-\(UIContentSizeCategory.extraExtraExtraLarge.rawValue)")
-            try session.set("accessibility-medium", expected: .accessibilityMedium)
-            XCTAssertEqual(app.state, .runningForeground)
-            try verifyRenderedTextAndNavigation(category: .accessibilityMedium)
-            attachScreenshot("settings-layout-boundary-\(UIContentSizeCategory.accessibilityMedium.rawValue)")
-        }
-        print("MACHINES LAYOUT XXXL -> ACCESSIBILITY MEDIUM PASSED WITHOUT RELAUNCH pid=\(session.pid)")
-    }
-
     private func beginSystemSizeSession() throws -> SystemSizeSession {
         let session = try SystemSizeSession(test: name)
         // Registered before the first change, and runs before app termination

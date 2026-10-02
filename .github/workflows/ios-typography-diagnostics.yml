@@ -7,7 +7,7 @@ on:
         description: Validation scope
         type: choice
         default: all-controls
-        options: [all-controls, system-size-and-e2e, settings-contrast, runtime-and-audit-finish, runtime-only, settings-layout]
+        options: [all-controls, system-size-and-e2e, settings-contrast, runtime-and-audit-finish, runtime-only]
   push:
     branches: ["codex/a11y-diagnostics-20261001"]
 
@@ -263,7 +263,7 @@ jobs:
           retention-days: 14
 
   runtime-and-audit-finish:
-    if: ${{ inputs.scope == 'runtime-and-audit-finish' || inputs.scope == 'runtime-only' || inputs.scope == 'settings-layout' }}
+    if: ${{ inputs.scope == 'runtime-and-audit-finish' || inputs.scope == 'runtime-only' }}
     runs-on: macos-26
     timeout-minutes: 40
     steps:
@@ -283,20 +283,9 @@ jobs:
           xcrun simctl ui "$simulator_id" content_size large
           xcrun simctl ui "$simulator_id" appearance light
           printf 'runtime=iOS26.5\nmodel=iPhone17\nsize=large\nappearance=light\n' > "$RUNNER_TEMP/runtime-audit-evidence/environment.txt"
-      - name: Verify selected runtime control and remaining text
-        env:
-          DIAGNOSTIC_SCOPE: ${{ inputs.scope }}
+      - name: Verify integrated runtime control, failure restoration and remaining text
         run: |
           set -o pipefail
-          runtime_tests=(
-            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchPreservesAppAndMachineNavigation
-            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRemainingSettingsTextAtLargeAndLargestSizes
-          )
-          if [ "$DIAGNOSTIC_SCOPE" = settings-layout ]; then
-            runtime_tests+=(-only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testMachinesLayoutAcrossAccessibilityBoundary)
-          else
-            runtime_tests+=(-only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchRestoresSizeAfterInjectedFailure)
-          fi
           python3 scripts/run_ios_system_size_tests.py \
             --device "$SETTINGS_SIMULATOR_ID" \
             --evidence-dir "$RUNNER_TEMP/runtime-audit-evidence/runtime-system-size" -- \
@@ -305,30 +294,23 @@ jobs:
             -derivedDataPath "$RUNNER_TEMP/runtime-audit-derived-data" \
             -resultBundlePath "$RUNNER_TEMP/runtime-audit-evidence/Runtime.xcresult" \
             -parallel-testing-enabled NO \
-            "${runtime_tests[@]}" \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchPreservesAppAndMachineNavigation \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRuntimeFontSwitchRestoresSizeAfterInjectedFailure \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRemainingSettingsTextAtLargeAndLargestSizes \
             CODE_SIGNING_ALLOWED=NO test 2>&1 | tee "$RUNNER_TEMP/runtime-audit-evidence/runtime.log"
       - name: Run one bounded native audit reproduction at each selected position
-        if: ${{ !cancelled() && env.SETTINGS_SIMULATOR_ID != '' && (inputs.scope == 'runtime-and-audit-finish' || inputs.scope == 'settings-layout') }}
-        env:
-          DIAGNOSTIC_SCOPE: ${{ inputs.scope }}
+        if: ${{ !cancelled() && env.SETTINGS_SIMULATOR_ID != '' && inputs.scope == 'runtime-and-audit-finish' }}
         run: |
           set -o pipefail
-          audit_tests=(
-            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testSettingsNativeAuditWithoutFilters
-            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testSettingsLowerSectionsNativeAuditWithoutFilters
-          )
-          if [ "$DIAGNOSTIC_SCOPE" != settings-layout ]; then
-            audit_tests+=(
-              -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testFormNativeAuditWithoutFilters
-              -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testLowerFormRowNativeAuditWithoutFilters
-            )
-          fi
           xcodebuild -project apps/ios/RunBuoy.xcodeproj -scheme RunBuoy \
             -destination "platform=iOS Simulator,id=$SETTINGS_SIMULATOR_ID" \
             -derivedDataPath "$RUNNER_TEMP/runtime-audit-derived-data" \
             -resultBundlePath "$RUNNER_TEMP/runtime-audit-evidence/NativeAudit.xcresult" \
             -parallel-testing-enabled NO \
-            "${audit_tests[@]}" \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testSettingsNativeAuditWithoutFilters \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testSettingsLowerSectionsNativeAuditWithoutFilters \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testFormNativeAuditWithoutFilters \
+            -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testLowerFormRowNativeAuditWithoutFilters \
             CODE_SIGNING_ALLOWED=NO test-without-building 2>&1 | tee "$RUNNER_TEMP/runtime-audit-evidence/native-audit.log"
       - name: Export compact raw audit and screenshot evidence
         if: always()
