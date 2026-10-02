@@ -323,23 +323,21 @@ private struct SettingsConnectionSummary: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        Group {
-            if dynamicTypeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: 8) {
-                    icon
-                    content
-                }
-            } else {
-                HStack(alignment: .top, spacing: 12) {
-                    icon
-                    content
-                }
-            }
+        summaryLayout {
+            icon
+            content
         }
         .padding(.vertical, 6)
         .accessibilityElement(children: .combine)
         .accessibilityValue(Text(state.title))
         .accessibilityIdentifier("settings.connectionSummary")
+    }
+
+    private var summaryLayout: AnyLayout {
+        // Keep the same content identity when Dynamic Type changes the arrangement.
+        dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+            : AnyLayout(HStackLayout(alignment: .top, spacing: 12))
     }
 
     private var icon: some View {
