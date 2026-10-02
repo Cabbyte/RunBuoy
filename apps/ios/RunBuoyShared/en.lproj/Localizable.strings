@@ -412,9 +412,9 @@
 "runs.confirmation_hint" = "Computer confirmation times are shown on each task.";
 
 // ChatGPT connections
-"plugin.title" = "Connected apps";
-"plugin.new" = "Connect ChatGPT";
-"plugin.scan" = "Scan connection QR code";
+"plugin.title" = "Agent connections";
+"plugin.new" = "Connect an agent";
+"plugin.scan" = "Scan QR code";
 "plugin.paste" = "Paste a RunBuoy connection link";
 "plugin.review" = "Review connection";
 "plugin.empty" = "No active connections confirmed by this iPhone.";
@@ -430,12 +430,32 @@
 "plugin.source" = "RunBuoy server";
 "plugin.workspace" = "Workspace";
 "plugin.permissions" = "Read Runs, machines and messages, including explicitly shared log excerpts. No remote execution permission.";
-"plugin.expired" = "This request has expired or has already been decided. Start a new connection from ChatGPT.";
+"plugin.expired" = "This request has expired or has already been decided. Start a new connection from your agent.";
 "plugin.allow" = "Allow read-only access";
 "plugin.deny" = "Deny";
-"plugin.confirm" = "Confirm ChatGPT connection";
-"plugin.confirm_footer" = "Only confirm a connection you just started in ChatGPT. The workspace shown above will be shared.";
-"plugin.allowed" = "Connected. Return to ChatGPT to finish.";
+"plugin.confirm" = "Confirm agent connection";
+"plugin.confirm_footer" = "Only confirm a connection you just started in your agent. The workspace shown above will be shared.";
+"plugin.allowed" = "Connected. Return to your agent to finish.";
 "plugin.denied" = "Connection denied.";
 "plugin.unavailable" = "This connection is unavailable. Check the link and whether this workspace is enrolled in the private preview.";
 "plugin.share_workspace" = "Share or copy workspace ID";
+
+"plugin.connected_agents" = "Connected agents";
+
+"plugin.paste_action" = "Paste connection link";
+
+"plugin.review_hint" = "Review permissions before connecting.";
+
+"plugin.workspace_id" = "Workspace ID";
+
+"plugin.access_expiry" = "Read-only · Expires %@";
+
+"plugin.connected_date" = "Connected %@";
+
+"plugin.connected" = "Connected";
+
+"plugin.connection_expired" = "Expired";
+
+"plugin.details_hint" = "View access, connection dates and revocation options.";
+
+"plugin.details" = "Connection details";

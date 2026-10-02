@@ -24,11 +24,16 @@ final class RunBuoyUITests: XCTestCase {
             + "?challenge=pcc_" + String(repeating: "b", count: 43)
         launch(initialURL: link)
         XCTAssertTrue(element("plugin.allow").waitForExistence(timeout: 5))
-        XCTAssertTrue(element("plugin.workspaceID").exists)
+        XCTAssertTrue(element("plugin.requestWorkspace").exists)
         XCTAssertFalse(element("plugin.revoke").exists)
         attachScreenshot(named: "plugin-phone-consent-en")
         element("plugin.allow").tap()
         XCTAssertTrue(element("plugin.completion").waitForExistence(timeout: 3))
+        let connection = element("plugin.connection.preview-grant")
+        XCTAssertTrue(connection.waitForExistence(timeout: 3))
+        XCTAssertFalse(element("plugin.revoke").exists)
+        connection.tap()
+        XCTAssertTrue(element("screen.agentConnectionDetails").waitForExistence(timeout: 3))
         let revoke = element("plugin.revoke")
         if !revoke.isHittable { app.swipeUp() }
         XCTAssertTrue(revoke.waitForExistence(timeout: 3))
@@ -48,6 +53,89 @@ final class RunBuoyUITests: XCTestCase {
         XCTAssertTrue(completion.waitForExistence(timeout: 3))
         XCTAssertTrue(completion.label.contains("Connection denied."), app.debugDescription)
         XCTAssertFalse(element("plugin.revoke").exists)
+    }
+
+    func testAgentConnectionLinkRequiresReviewAndExplicitConsent() {
+        launch()
+        tapTab("tab.settings", label: "Settings")
+        let entry = element("settings.pluginConnections")
+        XCTAssertTrue(entry.waitForExistence(timeout: 3))
+        XCTAssertTrue(entry.label.contains("Agent connections"))
+        entry.tap()
+        XCTAssertTrue(element("screen.agentConnections").waitForExistence(timeout: 3))
+        element("plugin.pasteAction").tap()
+        let field = element("plugin.link")
+        XCTAssertTrue(field.waitForExistence(timeout: 3))
+        XCTAssertFalse(element("plugin.review").isEnabled)
+        field.tap()
+        field.typeText("invalid-link")
+        element("plugin.review").tap()
+        XCTAssertTrue(element("plugin.linkError").waitForExistence(timeout: 3))
+        XCTAssertFalse(element("plugin.allow").exists)
+        field.tap()
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: "invalid-link".count))
+        let link = "runbuoy://connect/pca_" + String(repeating: "a", count: 32)
+            + "?challenge=pcc_" + String(repeating: "b", count: 43)
+        field.typeText(link)
+        element("plugin.review").tap()
+        XCTAssertTrue(element("plugin.allow").waitForExistence(timeout: 5))
+        XCTAssertFalse(element("plugin.connection.preview-grant").exists)
+        element("plugin.deny").tap()
+        XCTAssertTrue(element("plugin.completion").waitForExistence(timeout: 3))
+        XCTAssertFalse(element("plugin.connection.preview-grant").exists)
+    }
+
+    func testAgentConnectionsOverviewAndDetail() {
+        openConfirmedAgentConnection()
+        XCTAssertTrue(element("plugin.connection.preview-grant").isHittable)
+        XCTAssertTrue(element("plugin.scan").isHittable)
+        XCTAssertTrue(element("plugin.pasteAction").isHittable)
+        XCTAssertTrue(element("plugin.shareWorkspace").isHittable)
+        XCTAssertFalse(element("plugin.revoke").exists)
+        attachScreenshot(named: "agent-connections-overview-en")
+        element("plugin.connection.preview-grant").tap()
+        XCTAssertTrue(element("plugin.revoke").waitForExistence(timeout: 3))
+        attachScreenshot(named: "agent-connection-detail-en")
+    }
+
+    func testAgentConnectionsLargestChineseTextKeepsActionsReachable() {
+        openConfirmedAgentConnection(
+            language: "zh-Hans",
+            extraArguments: ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        )
+        XCTAssertTrue(app.navigationBars["智能体连接"].exists)
+        let connection = element("plugin.connection.preview-grant")
+        XCTAssertTrue(connection.waitForExistence(timeout: 3))
+        attachScreenshot(named: "agent-connections-zh-largest-top")
+        connection.tap()
+        let revoke = element("plugin.revoke")
+        for _ in 0..<6 where !revoke.isHittable { app.swipeUp() }
+        XCTAssertTrue(revoke.isHittable)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        let paste = element("plugin.pasteAction")
+        for _ in 0..<6 where !paste.isHittable { app.swipeUp() }
+        XCTAssertTrue(paste.isHittable)
+        let share = element("plugin.shareWorkspace")
+        for _ in 0..<6 where !share.isHittable { app.swipeUp() }
+        XCTAssertTrue(share.isHittable)
+        attachScreenshot(named: "agent-connections-zh-largest-bottom")
+    }
+
+    private func openConfirmedAgentConnection(language: String = "en", extraArguments: [String] = []) {
+        let link = "runbuoy://connect/pca_" + String(repeating: "a", count: 32)
+            + "?challenge=pcc_" + String(repeating: "b", count: 43)
+        launch(initialURL: link, language: language, extraArguments: extraArguments)
+        let allow = element("plugin.allow")
+        XCTAssertTrue(allow.waitForExistence(timeout: 5))
+        for _ in 0..<6 where !allow.isHittable { app.swipeUp() }
+        allow.tap()
+        XCTAssertTrue(element("plugin.completion").waitForExistence(timeout: 3))
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        let entry = element("settings.pluginConnections")
+        for _ in 0..<6 where !entry.isHittable { app.swipeUp() }
+        XCTAssertTrue(entry.waitForExistence(timeout: 3))
+        entry.tap()
+        XCTAssertTrue(element("screen.agentConnections").waitForExistence(timeout: 3))
     }
 
     func testOnboardingCompletesWithSeededPairingCode() {
@@ -396,7 +484,9 @@ final class RunBuoyUITests: XCTestCase {
         scenario: String = "loaded",
         resetState: Bool = true,
         onboarding: Bool = false,
-        initialURL: String? = nil
+        initialURL: String? = nil,
+        language: String = "en",
+        extraArguments: [String] = []
     ) {
         if app.state != .notRunning {
             app.terminate()
@@ -405,9 +495,9 @@ final class RunBuoyUITests: XCTestCase {
         app.launchArguments = [
             "-runbuoy-ui-testing",
             "-runbuoy-ui-scenario", scenario,
-            "-AppleLanguages", "(en)",
-            "-AppleLocale", "en_US"
-        ]
+            "-AppleLanguages", "(\(language))",
+            "-AppleLocale", language == "en" ? "en_US" : "zh_CN"
+        ] + extraArguments
         if resetState {
             app.launchArguments.append("-runbuoy-ui-reset-state")
         }
