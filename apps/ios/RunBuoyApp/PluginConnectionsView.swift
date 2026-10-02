@@ -66,6 +66,7 @@ struct PluginConnectionsView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var connections: [PluginConnection] = []
     @State private var request: PluginConnectionRequest?
     @State private var inspectedCode: PluginConnectionCode?
@@ -89,54 +90,60 @@ struct PluginConnectionsView: View {
     }
 
     var body: some View {
-        List {
-            if let error {
-                Section { Label(error, systemImage: "exclamationmark.triangle") }
-                    .foregroundStyle(.orange).accessibilityIdentifier("plugin.error")
-            }
-            if let completion {
-                Section { Label(completion, systemImage: "checkmark.circle") }
-                    .accessibilityIdentifier("plugin.completion")
-            }
-            if let request {
-                consent(request)
-            }
-            connectionsSection
-            addConnectionSection
-            workspaceSection
-        }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .background(theme.canvas)
-        .runBuoyBottomScrollEdgeStyle()
-        .navigationTitle("plugin.title")
-        .accessibilityIdentifier("screen.agentConnections")
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("plugin.reload", systemImage: "arrow.clockwise") {
-                    Task { await load() }
+        ScrollViewReader { proxy in
+            List {
+                if let error {
+                    Section { Label(error, systemImage: "exclamationmark.triangle") }
+                        .foregroundStyle(.orange).accessibilityIdentifier("plugin.error")
                 }
-                .disabled(busy || refreshing)
-                .accessibilityIdentifier("plugin.reload")
+                if let completion {
+                    Section { Label(completion, systemImage: "checkmark.circle") }
+                        .accessibilityIdentifier("plugin.completion")
+                        .id("plugin.completion")
+                }
+                if let request {
+                    consent(request)
+                }
+                connectionsSection
+                addConnectionSection
+                workspaceSection
             }
-        }
-        .refreshable { await load() }
-        .overlay { if busy { ProgressView().accessibilityLabel(Text("plugin.loading")) } }
-        .sheet(item: $presentedSheet) { sheet in
-            switch sheet {
-            case .scanner:
-                ScannerSheet { value in presentedSheet = nil; receive(value) }
-            case .link:
-                AgentConnectionLinkSheet { code in router.pendingPluginConnection = code }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(theme.canvas)
+            .runBuoyBottomScrollEdgeStyle()
+            .navigationTitle("plugin.title")
+            .accessibilityIdentifier("screen.agentConnections")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("plugin.reload", systemImage: "arrow.clockwise") {
+                        Task { await load() }
+                    }
+                    .disabled(busy || refreshing)
+                    .accessibilityIdentifier("plugin.reload")
+                }
             }
-        }
-        .navigationDestination(item: $selectedConnection) { connection in
-            connectionDetails(connection)
-        }
-        .task { await load() }
-        .task(id: router.pendingPluginConnection?.challenge) { await inspectPending() }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Task { await load(); await inspectPending() } }
+            .refreshable { await load() }
+            .onChange(of: completion) { _, value in
+                if value != nil { proxy.scrollTo("plugin.completion", anchor: .top) }
+            }
+            .overlay { if busy { ProgressView().accessibilityLabel(Text("plugin.loading")) } }
+            .sheet(item: $presentedSheet) { sheet in
+                switch sheet {
+                case .scanner:
+                    ScannerSheet { value in presentedSheet = nil; receive(value) }
+                case .link:
+                    AgentConnectionLinkSheet { code in router.pendingPluginConnection = code }
+                }
+            }
+            .navigationDestination(item: $selectedConnection) { connection in
+                connectionDetails(connection)
+            }
+            .task { await load() }
+            .task(id: router.pendingPluginConnection?.challenge) { await inspectPending() }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { Task { await load(); await inspectPending() } }
+            }
         }
     }
 
@@ -149,27 +156,24 @@ struct PluginConnectionsView: View {
                 Button {
                     selectedConnection = connection
                 } label: {
-                    HStack(spacing: 12) {
-                        AgentConnectionIcon(clientName: connection.clientName)
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(connection.clientName)
-                                .font(.headline)
-                                .foregroundStyle(.primary)
-                            Text(String(format: String(localized: "plugin.access_expiry"),
-                                        connection.expiresAt.formatted(date: .abbreviated, time: .omitted)))
-                                .font(.caption)
-                                .runBuoySecondaryText()
+                    Group {
+                        if dynamicTypeSize.isAccessibilitySize {
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    AgentConnectionIcon(clientName: connection.clientName)
+                                    Spacer()
+                                    connectionStatus(connection)
+                                }
+                                connectionSummary(connection)
+                            }
+                        } else {
+                            HStack(spacing: 12) {
+                                AgentConnectionIcon(clientName: connection.clientName)
+                                connectionSummary(connection)
+                                Spacer(minLength: 4)
+                                connectionStatus(connection)
+                            }
                         }
-                        .fixedSize(horizontal: false, vertical: true)
-                        Spacer(minLength: 4)
-                        Circle()
-                            .fill(theme.status(connection.expiresAt > .now ? .success : .neutral))
-                            .frame(width: 10, height: 10)
-                            .accessibilityHidden(true)
-                        Image(systemName: "chevron.right")
-                            .font(.footnote.weight(.semibold))
-                            .runBuoySecondaryText()
-                            .accessibilityHidden(true)
                     }
                     .frame(minHeight: 48)
                     .contentShape(Rectangle())
@@ -191,15 +195,39 @@ struct PluginConnectionsView: View {
         .listRowBackground(theme.surface)
     }
 
+    private func connectionSummary(_ connection: PluginConnection) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(connection.clientName).font(.headline).foregroundStyle(.primary)
+            Text(String(format: String(localized: "plugin.access_expiry"),
+                        connection.expiresAt.formatted(date: .abbreviated, time: .omitted)))
+                .font(.caption).runBuoySecondaryText()
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func connectionStatus(_ connection: PluginConnection) -> some View {
+        HStack(spacing: 12) {
+            Circle()
+                .fill(theme.status(connection.expiresAt > .now ? .success : .neutral))
+                .frame(width: 10, height: 10)
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13, weight: .semibold)).runBuoySecondaryText()
+        }
+        .accessibilityHidden(true)
+    }
+
     private var addConnectionSection: some View {
         Section {
             Button { presentedSheet = .scanner } label: {
                 connectionAction("plugin.scan", symbol: "qrcode.viewfinder")
             }
+            .buttonStyle(.plain)
             .accessibilityIdentifier("plugin.scan")
             Button { presentedSheet = .link } label: {
                 connectionAction("plugin.paste_action", symbol: "link")
             }
+            .buttonStyle(.plain)
             .accessibilityIdentifier("plugin.pasteAction")
         } header: {
             Text("plugin.new").runBuoySecondaryText()
@@ -213,7 +241,7 @@ struct PluginConnectionsView: View {
     private func connectionAction(_ title: LocalizedStringKey, symbol: String) -> some View {
         HStack(spacing: 16) {
             Image(systemName: symbol)
-                .font(.title2)
+                .font(.system(size: 22))
                 .foregroundStyle(.tint)
                 .frame(width: 28)
                 .accessibilityHidden(true)
@@ -221,7 +249,7 @@ struct PluginConnectionsView: View {
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 4)
             Image(systemName: "chevron.right")
-                .font(.footnote.weight(.semibold))
+                .font(.system(size: 13, weight: .semibold))
                 .runBuoySecondaryText()
                 .accessibilityHidden(true)
         }
@@ -244,10 +272,11 @@ struct PluginConnectionsView: View {
                         }
                         Spacer(minLength: 4)
                         Image(systemName: "square.and.arrow.up")
-                            .font(.title2).accessibilityHidden(true)
+                            .font(.system(size: 22)).foregroundStyle(.tint).accessibilityHidden(true)
                     }
                     .frame(minHeight: 44)
                 }
+                .buttonStyle(.plain)
                 .accessibilityLabel(Text("plugin.share_workspace"))
                 .accessibilityValue(identity.workspaceID)
                 .accessibilityIdentifier("plugin.shareWorkspace")

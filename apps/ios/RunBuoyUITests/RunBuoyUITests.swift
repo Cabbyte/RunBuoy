@@ -499,9 +499,13 @@ final class RunBuoyUITests: XCTestCase {
             "-AppleLanguages", "(\(language))",
             "-AppleLocale", language == "en" ? "en_US" : "zh_CN"
         ] + extraArguments
+        // A developer's physical iPhone may contain real RunBuoy preferences.
+        // Fixtures use an in-memory identity; only disposable simulators reset defaults.
+#if targetEnvironment(simulator)
         if resetState {
             app.launchArguments.append("-runbuoy-ui-reset-state")
         }
+#endif
         if onboarding {
             app.launchArguments.append("-runbuoy-ui-onboarding")
         }
