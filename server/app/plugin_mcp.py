@@ -23,7 +23,7 @@ from .auth import Principal
 from .config import Settings
 from .plugin_auth import READ_SCOPES, PhoneOAuthProvider, SessionFactory, valid_grant
 
-UI_URI = "ui://runbuoy/dashboard/v2.html"
+UI_URI = "ui://runbuoy/dashboard/v3.html"
 
 
 def _result(data: dict[str, Any], summary: dict[str, Any] | None = None) -> CallToolResult:
@@ -174,7 +174,7 @@ def create_plugin(settings: Settings, sessions: SessionFactory) -> tuple[MCPServ
             )
 
     @server.tool(
-        title="Run dashboard",
+        title="RunBuoy",
         annotations=annotations,
         meta={
             **security,
@@ -268,7 +268,7 @@ def create_plugin(settings: Settings, sessions: SessionFactory) -> tuple[MCPServ
     server.add_resource(
         TextResource(
             uri=UI_URI,
-            name="RunBuoy dashboard",
+            name="RunBuoy",
             mime_type="text/html;profile=mcp-app",
             text=ui_path.read_text(),
             meta={

@@ -11,6 +11,9 @@ import {
   cadence,
   confirmedDuration,
   fraction,
+  isStale,
+  needsAttention,
+  relativeTime,
   mergeEvents,
   mergeOverview,
   orderedRuns,
@@ -25,6 +28,8 @@ import {
   type View,
 } from "./model";
 import { translator, type Language } from "./i18n";
+import iconLight from "./assets/runbuoy-icon-light.png";
+import iconDark from "./assets/runbuoy-icon-dark.png";
 
 export function Dashboard() {
   const [overview, setOverview] = useState<Overview | null>(null);
@@ -34,6 +39,9 @@ export function Dashboard() {
   const [view, setView] = useState<View>("active");
   const [machine, setMachine] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
+  const [wide, setWide] = useState(false);
+  const [selectionDismissed, setSelectionDismissed] = useState(false);
+  const [showAllEvents, setShowAllEvents] = useState(false);
   const [detail, setDetail] = useState<Detail | null>(null);
   const [history, setHistory] = useState<HistoryPage | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +68,7 @@ export function Dashboard() {
   const date = (value?: string | null) =>
     value
       ? new Date(value).toLocaleString(locale, {
+          year: "numeric",
           month: "short",
           day: "numeric",
           hour: "2-digit",
@@ -67,18 +76,21 @@ export function Dashboard() {
           second: "2-digit",
         })
       : "—";
-  const relative = (value: string) => {
-    const seconds = Math.max(0, Math.round((now - Date.parse(value)) / 1000));
-    if (!Number.isFinite(seconds)) return "—";
-    return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(
-      seconds < 60
-        ? -seconds
-        : seconds < 3600
-          ? -Math.floor(seconds / 60)
-          : -Math.floor(seconds / 3600),
-      seconds < 60 ? "second" : seconds < 3600 ? "minute" : "hour",
-    );
-  };
+  const relative = (value: string) => relativeTime(value, now, locale);
+
+  useEffect(() => {
+    const viewport = window.matchMedia("(min-width: 1100px)");
+    const update = () => setWide(viewport.matches);
+    update();
+    viewport.addEventListener("change", update);
+    return () => viewport.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    setShowAllEvents(false);
+    setCopied(false);
+    setContextSet(false);
+  }, [selected]);
 
   const apply = useCallback((result: Envelope) => {
     if (authLost.current) return;
@@ -297,15 +309,17 @@ export function Dashboard() {
   }, [bridge, view, machine, overview?.next_cursor, handleError]);
 
   const openRun = (id: string) => {
+    if (id === selected) return;
     setSelected(id);
     setDetail(null);
     setDetailError(null);
     setExpanded(true);
     setCopied(false);
     setContextSet(false);
-    void bridge?.expand().catch(() => {
-      /* The full responsive view also fits the current host. */
-    });
+    if (!isFull)
+      void bridge?.expand().catch(() => {
+        /* The full responsive view also fits the current host. */
+      });
   };
   const loadMore = async () => {
     if (!bridge || !history?.next_cursor || pageBusy) return;
@@ -382,10 +396,21 @@ export function Dashboard() {
   const runList = overview?.runs || [];
   const activeRuns = orderedRuns(
     runList.filter(active).filter((r) => !machine || r.machine_id === machine),
+    now,
   );
-  const attention = activeRuns.filter((r) =>
-    ["critical", "warning"].includes(status(r).tone),
-  ).length;
+  const attention = activeRuns.filter((r) => needsAttention(r, now)).length;
+  const firstActiveID = activeRuns[0]?.id;
+  useEffect(() => {
+    if (
+      wide &&
+      isFull &&
+      view === "active" &&
+      !selectionDismissed &&
+      !selected &&
+      firstActiveID
+    )
+      setSelected(firstActiveID);
+  }, [wide, isFull, view, selectionDismissed, selected, firstActiveID]);
   const chosen =
     detail?.run.id === selected
       ? detail.run
@@ -429,30 +454,29 @@ export function Dashboard() {
   );
   const progress = (r: Run) => {
     const value = fraction(r.progress);
+    if (value === null)
+      return (
+        <div className="progress-block unknown-progress">
+          {r.phase && <span>{r.phase}</span>}
+          <span>{t("unknownProgress")}</span>
+        </div>
+      );
     return (
       <div className="progress-block">
         <div className="progress-label">
           <span>{r.phase || t("progress")}</span>
           <strong>
-            {value !== null
-              ? new Intl.NumberFormat(locale, {
-                  style: "percent",
-                  maximumFractionDigits: 0,
-                }).format(value)
-              : "—"}
+            {new Intl.NumberFormat(locale, {
+              style: "percent",
+              maximumFractionDigits: 0,
+            }).format(value)}
           </strong>
         </div>
-        {value !== null ? (
-          <progress max="1" value={value} aria-label={t("progress")} />
-        ) : (
-          <div className="unknown-progress">{t("unknownProgress")}</div>
-        )}
-        {value !== null && (
-          <div className="muted micro">
-            {r.progress?.current?.toLocaleString(locale)} /{" "}
-            {r.progress?.total?.toLocaleString(locale)} {r.progress?.unit || ""}
-          </div>
-        )}
+        <progress max="1" value={value} aria-label={t("progress")} />
+        <div className="muted micro">
+          {r.progress?.current?.toLocaleString(locale)} /{" "}
+          {r.progress?.total?.toLocaleString(locale)} {r.progress?.unit || ""}
+        </div>
       </div>
     );
   };
@@ -469,26 +493,49 @@ export function Dashboard() {
       key={r.id}
       className={`run-card ${hero ? "hero" : ""} ${selected === r.id ? "selected" : ""}`}
       onClick={() => openRun(r.id)}
-      aria-label={`${r.title}, ${t(status(r).key)}`}
+      aria-label={`${r.title}, ${t(status(r).key)}${isStale(r, now) ? `, ${t("staleShort")}` : ""}`}
+      aria-pressed={selected === r.id}
     >
-      <div className="row">
-        <span className="machine-label">
-          <Computer />
-          {r.machine_name}
-        </span>
+      <div className="row run-heading">
+        <h3>{r.title}</h3>
         {badge(r)}
       </div>
-      <h3>{r.title}</h3>
+      <span className="machine-label">
+        <Computer />
+        {r.machine_name}
+      </span>
       {progress(r)}
       <div className="row foot">
-        <span>
-          {t("confirmed")} · {relative(r.updated_at)}
+        <span className={isStale(r, now) ? "freshness-overdue" : ""}>
+          {isStale(r, now) ? t("staleShort") : t("confirmed")} ·{" "}
+          <time dateTime={r.updated_at} title={date(r.updated_at)}>
+            {relative(r.updated_at)}
+          </time>
         </span>
         <span>
-          {duration(r)} <span aria-hidden="true">↗</span>
+          {r.started_at && duration(r)} <span aria-hidden="true">↗</span>
         </span>
       </div>
     </button>
+  );
+
+  const machineFilter = isFull && overview && (
+    <select
+      aria-label={t("filter")}
+      value={machine}
+      onChange={(e) => {
+        setMachine(e.target.value);
+        setSelectionDismissed(false);
+        setSelected(null);
+      }}
+    >
+      <option value="">{t("all")}</option>
+      {overview.machines.map((m) => (
+        <option key={m.id} value={m.id}>
+          {m.display_name}
+        </option>
+      ))}
+    </select>
   );
 
   const detailView = chosen && (
@@ -498,7 +545,10 @@ export function Dashboard() {
         <button
           className="icon-button"
           aria-label={t("close")}
-          onClick={() => setSelected(null)}
+          onClick={() => {
+            setSelectionDismissed(true);
+            setSelected(null);
+          }}
         >
           ×
         </button>
@@ -511,10 +561,10 @@ export function Dashboard() {
           {chosen.machine_name}
         </span>
       </div>
-      {(detailError ||
-        (active(chosen) && now - Date.parse(chosen.updated_at) > 60_000)) && (
+      {(detailError || isStale(chosen, now)) && (
         <div className="notice" role="status">
-          {detailError || t("staleNote")}
+          {detailError ||
+            `${t("staleShort")} · ${relative(chosen.updated_at)} · ${t("staleStatus")}`}
         </div>
       )}
       {progress(chosen)}
@@ -529,10 +579,14 @@ export function Dashboard() {
       )}
       <dl className="metrics">
         {[
-          [t("elapsed"), duration(chosen)],
+          ...(chosen.started_at
+            ? [[t("elapsed"), duration(chosen)]]
+            : [[t("created"), date(chosen.created_at)]]),
           [t("confirmed"), date(chosen.updated_at)],
-          [t("started"), date(chosen.started_at)],
-          [t("ended"), date(chosen.ended_at)],
+          ...(chosen.started_at
+            ? [[t("started"), date(chosen.started_at)]]
+            : []),
+          ...(chosen.ended_at ? [[t("ended"), date(chosen.ended_at)]] : []),
           ...(chosen.progress?.estimated_end_at
             ? [[t("eta"), date(chosen.progress.estimated_end_at)]]
             : []),
@@ -546,6 +600,71 @@ export function Dashboard() {
           </div>
         ))}
       </dl>
+      <section className="recent-events" aria-label={t("recentEvents")}>
+        <div className="row events-heading">
+          <h4>{showAllEvents ? t("timeline") : t("recentEvents")}</h4>
+          {detail &&
+            (detail.events.items.length > 3 || detail.events.has_more) && (
+              <button
+                className="text-button"
+                onClick={() => setShowAllEvents(!showAllEvents)}
+              >
+                {showAllEvents ? t("fewerEvents") : t("allEvents")}
+              </button>
+            )}
+        </div>
+        {!detail && !detailError && <p className="muted">{t("loading")}</p>}
+        {showAllEvents && detail?.events.has_more && (
+          <button
+            className="secondary"
+            disabled={pageBusy}
+            onClick={() => void loadEvents()}
+          >
+            {t("moreEvents")}
+          </button>
+        )}
+        <ol className="timeline">
+          {(showAllEvents
+            ? detail?.events.items
+            : detail?.events.items.slice(-3)
+          )
+            ?.slice()
+            .reverse()
+            .map((e) => (
+              <li key={e.event_id}>
+                <span className="timeline-dot" />
+                <div>
+                  <strong>
+                    {e.type.replace(/^run\./, "").replaceAll("_", " ")}
+                  </strong>
+                  <time>
+                    {date(e.occurred_at)} · #{e.seq}
+                  </time>
+                  {(e.payload.message || e.payload.safe_message) && (
+                    <p>{e.payload.message || e.payload.safe_message}</p>
+                  )}
+                  {e.payload.phase && <small>{e.payload.phase}</small>}
+                  <details>
+                    <summary>{t("safeFields")}</summary>
+                    <pre>{JSON.stringify(e.payload, null, 2)}</pre>
+                  </details>
+                </div>
+              </li>
+            ))}
+        </ol>
+        {detail && !detail.events.items.length && (
+          <p className="muted">{t("noEvents")}</p>
+        )}
+      </section>
+      <details className="shared-logs">
+        <summary>{t("logs")}</summary>
+        <p className="muted micro">{t("logNote")}</p>
+        {chosen.safe_log_tail?.length ? (
+          <pre>{chosen.safe_log_tail.join("\n")}</pre>
+        ) : (
+          <p className="muted">{t("noLogs")}</p>
+        )}
+      </details>
       <details className="technical">
         <summary>{t("technical")}</summary>
         <dl className="technical-data">
@@ -565,50 +684,6 @@ export function Dashboard() {
             </div>
           ))}
         </dl>
-        <h4>{t("timeline")}</h4>
-        {!detail && !detailError && <p className="muted">{t("loading")}</p>}
-        {detail?.events.has_more && (
-          <button
-            className="secondary"
-            disabled={pageBusy}
-            onClick={() => void loadEvents()}
-          >
-            {t("moreEvents")}
-          </button>
-        )}
-        <ol className="timeline">
-          {detail?.events.items.map((e) => (
-            <li key={e.event_id}>
-              <span className="timeline-dot" />
-              <div>
-                <strong>
-                  {e.type.replace(/^run\./, "").replaceAll("_", " ")}
-                </strong>
-                <time>
-                  {date(e.occurred_at)} · #{e.seq}
-                </time>
-                {(e.payload.message || e.payload.safe_message) && (
-                  <p>{e.payload.message || e.payload.safe_message}</p>
-                )}
-                {e.payload.phase && <small>{e.payload.phase}</small>}
-                <details>
-                  <summary>{t("safeFields")}</summary>
-                  <pre>{JSON.stringify(e.payload, null, 2)}</pre>
-                </details>
-              </div>
-            </li>
-          ))}
-        </ol>
-        {detail && !detail.events.items.length && (
-          <p className="muted">{t("noEvents")}</p>
-        )}
-        <h4>{t("logs")}</h4>
-        <p className="muted micro">{t("logNote")}</p>
-        {chosen.safe_log_tail?.length ? (
-          <pre>{chosen.safe_log_tail.join("\n")}</pre>
-        ) : (
-          <p className="muted">{t("noLogs")}</p>
-        )}
       </details>
       <div className="detail-actions">
         <button
@@ -662,6 +737,15 @@ export function Dashboard() {
           </div>
         </div>
         <div className="toolbar">
+          {checked && isFull && (
+            <span className="checked-at" title={checked.toLocaleString(locale)}>
+              {t("fetched")} ·{" "}
+              {checked.toLocaleTimeString(locale, {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          )}
           <button
             className="text-button"
             onClick={() => {
@@ -722,6 +806,7 @@ export function Dashboard() {
                     aria-current={view === item ? "page" : undefined}
                     onClick={() => {
                       setView(item);
+                      setSelectionDismissed(false);
                       setSelected(null);
                       setMachine("");
                     }}
@@ -737,55 +822,46 @@ export function Dashboard() {
               )}
             </nav>
           )}
-          <div className={`workspace ${selected ? "has-selection" : ""}`}>
-            <section className="list-panel" aria-label={t(view)}>
-              {view === "active" && (
-                <div className="overview">
+          {view === "active" && (!selected || wide) && (
+            <section className="overview" aria-label={t("overview")}>
+              <div>
+                <span className="eyebrow">{t("overview")}</span>
+                <h1>
+                  {language === "zh"
+                    ? "运行，一目了然。"
+                    : "Every run. In sight."}
+                </h1>
+              </div>
+              <div className="overview-tools">
+                <div className="summary-counts">
                   <div>
-                    <span className="eyebrow">{t("overview")}</span>
-                    <h1>
-                      {language === "zh"
-                        ? "运行，一目了然。"
-                        : "Every run. In sight."}
-                    </h1>
-                    <p>{t("tagline")}</p>
+                    <strong>
+                      {activeRuns.length.toString().padStart(2, "0")}
+                    </strong>
+                    <span>{t("activeCount")}</span>
                   </div>
-                  <div className="summary-counts">
-                    <div>
-                      <strong>
-                        {activeRuns.length.toString().padStart(2, "0")}
-                      </strong>
-                      <span>{t("activeCount")}</span>
-                    </div>
-                    <div className={attention ? "attention" : ""}>
-                      <strong>{attention.toString().padStart(2, "0")}</strong>
-                      <span>{t("attentionCount")}</span>
-                    </div>
+                  <div
+                    className={attention ? "attention" : ""}
+                    title={t("attentionHint")}
+                  >
+                    <strong>{attention.toString().padStart(2, "0")}</strong>
+                    <span>{t("attentionCount")}</span>
                   </div>
                 </div>
-              )}
-              <div className="section-heading">
-                <h2>
-                  {t(view)} <span className="muted">{count}</span>
-                </h2>
-                {isFull && (
-                  <select
-                    aria-label={t("filter")}
-                    value={machine}
-                    onChange={(e) => {
-                      setMachine(e.target.value);
-                      setSelected(null);
-                    }}
-                  >
-                    <option value="">{t("all")}</option>
-                    {overview.machines.map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.display_name}
-                      </option>
-                    ))}
-                  </select>
-                )}
+                {machineFilter}
               </div>
+            </section>
+          )}
+          <div className={`workspace ${selected ? "has-selection" : ""}`}>
+            <section className="list-panel" aria-label={t(view)}>
+              {view !== "active" && (
+                <div className="section-heading">
+                  <h2>
+                    {t(view)} <span className="muted">{count}</span>
+                  </h2>
+                  {machineFilter}
+                </div>
+              )}
               {view === "active" && (
                 <div className="run-list">
                   {(isFull ? activeRuns : activeRuns.slice(0, 3)).map((r, i) =>
@@ -935,7 +1011,10 @@ export function Dashboard() {
                 <section className="detail-panel">
                   <button
                     className="text-button"
-                    onClick={() => setSelected(null)}
+                    onClick={() => {
+                      setSelectionDismissed(true);
+                      setSelected(null);
+                    }}
                   >
                     {t("back")}
                   </button>
@@ -993,27 +1072,21 @@ function Computer() {
 }
 function Buoy() {
   return (
-    <svg
-      className="buoy"
-      width="36"
-      height="36"
-      viewBox="0 0 40 40"
-      fill="none"
-      aria-hidden="true"
-    >
-      <rect width="40" height="40" rx="12" fill="currentColor" />
-      <path
-        d="M20 8v6M17 15h6l2 13H15l2-13Z"
-        stroke="white"
-        strokeWidth="2.3"
-        strokeLinejoin="round"
+    <div className="buoy" aria-hidden="true">
+      <img
+        className="brand-icon-light"
+        src={iconLight}
+        alt=""
+        width="36"
+        height="36"
       />
-      <path
-        d="M10 30q5-4 10 0t10 0M16 21h8"
-        stroke="white"
-        strokeWidth="2.3"
-        strokeLinecap="round"
+      <img
+        className="brand-icon-dark"
+        src={iconDark}
+        alt=""
+        width="36"
+        height="36"
       />
-    </svg>
+    </div>
   );
 }
