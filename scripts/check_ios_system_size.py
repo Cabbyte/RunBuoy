@@ -84,9 +84,19 @@ def read_app(pid: int, evidence: Path, label: str) -> list[str]:
         "-o",
         "quit",
     ]
-    result = subprocess.run(  # noqa: S603 - fixed read-only debugger expressions
-        arguments, text=True, capture_output=True, timeout=60
-    )
+    try:
+        # The initial debugger attach/read exceeded one minute on the CI runner.
+        # Bound the read, retain partial diagnostics, and still fail without both values.
+        result = subprocess.run(  # noqa: S603 - fixed read-only debugger expressions
+            arguments, text=True, capture_output=True, timeout=120
+        )
+    except subprocess.TimeoutExpired as error:
+        output = "".join(
+            value.decode(errors="replace") if isinstance(value, bytes) else value or ""
+            for value in (error.stdout, error.stderr)
+        )
+        (evidence / f"{label}-lldb.log").write_text(output)
+        raise RuntimeError(f"LLDB readback timed out after 120s; see {label}-lldb.log") from error
     output = result.stdout + result.stderr
     (evidence / f"{label}-lldb.log").write_text(output)
     if result.returncode:

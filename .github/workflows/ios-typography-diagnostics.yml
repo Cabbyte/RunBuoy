@@ -7,7 +7,7 @@ on:
         description: Validation scope
         type: choice
         default: all-controls
-        options: [all-controls, system-size-and-e2e, settings-contrast, runtime-and-audit-finish]
+        options: [all-controls, system-size-and-e2e, settings-contrast, runtime-and-audit-finish, runtime-only]
   push:
     branches: ["codex/a11y-diagnostics-20261001"]
 
@@ -263,7 +263,7 @@ jobs:
           retention-days: 14
 
   runtime-and-audit-finish:
-    if: ${{ inputs.scope == 'runtime-and-audit-finish' }}
+    if: ${{ inputs.scope == 'runtime-and-audit-finish' || inputs.scope == 'runtime-only' }}
     runs-on: macos-26
     timeout-minutes: 40
     steps:
@@ -299,7 +299,7 @@ jobs:
             -only-testing:RunBuoyUITests/TypographyDiagnosticsTests/testRemainingSettingsTextAtLargeAndLargestSizes \
             CODE_SIGNING_ALLOWED=NO test 2>&1 | tee "$RUNNER_TEMP/runtime-audit-evidence/runtime.log"
       - name: Run one bounded native audit reproduction at each selected position
-        if: ${{ !cancelled() && env.SETTINGS_SIMULATOR_ID != '' }}
+        if: ${{ !cancelled() && env.SETTINGS_SIMULATOR_ID != '' && inputs.scope == 'runtime-and-audit-finish' }}
         run: |
           set -o pipefail
           xcodebuild -project apps/ios/RunBuoy.xcodeproj -scheme RunBuoy \

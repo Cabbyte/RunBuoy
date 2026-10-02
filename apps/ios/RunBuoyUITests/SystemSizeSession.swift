@@ -68,7 +68,7 @@ final class SystemSizeSession {
         let responseExists = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
             FileManager.default.fileExists(atPath: responseURL.path)
         }, object: nil)
-        guard XCTWaiter.wait(for: [responseExists], timeout: action == "begin" ? 20 : 100) == .completed else {
+        guard XCTWaiter.wait(for: [responseExists], timeout: action == "begin" ? 20 : 180) == .completed else {
             throw NSError(domain: "RunBuoySystemSize", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "Host size controller did not respond. Run xcodebuild through scripts/run_ios_system_size_tests.py; no setting was assumed to succeed."
             ])

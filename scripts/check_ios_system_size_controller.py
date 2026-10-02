@@ -8,6 +8,7 @@ import uuid
 from pathlib import Path
 from unittest.mock import patch
 
+from check_ios_system_size import read_app
 from run_ios_system_size_tests import DIRECTORY, Controller
 
 
@@ -70,6 +71,17 @@ class SystemSizeControllerTests(unittest.TestCase):
         ):
             self.controller.process({"session": identifier, "action": "set", "category": "large"})
         self.assertFalse(self.controller.sessions[identifier]["restored"])
+
+    def test_debugger_timeout_preserves_partial_evidence_and_still_fails(self) -> None:
+        with (
+            patch(
+                "check_ios_system_size.subprocess.run",
+                side_effect=subprocess.TimeoutExpired("lldb", 120, output=b"partial SDK import"),
+            ),
+            self.assertRaisesRegex(RuntimeError, "timed out after 120s"),
+        ):
+            read_app(123, self.directory, "cold-read")
+        self.assertEqual((self.directory / "cold-read-lldb.log").read_text(), "partial SDK import")
 
 
 if __name__ == "__main__":

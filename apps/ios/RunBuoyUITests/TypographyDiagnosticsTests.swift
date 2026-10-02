@@ -145,14 +145,24 @@ final class TypographyDiagnosticsTests: XCTestCase {
             ("settings.connectionSummary.region", .subheadline),
             ("settings.connectionSummary.confirmedLabel", .caption1),
             ("settings.connectionSummary.confirmedDate", .caption1),
-            ("The selected data region cannot be changed.", .footnote)
+            ("settings.regionLock", .footnote)
         ]
         for category in [UIContentSizeCategory.large, .accessibilityExtraExtraExtraLarge] {
             launch(category: category)
             tapTab("Settings")
             attachScreenshot("settings-summary-initial-\(category.rawValue)")
             for (identifier, style) in samples {
-                let node = app.staticTexts[identifier]
+                let node: XCUIElement
+                if identifier == "settings.regionLock" {
+                    // The combined row and its child share a label. Measure only
+                    // the child text, excluding the row's leading lock icon.
+                    let text = element(identifier).descendants(matching: .staticText)
+                        .matching(NSPredicate(format: "label == %@", "The selected data region cannot be changed."))
+                    XCTAssertEqual(text.count, 1)
+                    node = text.element(boundBy: 0)
+                } else {
+                    node = app.staticTexts[identifier]
+                }
                 ensureFullyVisible([node])
                 let text = node.label
                 let first = try XCTUnwrap(text.first)
