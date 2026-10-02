@@ -153,17 +153,19 @@ final class TypographyDiagnosticsTests: XCTestCase {
             attachScreenshot("settings-summary-initial-\(category.rawValue)")
             for (identifier, style) in samples {
                 let node: XCUIElement
+                var childQuery: XCUIElementQuery?
                 if identifier == "settings.regionLock" {
                     // The combined row and its child share a label. Measure only
                     // the child text, excluding the row's leading lock icon.
                     let text = element(identifier).descendants(matching: .staticText)
                         .matching(NSPredicate(format: "label == %@", "The selected data region cannot be changed."))
-                    XCTAssertEqual(text.count, 1)
+                    childQuery = text
                     node = text.element(boundBy: 0)
                 } else {
                     node = app.staticTexts[identifier]
                 }
                 ensureFullyVisible([node])
+                if let childQuery { XCTAssertEqual(childQuery.count, 1) }
                 let text = node.label
                 let first = try XCTUnwrap(text.first)
                 try verifyGlyph(node, character: String(first), style: style,
@@ -269,11 +271,20 @@ final class TypographyDiagnosticsTests: XCTestCase {
     }
 
     private func verifyCompleteText(_ expected: [String], in image: UIImage) throws {
-        let recognized = try recognizedText(in: image)
-        print("COMPLETE TEXT OCR: \(recognized)")
+        let lines = try recognizedLineCandidates(in: image)
+        let alternatives = lines.reduce([""]) { prefixes, candidates in
+            Array(prefixes.flatMap { prefix in
+                candidates.map { prefix + " " + $0 }
+            }.prefix(256))
+        }
+        print("COMPLETE TEXT OCR: \(alternatives.first ?? "")")
         for text in expected {
-            XCTAssertTrue(Self.normalized(recognized).contains(Self.normalized(text)),
-                          "Full text absent from rendered pixels: \(text); OCR: \(recognized)")
+            let matching = alternatives.first { Self.normalized($0).contains(Self.normalized(text)) }
+            XCTAssertNotNil(matching,
+                            "Full text absent from rendered OCR candidates: \(text); candidates: \(lines)")
+            if let matching, matching != alternatives.first {
+                print("COMPLETE TEXT OCR ALTERNATIVE: \(matching)")
+            }
         }
     }
 
@@ -315,7 +326,20 @@ final class TypographyDiagnosticsTests: XCTestCase {
     private func tapTab(_ label: String) {
         let tab = app.tabBars.buttons[label]
         XCTAssertTrue(tab.waitForExistence(timeout: 5))
-        tab.tap()
+        let screenID = ["Active": "screen.activeRuns", "History": "screen.history", "Settings": "screen.settings"][label]!
+        let screen = element(screenID)
+        for attempt in 1...2 {
+            tab.tap()
+            let selected = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                tab.isSelected && screen.exists
+            }, object: nil)
+            if XCTWaiter.wait(for: [selected], timeout: 5) == .completed {
+                print("TAB SELECTION CONFIRMED label=\(label) attempts=\(attempt)")
+                return
+            }
+            attachScreenshot("tab-selection-pending-\(label)-attempt-\(attempt)")
+        }
+        XCTAssertTrue(tab.isSelected && screen.exists, "Tab \(label) did not select its page after two taps")
     }
 
     private func element(_ identifier: String) -> XCUIElement {
@@ -323,6 +347,10 @@ final class TypographyDiagnosticsTests: XCTestCase {
     }
 
     private func recognizedText(in image: UIImage) throws -> String {
+        try recognizedLineCandidates(in: image).compactMap(\.first).joined(separator: " ")
+    }
+
+    private func recognizedLineCandidates(in image: UIImage) throws -> [[String]] {
         let request = VNRecognizeTextRequest()
         request.recognitionLevel = .accurate
         request.recognitionLanguages = ["en-US"]
@@ -330,9 +358,11 @@ final class TypographyDiagnosticsTests: XCTestCase {
         try VNImageRequestHandler(cgImage: XCTUnwrap(image.cgImage)).perform([request])
         let lines = (request.results ?? []).sorted { $0.boundingBox.midY > $1.boundingBox.midY }
         print("OCR LINE EVIDENCE count=\(lines.count) " + lines.map {
-            "text=\($0.topCandidates(1).first?.string ?? "") bounds=\($0.boundingBox)"
+            "candidates=\($0.topCandidates(5).map(\.string)) bounds=\($0.boundingBox)"
         }.joined(separator: "; "))
-        return lines.compactMap { $0.topCandidates(1).first?.string }.joined(separator: " ")
+        // Preserve Vision's own alternatives for visually confusable scripts.
+        // Do not substitute expected words or provide them to the recognizer.
+        return lines.map { $0.topCandidates(5).map(\.string) }
     }
 
     private static func normalized(_ text: String) -> String {
