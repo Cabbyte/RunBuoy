@@ -291,6 +291,7 @@ final class RunBuoyUITests: XCTestCase {
 
         let safeMessages = element("settings.safeMessages")
         XCTAssertTrue(safeMessages.waitForExistence(timeout: 3))
+        ensureSettingsControlVisible(safeMessages)
         let initialSafeMessagesValue = safeMessages.value as? String ?? "1"
         safeMessages.coordinate(
             withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)
@@ -300,6 +301,7 @@ final class RunBuoyUITests: XCTestCase {
         let liveActivities = element("settings.liveActivities")
         XCTAssertTrue(liveActivities.exists)
         if liveActivities.isEnabled {
+            ensureSettingsControlVisible(liveActivities)
             let initialLiveActivitiesValue = liveActivities.value as? String ?? "1"
             liveActivities.coordinate(
                 withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)
@@ -507,15 +509,42 @@ final class RunBuoyUITests: XCTestCase {
         labeledTab.tap()
     }
 
+    private func ensureSettingsControlVisible(_ control: XCUIElement) {
+        let settings = element("screen.settings")
+        let top = app.navigationBars.firstMatch.frame.maxY + 8
+        let bottom = app.tabBars.firstMatch.frame.minY - 12
+        for _ in 0..<4 {
+            let frame = control.frame
+            if control.isHittable && frame.minY >= top && frame.maxY <= bottom {
+                return
+            }
+            if frame.maxY > bottom {
+                settings.swipeUp()
+            } else {
+                settings.swipeDown()
+            }
+        }
+        XCTAssertTrue(control.isHittable, "Settings control must be tappable")
+        XCTAssertGreaterThanOrEqual(control.frame.minY, top)
+        XCTAssertLessThanOrEqual(control.frame.maxY, bottom)
+    }
+
     private func waitForValue(
         _ value: String,
         of element: XCUIElement,
         timeout: TimeInterval = 2
     ) {
-        let expectation = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "value == %@", value),
-            object: element
-        )
+        let expectation: XCTestExpectation
+        if element.value as? String == value {
+            // A matching live value needs no delayed predicate polling.
+            expectation = XCTestExpectation(description: "Control already has expected value")
+            expectation.fulfill()
+        } else {
+            expectation = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "value == %@", value),
+                object: element
+            )
+        }
         XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
     }
 
@@ -523,10 +552,16 @@ final class RunBuoyUITests: XCTestCase {
         _ element: XCUIElement,
         timeout: TimeInterval = 3
     ) {
-        let expectation = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "hittable == true"),
-            object: element
-        )
+        let expectation: XCTestExpectation
+        if element.isHittable {
+            expectation = XCTestExpectation(description: "Control is already hittable")
+            expectation.fulfill()
+        } else {
+            expectation = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "hittable == true"),
+                object: element
+            )
+        }
         XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
     }
 

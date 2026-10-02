@@ -1,6 +1,6 @@
 {
   "scope": "Internal TestFlight only; known failures remain XCTest failures, never a general accessibility pass.",
-  "ios_tree": "e28c2148089aff4804ac7ed083ea7378584e1f21",
+  "ios_tree": "9c440d1a977b547e98a79fa341702662f1087e5b",
   "candidate_commit": "663a71082f3a774a97800fa556d848e26ced5f5d",
   "expires_at": "2026-10-03T00:00:00+00:00",
   "human_acceptance": {
@@ -189,5 +189,15 @@
         "label": "1 active · no attention reported"
       }
     ]
+  },
+  "test_only_followup": {
+    "previous_ios_tree": "e28c2148089aff4804ac7ed083ea7378584e1f21",
+    "changes": [
+      "Scroll preference controls completely inside the Settings viewport before tapping.",
+      "Observe already-satisfied value/hittability immediately, while keeping original XCTest assertions, predicate fallback and 2/3-second wait timeouts."
+    ],
+    "product_code_unchanged_from": "663a71082f3a774a97800fa556d848e26ced5f5d",
+    "parent_authorization": "2026-10-02: complete ordinary recoverable pre-release validation fixes; no new exceptions and no swallowed failures.",
+    "diagnostic_run": "https://github.com/Cabbyte/RunBuoy/actions/runs/36962241614"
   }
 }

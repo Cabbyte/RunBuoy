@@ -10,10 +10,19 @@ isolated iPhone 17 / iOS 27 simulator using preview fixtures and normal animatio
 The user did not separately identify the device used for acceptance. In particular,
 this record does not claim human verification on the CI runtime, iOS 26.5.
 
-The accepted iOS tree is `e28c2148089aff4804ac7ed083ea7378584e1f21`, from candidate
-`663a71082f3a774a97800fa556d848e26ced5f5d`, identical to the retained first layout
-experiment. The second experiment was reverted. No further iOS source or test
-assertion change is included in this acceptance.
+The manually accepted candidate is `663a71082f3a774a97800fa556d848e26ced5f5d`,
+identical to the retained first layout experiment. The second experiment was
+reverted. All product source remains unchanged from that candidate.
+
+The parent subsequently authorized a test-only validation correction. The Settings
+switches are scrolled fully inside the viewport before tapping. Already-satisfied
+live value/hittability conditions fulfill an expectation immediately; otherwise the
+original predicate wait remains in use. The original state assertions, failure
+paths and 2/3-second wait timeouts are preserved. Video shows the safe-messages
+switch changing from on to off while its row was partly behind the tab bar; the
+Feature Tour failure screenshot shows a fully visible control despite a delayed
+predicate timeout. Neither failure receives an exception. The corrected test tree
+is `9c440d1a977b547e98a79fa341702662f1087e5b`; only test source changed under `apps/ios`.
 
 The [machine-readable policy](2026-10-02-internal-testflight.json) expires on
 2026-10-03 at 00:00 UTC. It allows only the documented native audit signatures for
