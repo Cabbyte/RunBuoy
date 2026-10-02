@@ -17,6 +17,7 @@
   --accent: #5364db;
   --accent-soft: #eff1fe;
   --shadow: 0 3px 14px #1c285207;
+  --warning-ink: #986113;
   color-scheme: light;
 }
 :root[data-theme="dark"] {
@@ -29,6 +30,7 @@
   --accent: #a2adff;
   --accent-soft: #282e50;
   --shadow: none;
+  --warning-ink: #e4ba75;
   color: var(--ink);
   background: var(--bg);
 }
@@ -43,6 +45,7 @@
     --accent: #a2adff;
     --accent-soft: #282e50;
     --shadow: none;
+    --warning-ink: #e4ba75;
     color: var(--ink);
     background: var(--bg);
   }
@@ -135,6 +138,14 @@ time {
   min-height: 0;
   padding: 20px 22px 12px;
 }
+.app.full {
+  padding-bottom: max(88px, env(safe-area-inset-bottom));
+}
+.checked-at {
+  color: var(--muted);
+  font-size: 11px;
+  margin-right: 8px;
+}
 .app-header {
   display: flex;
   align-items: center;
@@ -148,7 +159,32 @@ time {
   gap: 10px;
 }
 .buoy {
-  color: var(--accent);
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+}
+.buoy img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 9px;
+}
+.buoy .brand-icon-dark {
+  display: none;
+}
+:root[data-theme="dark"] .brand-icon-light {
+  display: none;
+}
+:root[data-theme="dark"] .brand-icon-dark {
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand-icon-light {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .brand-icon-dark {
+    display: block;
+  }
 }
 .brand strong {
   font-size: 19px;
@@ -203,6 +239,7 @@ time {
   padding: 6px;
   font-size: 12px;
   font-weight: 550;
+  white-space: nowrap;
 }
 .busy {
   animation: fade 1s infinite alternate;
@@ -249,11 +286,23 @@ nav button[aria-current] {
   min-width: 0;
 }
 .overview {
-  padding: 14px 0 28px;
+  padding: 0 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+}
+.overview h1 {
+  font-size: 25px;
+  letter-spacing: -0.8px;
+}
+.overview .eyebrow {
+  margin-bottom: 6px;
+}
+.overview-tools {
+  display: flex;
+  align-items: center;
+  gap: 28px;
 }
 .overview p {
   margin-top: 10px;
@@ -279,7 +328,7 @@ nav button[aria-current] {
   gap: 4px;
 }
 .summary-counts strong {
-  font-size: 37px;
+  font-size: 28px;
   letter-spacing: -1.4px;
   font-weight: 550;
   font-variant-numeric: tabular-nums;
@@ -290,7 +339,10 @@ nav button[aria-current] {
   color: var(--muted);
 }
 .summary-counts .attention strong {
-  color: #ae711e;
+  color: var(--warning-ink);
+}
+.freshness-overdue {
+  color: var(--warning-ink);
 }
 .section-heading {
   display: flex;
@@ -334,14 +386,28 @@ select {
 .run-card:hover,
 .run-card.selected {
   border-color: var(--accent);
+  background: linear-gradient(135deg, var(--card) 45%, var(--accent-soft));
 }
 .run-card.hero {
   border-color: color-mix(in srgb, var(--accent) 26%, var(--line));
   background: linear-gradient(135deg, var(--card) 45%, var(--accent-soft));
   padding: 22px;
 }
-.run-card h3 {
-  margin: 14px 0;
+.run-heading {
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.run-heading h3 {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.run-card .progress-block {
+  margin: 12px 0 0;
+}
+.run-card .foot {
+  margin-top: 12px;
+  padding-top: 10px;
 }
 .machine-label {
   display: inline-flex;
@@ -373,7 +439,7 @@ select {
   background: color-mix(in srgb, #28a777 12%, var(--card));
 }
 .badge.warning {
-  color: #ad721e;
+  color: var(--warning-ink);
   background: color-mix(in srgb, #e2a843 14%, var(--card));
 }
 .badge.critical {
@@ -427,10 +493,15 @@ progress::-moz-progress-bar {
   margin-top: 8px;
 }
 .unknown-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   font-size: 11px;
   color: var(--muted);
-  padding: 4px 0 8px;
-  border-bottom: 2px dashed var(--line);
+}
+.unknown-progress > span:first-child:not(:only-child) {
+  color: var(--ink);
+  font-size: 12px;
 }
 .foot {
   font-size: 11px;
@@ -450,38 +521,40 @@ progress::-moz-progress-bar {
   min-width: 0;
 }
 .detail-heading {
-  margin: 18px 0;
+  margin: 12px 0;
 }
 .detail-heading h2 {
-  font-size: 25px;
+  font-size: 23px;
   line-height: 1.25;
   overflow-wrap: anywhere;
-  margin: 14px 0 10px;
+  margin: 8px 0;
 }
 .message-highlight {
-  margin: 22px 0;
+  margin: 16px 0;
   background: var(--accent-soft);
   border-radius: 12px;
-  padding: 15px 16px;
+  padding: 12px 14px;
 }
 .message-highlight h4 {
   color: var(--accent);
   font-size: 11px;
 }
 .message-highlight p {
-  margin: 8px 0;
+  margin: 6px 0;
+  font-size: 14px;
+  line-height: 1.5;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .message-highlight time {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
 }
 .metrics {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px 14px;
-  margin: 24px 0;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
 }
 .metrics dt,
 .technical-data dt {
@@ -495,9 +568,25 @@ progress::-moz-progress-bar {
   font-weight: 550;
   line-height: 1.5;
 }
-.technical {
+.technical,
+.shared-logs {
   border-top: 1px solid var(--line);
-  padding-top: 18px;
+  padding-top: 12px;
+}
+.recent-events {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.events-heading {
+  min-height: 28px;
+}
+.events-heading .text-button {
+  padding-right: 0;
+}
+.timeline details summary {
+  padding: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
 }
 summary {
   cursor: pointer;
@@ -535,7 +624,7 @@ summary {
   display: flex;
   gap: 12px;
   position: relative;
-  padding: 10px 0 16px;
+  padding: 6px 0 12px;
 }
 .timeline li:not(:last-child):before {
   content: "";
@@ -564,14 +653,14 @@ summary {
 .timeline time {
   display: block;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 4px;
 }
 .timeline p {
-  font-size: 12px;
+  font-size: 13px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 .timeline small {
   color: var(--muted);
@@ -730,18 +819,26 @@ footer {
   margin-top: 12px;
   line-height: 1.6;
 }
-.has-selection .overview {
-  flex-direction: column;
-  align-items: flex-start;
-}
-.has-selection .summary-counts strong {
-  font-size: 26px;
-}
-.has-selection .summary-counts {
-  gap: 25px;
-}
-.has-selection .overview h1 {
-  font-size: 24px;
+@media (min-width: 1100px) {
+  .full .workspace.has-selection {
+    grid-template-columns: minmax(330px, 0.34fr) minmax(0, 0.66fr);
+    gap: 20px;
+  }
+  .full .run-card {
+    padding: 16px;
+  }
+  .full .run-heading h3 {
+    font-size: 16px;
+  }
+  .full .run-card .progress-block .micro {
+    display: none;
+  }
+  .full .run-card .progress-label {
+    margin-bottom: 6px;
+  }
+  .full .detail-panel {
+    padding: 18px 20px;
+  }
 }
 @media (max-width: 700px) {
   .app {
@@ -758,6 +855,15 @@ footer {
     align-items: flex-start;
     gap: 20px;
   }
+  .overview-tools {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .checked-at {
+    display: none;
+  }
   .summary-counts {
     gap: 40px;
   }
@@ -769,6 +875,13 @@ footer {
   }
   .toolbar {
     gap: 4px;
+  }
+  .run-heading {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+  .run-heading h3 {
+    margin: 0;
   }
   nav {
     gap: 18px;
@@ -806,6 +919,18 @@ footer {
     display: none;
   }
 }
+@media (max-width: 480px) {
+  .compact .app-header {
+    flex-wrap: wrap;
+  }
+  .compact .toolbar {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .compact .toolbar .secondary {
+    white-space: nowrap;
+  }
+}
 @media (max-width: 380px) {
   .compact .overview {
     flex-direction: column;
@@ -839,13 +964,36 @@ footer {
 }
 
 /* The conversation card keeps the same facts in a smaller reading surface. */
-.compact .overview > div:first-child { display: none; }
-.compact .overview { padding: 0 0 16px; }
-.compact .summary-counts strong { font-size: 28px; }
-.compact .run-card { padding: 12px 14px; }
-.compact .run-card h3 { font-size: 15px; margin: 7px 0; }
-.compact .run-card .progress-block { margin: 8px 0; }
-.compact .run-card .progress-block > .micro { display: none; }
-.compact .run-card .foot { padding-top: 9px; margin-top: 8px; font-size: 10px; }
-.compact .run-card .progress-label { font-size: 11px; }
-.compact .brand span { display: block; }
+.compact .overview > div:first-child {
+  display: none;
+}
+.compact .overview {
+  padding: 0 0 16px;
+}
+.compact .summary-counts strong {
+  font-size: 28px;
+}
+.compact .run-card {
+  padding: 12px 14px;
+}
+.compact .run-card h3 {
+  font-size: 15px;
+  margin: 7px 0;
+}
+.compact .run-card .progress-block {
+  margin: 8px 0;
+}
+.compact .run-card .progress-block > .micro {
+  display: none;
+}
+.compact .run-card .foot {
+  padding-top: 9px;
+  margin-top: 8px;
+  font-size: 10px;
+}
+.compact .run-card .progress-label {
+  font-size: 11px;
+}
+.compact .brand span {
+  display: block;
+}

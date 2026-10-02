@@ -5,6 +5,10 @@ import {
   cadence,
   confirmedDuration,
   fraction,
+  isStale,
+  needsAttention,
+  orderedRuns,
+  relativeTime,
   mergeEvents,
   mergeOverview,
   status,
@@ -107,6 +111,61 @@ test("polling uses activity cadence and bounded exponential backoff", () => {
   assert.equal(cadence(false, 0), 30_000);
   assert.equal(cadence(true, 2), 40_000);
   assert.equal(cadence(false, 20), 300_000);
+});
+test("freshness includes old active confirmations without replacing execution state", () => {
+  const confirmed = Date.parse(run.updated_at);
+  const created = { ...run, execution_status: "CREATED" };
+  assert.equal(isStale(created, confirmed + 60_000), false);
+  assert.equal(isStale(created, confirmed + 60_001), true);
+  assert.equal(needsAttention(created, confirmed + 60_001), true);
+  assert.equal(status(created).key, "CREATED");
+  assert.equal(isStale(run, confirmed - 60_000), false);
+  assert.equal(isStale({ ...run, updated_at: "invalid" }, confirmed), false);
+  const completed = { ...run, execution_status: "SUCCEEDED" };
+  assert.equal(isStale(completed, confirmed + 86400_000), false);
+  assert.equal(needsAttention(completed, confirmed + 86400_000), false);
+  assert.equal(
+    needsAttention({ ...run, attention_status: "ACTION_REQUIRED" }, confirmed),
+    true,
+  );
+});
+test("desktop initial selection prioritizes required actions, then overdue updates", () => {
+  const now = Date.parse(run.updated_at) + 120_000;
+  const fresh = {
+    ...run,
+    id: "fresh",
+    updated_at: new Date(now).toISOString(),
+  };
+  const required = {
+    ...fresh,
+    id: "required",
+    attention_status: "ACTION_REQUIRED",
+  };
+  const stale = { ...run, id: "stale" };
+  assert.deepEqual(
+    orderedRuns([fresh, stale, required], now).map((r) => r.id),
+    ["required", "stale", "fresh"],
+  );
+});
+test("long confirmation ages use days and remain readable in both languages", () => {
+  const confirmed = Date.parse(run.updated_at);
+  assert.equal(
+    relativeTime(run.updated_at, confirmed + 1375 * 3600_000, "en-US"),
+    "57 days ago",
+  );
+  assert.equal(
+    relativeTime(run.updated_at, confirmed + 1375 * 3600_000, "zh-CN"),
+    "57天前",
+  );
+  assert.equal(
+    relativeTime(run.updated_at, confirmed + 23 * 3600_000, "en-US"),
+    "23 hours ago",
+  );
+  assert.equal(
+    relativeTime(run.updated_at, confirmed + 24 * 3600_000, "en-US"),
+    "yesterday",
+  );
+  assert.equal(relativeTime("invalid", confirmed, "en-US"), "—");
 });
 test("UI data uses metadata, auth errors retain reconnect signal", () => {
   assert.equal(

@@ -100,6 +100,36 @@ export interface ToolData {
 }
 export const terminal = new Set(["SUCCEEDED", "FAILED", "CANCELLED", "LOST"]);
 export const active = (r: Run) => !terminal.has(r.execution_status);
+// Freshness describes the last confirmation, not the machine's execution state.
+export function isStale(r: Run, now: number): boolean {
+  return active(r) && now - Date.parse(r.updated_at) > 60_000;
+}
+export function needsAttention(r: Run, now: number): boolean {
+  return (
+    active(r) &&
+    (["critical", "warning"].includes(status(r).tone) || isStale(r, now))
+  );
+}
+export function relativeTime(
+  value: string,
+  now: number,
+  locale: string,
+): string {
+  const seconds = Math.max(0, Math.round((now - Date.parse(value)) / 1000));
+  if (!Number.isFinite(seconds)) return "—";
+  const [divisor, unit] =
+    seconds < 60
+      ? ([1, "second"] as const)
+      : seconds < 3600
+        ? ([60, "minute"] as const)
+        : seconds < 86400
+          ? ([3600, "hour"] as const)
+          : ([86400, "day"] as const);
+  return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(
+    -Math.floor(seconds / divisor),
+    unit,
+  );
+}
 export type Tone = "neutral" | "live" | "success" | "warning" | "critical";
 export function status(r: Run): { key: string; tone: Tone } {
   if (terminal.has(r.execution_status))
@@ -173,13 +203,13 @@ export function mergeEvents(old: Event[], page: Event[]): Event[] {
     ...new Map([...old, ...page].map((e) => [e.event_id, e])).values(),
   ].sort((a, b) => a.seq - b.seq);
 }
-export function orderedRuns(runs: Run[]): Run[] {
+export function orderedRuns(runs: Run[], now = Date.now()): Run[] {
   const rank = (r: Run) =>
     r.attention_status === "ACTION_REQUIRED"
       ? 0
       : r.attention_status === "WARNING"
         ? 1
-        : ["STALE", "OFFLINE"].includes(r.health_status)
+        : ["STALE", "OFFLINE"].includes(r.health_status) || isStale(r, now)
           ? 2
           : 3;
   return [...runs].sort(

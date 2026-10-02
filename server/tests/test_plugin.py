@@ -161,6 +161,7 @@ def test_oauth_mcp_ui_and_separate_credentials(plugin):
     descriptors = tools.json()["result"]["tools"]
     assert len(descriptors) == 6
     opener = next(t for t in descriptors if t["name"] == "open_runbuoy")
+    assert opener["title"] == "RunBuoy"
     assert opener["_meta"]["openai/ui"]["entrypoints"] == [{"type": "global"}, {"type": "thread"}]
     assert all(t["annotations"]["readOnlyHint"] for t in descriptors)
     opened = rpc(client, token, "tools/call", {"name": "open_runbuoy", "arguments": {}})

@@ -61,6 +61,8 @@ const runs = [
   run("01900000-0000-7000-8000-000000000004", "API · Integration tests", 100, {
     execution_status: "SUCCEEDED",
     ended_at: ago(1100),
+    updated_at: ago(1100),
+    phase: "Complete",
     exit_code: 0,
   }),
 ];
@@ -114,6 +116,42 @@ export function createDemoBridge(
   onContext: (c: BridgeState) => void,
 ): Bridge {
   const params = new URLSearchParams(location.search);
+  if (params.get("scenario") === "single") {
+    overview.runs = [runs[0]];
+    overview.machines = overview.machines.filter(
+      (m) => m.id === runs[0].machine_id,
+    );
+  }
+  if (params.get("scenario") === "stale") {
+    Object.assign(runs[0], {
+      title: "Website verification",
+      machine_id: "mac",
+      machine_name: "RunBuoy E2E Mac",
+      execution_status: "CREATED",
+      created_at: ago(1375 * 3600),
+      updated_at: ago(1375 * 3600),
+      started_at: null,
+      phase: null,
+      progress: null,
+      safe_message: null,
+      safe_log_tail: null,
+      sequence: 1,
+    });
+    overview.runs = [runs[0]];
+    overview.machines = [
+      { ...overview.machines[0], display_name: runs[0].machine_name },
+    ];
+    overview.notifications = [];
+  }
+  if (params.get("scenario") === "long") {
+    Object.assign(runs[2], {
+      title:
+        "Coastal depth estimation · validation and checkpoint verification across the complete multi-camera dataset",
+      phase: "Waiting for confirmation of the next dataset partition",
+      safe_message:
+        "The dataset is ready for review.\nCheck the validation summary and confirm the next partition on the machine. The current run remains available while you review the latest checkpoint and compare its results with the previous training session.",
+    });
+  }
   if (params.has("empty")) {
     overview.runs = [];
     overview.machines = [];
@@ -141,25 +179,44 @@ export function createDemoBridge(
                 {
                   event_id: "1",
                   seq: 1,
-                  type: "run.started",
-                  occurred_at: r.started_at!,
+                  type: "run.created",
+                  occurred_at: r.created_at,
                   payload: {},
                 },
-                {
-                  event_id: "24",
-                  seq: 24,
-                  type: "run.progress",
-                  occurred_at: r.updated_at,
-                  payload: {
-                    message: r.safe_message || "Work in progress",
-                    phase: r.phase || "",
-                  },
-                },
+                ...(r.started_at
+                  ? [
+                      {
+                        event_id: "2",
+                        seq: 2,
+                        type: "run.started",
+                        occurred_at: r.started_at,
+                        payload: {},
+                      },
+                      ...[7, 12, 18, 24].map((seq, index) => ({
+                        event_id: String(seq),
+                        seq,
+                        type:
+                          seq === 24 && r.ended_at
+                            ? "run.succeeded"
+                            : "run.progress",
+                        occurred_at: new Date(
+                          Date.parse(r.updated_at) - (3 - index) * 20_000,
+                        ).toISOString(),
+                        payload: {
+                          message:
+                            index === 3
+                              ? r.safe_message || "Work in progress"
+                              : "Run confirmed by the machine.",
+                          phase: r.phase || "",
+                        },
+                      })),
+                    ]
+                  : []),
               ],
               before_seq: 1,
-              after_seq: 24,
+              after_seq: r.sequence,
               has_more: false,
-              sequence: 24,
+              sequence: r.sequence,
             },
           },
         };
@@ -184,7 +241,8 @@ export function createDemoBridge(
       }
       return { data: {} };
     },
-    expand: async () => onContext({ ...hostContext, displayMode: "fullscreen" }),
+    expand: async () =>
+      onContext({ ...hostContext, displayMode: "fullscreen" }),
     context: async () => {},
     close: () => {},
   };
