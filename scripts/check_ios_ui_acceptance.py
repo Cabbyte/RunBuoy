@@ -7,7 +7,6 @@ import json
 import os
 import re
 import subprocess
-from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -121,9 +120,10 @@ def evaluate(
             observed = signatures.get(identifier, [])
             known = policy["native_signatures"][identifier]
             allowed = bool(observed) and all(signature in known for signature in observed)
-            # Each audit callback returns false. Every issue must still be present
-            # as a raw XCTest failure, including additional assertions in the test.
-            allowed = allowed and Counter(messages) == Counter(s["compact"] for s in observed)
+            # xcresult issue summaries deduplicate identical messages within a test.
+            # Attachments retain every callback occurrence; summaries must contain
+            # exactly their message categories and no additional assertion failure.
+            allowed = allowed and set(messages) == {s["compact"] for s in observed}
         if allowed:
             accepted.append({"test": identifier, "raw_failures": messages})
         else:

@@ -77,6 +77,15 @@ class UIAcceptanceTests(unittest.TestCase):
         self.assertEqual(len(report["accepted_failed_tests"]), 1)
         self.assertEqual(report["passed_tests"], 4)
 
+    def test_real_xcresult_summary_deduplicates_identical_audit_messages(self) -> None:
+        # Verified against raw xcresult from CI 36927551730: five Active callbacks
+        # produce one Dynamic Type issue summary; Form's two contrast callbacks
+        # likewise produce one contrast issue summary. This is not a test pass.
+        data = self.fixture()
+        data["signatures"][NATIVE] *= 3
+        report = self.check(data, True)
+        self.assertFalse(report["all_xctests_passed"])
+
     def test_all_actual_passes_need_no_exception(self) -> None:
         data = self.fixture()
         data["tree"] = "new-product-tree"
