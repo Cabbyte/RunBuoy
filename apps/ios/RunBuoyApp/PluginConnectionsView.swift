@@ -73,6 +73,7 @@ struct PluginConnectionsView: View {
     @State private var selectedConnection: PluginConnection?
     @State private var busy = false
     @State private var refreshing = false
+    @State private var refreshID: UUID?
     @State private var error: String?
     @State private var completion: String?
     @State private var revoking: PluginConnection?
@@ -359,11 +360,19 @@ struct PluginConnectionsView: View {
     }
 
     private func load() async {
-        guard !refreshing else { return }
+        let id = UUID()
+        refreshID = id
         refreshing = true
-        defer { refreshing = false }
-        do { connections = try await store.pluginConnections(); error = nil }
-        catch { show(error) }
+        defer { if refreshID == id { refreshing = false } }
+        do {
+            let updated = try await store.pluginConnections()
+            guard refreshID == id else { return }
+            connections = updated
+            error = nil
+        } catch {
+            guard refreshID == id else { return }
+            show(error)
+        }
     }
 
     private func show(_ failure: Error) {

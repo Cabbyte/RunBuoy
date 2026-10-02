@@ -126,8 +126,9 @@ final class RunBuoyUITests: XCTestCase {
             + "?challenge=pcc_" + String(repeating: "b", count: 43)
         launch(initialURL: link, language: language, extraArguments: extraArguments)
         let allow = element("plugin.allow")
-        XCTAssertTrue(allow.waitForExistence(timeout: 5))
+        XCTAssertTrue(element("screen.agentConnections").waitForExistence(timeout: 5))
         for _ in 0..<6 where !allow.isHittable { app.swipeUp() }
+        XCTAssertTrue(allow.isHittable)
         allow.tap()
         XCTAssertTrue(element("plugin.completion").waitForExistence(timeout: 3))
         app.navigationBars.buttons.element(boundBy: 0).tap()
