@@ -1,0 +1,193 @@
+{
+  "scope": "Internal TestFlight only; known failures remain XCTest failures, never a general accessibility pass.",
+  "ios_tree": "e28c2148089aff4804ac7ed083ea7378584e1f21",
+  "candidate_commit": "663a71082f3a774a97800fa556d848e26ced5f5d",
+  "expires_at": "2026-10-03T00:00:00+00:00",
+  "human_acceptance": {
+    "result": "user-reported-pass",
+    "date": "2026-10-02",
+    "quote": "已经人工测试，没问题",
+    "checks": [
+      "large Dynamic Type",
+      "actual VoiceOver",
+      "critical navigation and operations"
+    ],
+    "device_boundary": "iPhone 17 / iOS 27 simulator was prepared on MacBook16; user did not separately identify the tested device. No human iOS 26.5 coverage is claimed."
+  },
+  "risk_acceptance_quote": "接受这些尚未排除的无障碍风险，先人工验收大字号、VoiceOver 和关键操作，再完成其他构建检查后发 TestFlight。不能直接跳过检查上传。",
+  "prior_evidence_runs": [
+    "https://github.com/Cabbyte/RunBuoy/actions/runs/36951718028",
+    "https://github.com/Cabbyte/RunBuoy/actions/runs/36927551730"
+  ],
+  "core_failure": "Dynamic Type font sizes are partially unsupported",
+  "ocr_failures": [
+    "XCTAssertNotNil failed - Full text absent from rendered OCR candidates: 3 mo. ago; candidates: [[\"3 тo.\"], [\"ago\"]]",
+    "XCTAssertNotNil failed - Full text absent from rendered OCR candidates: 3 mo. ago; candidates: [[\"3 то.\"], [\"ago\"]]"
+  ],
+  "native_signatures": {
+    "TypographyDiagnosticsTests/testFormNativeAuditWithoutFilters()": [
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "131072",
+        "compact": "Text clipped",
+        "identifier": "probe.title",
+        "label": "Machines"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "1",
+        "compact": "Contrast nearly passed",
+        "identifier": "probe.suffix",
+        "label": "paired"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "1",
+        "compact": "Contrast nearly passed",
+        "identifier": "probe.count",
+        "label": "2"
+      }
+    ],
+    "TypographyDiagnosticsTests/testLowerFormRowNativeAuditWithoutFilters()": [
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "131072",
+        "compact": "Text clipped",
+        "identifier": "probe.title",
+        "label": "Machines"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "probe.suffix",
+        "label": "paired"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "probe.title",
+        "label": "Machines"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "probe.count",
+        "label": "2"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "1",
+        "compact": "Contrast nearly passed",
+        "identifier": "probe.suffix",
+        "label": "paired"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "1",
+        "compact": "Contrast nearly passed",
+        "identifier": "probe.count",
+        "label": "2"
+      }
+    ],
+    "TypographyDiagnosticsTests/testSettingsLowerSectionsNativeAuditWithoutFilters()": [
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "131072",
+        "compact": "Text clipped",
+        "identifier": "nil",
+        "label": "nil"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "1",
+        "compact": "Contrast failed",
+        "identifier": "nil",
+        "label": "nil"
+      }
+    ],
+    "TypographyDiagnosticsTests/testSettingsNativeAuditWithoutFilters()": [
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "1",
+        "compact": "Contrast failed",
+        "identifier": "nil",
+        "label": "nil"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "131072",
+        "compact": "Text clipped",
+        "identifier": "settings.machines.title",
+        "label": "Machines"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "settings.machines.count",
+        "label": "2"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "settings.machines.suffix",
+        "label": "paired"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "",
+        "label": "The selected data region cannot be changed."
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "settings.machines.title",
+        "label": "Machines"
+      }
+    ],
+    "TypographyDiagnosticsTests/testActiveNativeAuditWithoutFilters()": [
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "activeRuns.confirmationHint",
+        "label": "Computer confirmation times are shown on each task."
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "",
+        "label": "Run time 10:20"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "",
+        "label": "Last Confirmed 3 months ago"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "",
+        "label": "Phone synced 3 months ago"
+      },
+      {
+        "OS": "Version 26.5 (Build 23F77)",
+        "type": "65536",
+        "compact": "Dynamic Type font sizes are partially unsupported",
+        "identifier": "",
+        "label": "1 active · no attention reported"
+      }
+    ]
+  }
+}

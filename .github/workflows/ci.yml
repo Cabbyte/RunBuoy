@@ -49,6 +49,7 @@ jobs:
       - run: uv run python scripts/check_ios_privacy_manifests.py
       - run: uv run python scripts/check_workflow_pins.py
       - run: uv run python scripts/check_ios_release_gate.py
+      - run: uv run python scripts/test_ios_ui_acceptance.py
       - run: uv run python scripts/check_markdown_links.py
       - run: uvx openapi-spec-validator packages/protocol/openapi.yaml
       - name: License and provenance
@@ -286,6 +287,7 @@ jobs:
           set -o pipefail
           simulator_id=$(xcrun simctl list devices available --json | python3 -c 'import json,sys; groups=json.load(sys.stdin)["devices"]; runtimes=sorted((k for k in groups if ".iOS-" in k), key=lambda k:tuple(map(int,k.split(".iOS-")[1].split("-"))), reverse=True); print(next(d["udid"] for k in runtimes for d in groups[k] if d["name"] == "iPhone 17"))')
           xcrun simctl bootstatus "$simulator_id" -b
+          set +e
           python3 scripts/run_ios_system_size_tests.py \
             --device "$simulator_id" \
             --evidence-dir "$RUNNER_TEMP/$IOS_RESULT_DIR/runtime-system-size" -- \
@@ -299,6 +301,10 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -only-testing:RunBuoyUITests \
             test
+          ui_exit=$?
+          set -e
+          python3 scripts/check_ios_ui_acceptance.py \
+            --evidence "$RUNNER_TEMP/$IOS_RESULT_DIR" --wrapper-exit "$ui_exit"
       - name: Archive app and embedded widget without signing
         run: |
           set -o pipefail
@@ -322,11 +328,11 @@ jobs:
         run: >-
           xcrun simctl diagnose
           --output="$RUNNER_TEMP/RunBuoy-iOS-latest-simulator-diagnostics"
-      - name: Upload latest iOS failure artifacts
-        if: failure()
+      - name: Upload latest iOS results including accepted failures
+        if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: RunBuoy-iOS-latest-failure-${{ github.run_id }}
+          name: RunBuoy-iOS-latest-results-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/${{ env.IOS_RESULT_DIR }}
             ${{ runner.temp }}/RunBuoy-iOS-latest-simulator-diagnostics*
