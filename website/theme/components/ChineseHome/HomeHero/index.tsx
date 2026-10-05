@@ -10,6 +10,15 @@ interface HomeHeroProps {
   image?: React.ReactNode;
 }
 
+function isAppStoreLink(href: string): boolean {
+  try {
+    const url = new URL(href, 'https://www.runbuoy.cloud');
+    return url.protocol === 'https:' && url.hostname === 'apps.apple.com';
+  } catch {
+    return false;
+  }
+}
+
 function HomeHero({ beforeHeroActions, afterHeroActions, image }: HomeHeroProps) {
   const { frontmatter } = useFrontmatter();
   const lang = useLang();
@@ -28,7 +37,7 @@ function HomeHero({ beforeHeroActions, afterHeroActions, image }: HomeHeroProps)
         <div className="runbuoy-zh-home-hero__actions">
           {hero?.actions?.map(action => (
             <Button type="a" key={action.link} href={localizeHref(action.link, lang)} theme={action.theme} className="runbuoy-zh-home-hero__action">
-              {action.link.includes('apps.apple.com') ? <AppStoreLogo size={21} weight="bold" aria-hidden="true" /> : <ArrowRight size={20} aria-hidden="true" />}
+              {isAppStoreLink(action.link) ? <AppStoreLogo size={21} weight="bold" aria-hidden="true" /> : <ArrowRight size={20} aria-hidden="true" />}
               <span {...renderHtmlOrText(action.text)} />
             </Button>
           ))}
