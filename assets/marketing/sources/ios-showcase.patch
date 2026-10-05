@@ -1,0 +1,126 @@
+diff --git a/apps/ios/RunBuoyApp/CapabilityDemoView.swift b/apps/ios/RunBuoyApp/CapabilityDemoView.swift
+index eeb01f0..cf49b57 100644
+--- a/apps/ios/RunBuoyApp/CapabilityDemoView.swift
++++ b/apps/ios/RunBuoyApp/CapabilityDemoView.swift
+@@ -200,6 +200,12 @@ final class CapabilityDemoModel {
+         let now = Date()
+         let sessionID = UUID().uuidString
+         let presentation = demoPresentation
++        var startedAt = now
++#if DEBUG
++        if isMarketingCapture {
++            startedAt = now.addingTimeInterval(-47 * 60)
++        }
++#endif
+         let attributes = RunActivityAttributes(
+             runID: UUID().uuidString,
+             title: presentation.title,
+@@ -210,11 +216,11 @@ final class CapabilityDemoModel {
+         let content = ActivityContent(
+             state: step.contentState(
+                 now: now,
+-                createdAt: now,
+-                startedAt: now,
++                createdAt: startedAt,
++                startedAt: startedAt,
+                 machineName: presentation.machineName
+             ),
+-            staleDate: now.addingTimeInterval(60)
++            staleDate: now.addingTimeInterval(demoFreshnessInterval)
+         )
+ 
+         do {
+@@ -262,7 +268,7 @@ final class CapabilityDemoModel {
+             state: state,
+             staleDate: step == .stale
+                 ? now.addingTimeInterval(-1)
+-                : step.isTerminal ? nil : now.addingTimeInterval(60)
++                : step.isTerminal ? nil : now.addingTimeInterval(demoFreshnessInterval)
+         )
+ 
+         if step.isTerminal {
+@@ -383,6 +389,24 @@ final class CapabilityDemoModel {
+         )
+     }
+ 
++    // Keep a local marketing fixture fresh while composing captures. Production
++    // demos retain their normal 60-second freshness and start time.
++    private var demoFreshnessInterval: TimeInterval {
++#if DEBUG
++        if isMarketingCapture { return 15 * 60 }
++#endif
++        return 60
++    }
++
++#if DEBUG
++    private var isMarketingCapture: Bool {
++        let configuration = UITestConfiguration.current
++        return configuration.isEnabled
++            && [.showcase, .showcaseEnglish].contains(configuration.scenario)
++            && ProcessInfo.processInfo.arguments.contains("-runbuoy-marketing-activity")
++    }
++#endif
++
+     private func removeAllDemoActivities() async {
+         for activity in Activity<RunActivityAttributes>.activities where activity.attributes.isDemo {
+             await activity.end(nil, dismissalPolicy: .immediate)
+@@ -402,6 +426,9 @@ struct CapabilityDemoView: View {
+     @Environment(\.scenePhase) private var scenePhase
+     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+     @State private var model = CapabilityDemoModel()
++#if DEBUG
++    @State private var didStartMarketingActivity = false
++#endif
+ 
+     var body: some View {
+         Form {
+@@ -503,6 +530,21 @@ struct CapabilityDemoView: View {
+         .task(id: scenePhase) {
+             guard scenePhase == .active else { return }
+             await model.refresh()
++#if DEBUG
++            let configuration = UITestConfiguration.current
++            let arguments = ProcessInfo.processInfo.arguments
++            if configuration.isEnabled,
++               [.showcase, .showcaseEnglish].contains(configuration.scenario),
++               !didStartMarketingActivity,
++               let index = arguments.firstIndex(of: "-runbuoy-marketing-activity"),
++               arguments.indices.contains(index + 1),
++               let value = Int(arguments[index + 1]),
++               let step = CapabilityDemoStep(rawValue: value) {
++                didStartMarketingActivity = true
++                await model.start()
++                await model.setStep(step)
++            }
++#endif
+         }
+     }
+ 
+diff --git a/apps/ios/RunBuoyApp/RunBuoyApp.swift b/apps/ios/RunBuoyApp/RunBuoyApp.swift
+index 7b7e9a6..8812c8d 100644
+--- a/apps/ios/RunBuoyApp/RunBuoyApp.swift
++++ b/apps/ios/RunBuoyApp/RunBuoyApp.swift
+@@ -35,6 +35,23 @@ struct RunBuoyApp: App {
+         if let initialURL = uiTestConfiguration.initialURL {
+             _ = router.handle(initialURL)
+         }
++#if DEBUG
++        // Capture real screens with local showcase data; never route a production launch.
++        if uiTestConfiguration.isEnabled,
++           [.showcase, .showcaseEnglish].contains(uiTestConfiguration.scenario),
++           let flag = ProcessInfo.processInfo.arguments.firstIndex(of: "-runbuoy-marketing-screen"),
++           ProcessInfo.processInfo.arguments.indices.contains(flag + 1) {
++            switch ProcessInfo.processInfo.arguments[flag + 1] {
++            case "pairing":
++                router.selectedTab = .settings
++                router.settingsPath = [.pairMachine]
++            case "data":
++                router.selectedTab = .settings
++                router.settingsPath = [.advancedData]
++            default: break
++            }
++        }
++#endif
+         _router = State(initialValue: router)
+         if isUIPreviewMode {
+             _store = State(

@@ -49,7 +49,7 @@ npm run check
 
 `render.swift` 从原始截图、文案 JSON 和品牌原图生成全部交付文件、总览图及导出清单，并同步官网使用的副本至 `website/docs/public/marketing` 和 `website/docs/public/og.png`。重新生成后还需要目视检查总览及浏览器：尺寸校验不能识别空白界面、错语言、文字遮挡。
 
-需要替换界面时，先用 Xcode 构建并安装 Debug `RunBuoy`，选择一台专用 iPhone 17 Pro Max 模拟器，再执行：
+需要替换界面时，先在独立工作树检查并应用 [Debug 展示入口补丁](sources/ios-showcase.patch)（记录于原始截图基线；需核对当前代码再使用），然后用 Xcode 构建并安装 Debug `RunBuoy`，选择一台专用 iPhone 17 Pro Max 模拟器，再执行：
 
 ```bash
 SIMULATOR_UDID=<设备 UUID> bash assets/marketing/scripts/capture.sh zh-Hans active-runs
