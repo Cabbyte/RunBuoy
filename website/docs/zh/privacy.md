@@ -5,7 +5,7 @@ description: RunBuoy 会同步什么、什么留在本地，以及保留、删�
 
 # 隐私
 
-RunBuoy 按“默认不上传”设计，只同步在 iPhone 上展示 Run 状态所需的有限数据。RunBuoy 不出售个人数据，也不会把同步的 Run 数据用于广告或跨服务追踪。
+RunBuoy 按“默认不上传”设计，只同步用于展示任务状态的有限数据。iPhone 与经你授权的 ChatGPT Plugin 可以读取同一工作区的状态。RunBuoy 不出售个人数据，也不会把同步的 Run 数据用于广告或跨服务追踪。
 
 ## 默认同步的数据
 
@@ -59,6 +59,12 @@ RunBuoy 的手机路径是只读的：Server 和 iPhone 都不会获得启动、
 
 删除无法取消或修改机器上已经运行的进程。只卸载 App 并不代表服务端删除已完成；请先使用产品内重置或删除操作，或通过[支持](/support)获得帮助。
 
+## ChatGPT Plugin 的查看授权
+
+连接由你在 iPhone 确认，可授权读取工作区中的任务、电脑和通知。Plugin 的回答与看板可能显示任务标题、阶段、结果和消息；只有明确共享的日志片段才可被读取，不会自动取得完整命令、源码或本地日志。
+
+可以从 iPhone 撤销连接，阻止后续读取。撤销不能收回已经进入 ChatGPT 对话的信息；对话内容另受你使用的 ChatGPT 服务及其数据设置管理。
+
 ## 网站与自托管
 
 本静态网站默认不加载广告或第三方分析脚本。GitHub Pages 可能按照其服务政策记录访问和安全日志。
@@ -67,6 +73,6 @@ RunBuoy 的手机路径是只读的：Server 和 iPhone 都不会获得启动、
 
 ## 联系与更新
 
-权威实现和变更记录位于 [GitHub 仓库](https://github.com/TANG617/RunBuoy)。隐私问题可通过 [GitHub Issue](https://github.com/TANG617/RunBuoy/issues) 提交，请勿包含私密 Run 数据或凭据。安全问题必须使用 [GitHub 私密漏洞报告](https://github.com/TANG617/RunBuoy/security/advisories/new)。
+权威实现和变更记录位于 [GitHub 仓库](https://github.com/Cabbyte/RunBuoy)。隐私问题可通过 [GitHub Issue](https://github.com/Cabbyte/RunBuoy/issues) 提交，请勿包含私密 Run 数据或凭据。安全问题必须使用 [GitHub 私密漏洞报告](https://github.com/Cabbyte/RunBuoy/security/advisories/new)。
 
-最后更新：2026 年 8 月 7 日。
+最后更新：2026 年 10 月 5 日。

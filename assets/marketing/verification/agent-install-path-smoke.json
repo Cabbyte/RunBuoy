@@ -1,0 +1,88 @@
+{
+  "source": "/Users/timli/.codex/worktrees/agent-install-path/RunBuoy",
+  "cli_source": "main 45930228",
+  "checks": [
+    {
+      "shell": "/bin/bash",
+      "flags": "-ic",
+      "version": "runbuoy 0.1.4",
+      "local_ready": true,
+      "delivery": {
+        "paired": false,
+        "reachable": false,
+        "ready": false
+      },
+      "capabilities_schema": 2
+    },
+    {
+      "shell": "/bin/bash",
+      "flags": "-lic",
+      "version": "runbuoy 0.1.4",
+      "local_ready": true,
+      "delivery": {
+        "paired": false,
+        "reachable": false,
+        "ready": false
+      },
+      "capabilities_schema": 2
+    },
+    {
+      "shell": "/bin/zsh",
+      "flags": "-ic",
+      "version": "runbuoy 0.1.4",
+      "local_ready": true,
+      "delivery": {
+        "paired": false,
+        "reachable": false,
+        "ready": false
+      },
+      "capabilities_schema": 2
+    },
+    {
+      "shell": "/bin/zsh",
+      "flags": "-lic",
+      "version": "runbuoy 0.1.4",
+      "local_ready": true,
+      "delivery": {
+        "paired": false,
+        "reachable": false,
+        "ready": false
+      },
+      "capabilities_schema": 2
+    }
+  ],
+  "helper": {
+    "ok": true,
+    "bin_dir": "<temporary-isolated-root>/home/测试 tools/bin",
+    "executable": "<temporary-isolated-root>/home/测试 tools/bin/runbuoy",
+    "shell": "/bin/zsh",
+    "repair_attempted": true,
+    "version": "runbuoy 0.1.4",
+    "current_process_on_path": false,
+    "activate_current_shell": "export PATH='<temporary-isolated-root>/home/测试 tools/bin':\"$PATH\"; hash -r",
+    "update_shell_exit_code": 0,
+    "fresh_shells": {
+      "interactive": {
+        "ok": true,
+        "executable": "<temporary-isolated-root>/home/测试 tools/bin/runbuoy",
+        "exit_code": 0
+      },
+      "login_interactive": {
+        "ok": true,
+        "executable": "<temporary-isolated-root>/home/测试 tools/bin/runbuoy",
+        "exit_code": 0
+      }
+    }
+  },
+  "isolated": true,
+  "configuration_or_credentials_created": false,
+  "verified_at": "2026-10-05",
+  "uv_version": "0.12.17",
+  "platform": "macOS; real bash and zsh; fish unavailable",
+  "automated_tests": {
+    "passed": 29,
+    "skipped": 7,
+    "skip_reason": "fish is not installed",
+    "command": "uv run pytest packages/protocol/tests skills/runbuoy/tests -q"
+  }
+}

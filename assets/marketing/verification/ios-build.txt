@@ -1,0 +1,15 @@
+iOS simulator capture build
+Date: 2026-10-02T16:06:55Z
+Project: apps/ios/RunBuoy.xcodeproj
+Scheme: RunBuoy
+Configuration: Debug
+Destination: iPhone 17 Pro Max / iOS 27.0
+Base main commit: 9ad840519fe8e5ff66ad9dd4a71c8c1b30b34177
+Version: 1.0.6 (1)
+Includes local marketing capture helpers in CapabilityDemoView and RunBuoyApp.
+
+2026-10-03 00:07:02.022 appintentsmetadataprocessor[46641:49249522] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+** BUILD SUCCEEDED **
+
+This is a build-log extract. It is not an archive, TestFlight or release-gate result.

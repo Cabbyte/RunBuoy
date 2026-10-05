@@ -46,9 +46,23 @@ function description(source) {
 
 expect(existsSync(outputRoot), 'doc_build is missing; run npm run build first.');
 
+// Chinese rollout: all public installation prompts use the same verified procedure.
+const zhPromptSource = readFileSync(path.join(websiteRoot, 'theme/components/ChineseHome/installPrompts.ts'), 'utf8');
+const zhPrompt = zhPromptSource.match(/  zh: `([\s\S]*?)`,/)?.[1];
+expect(Boolean(zhPrompt), 'Missing Chinese installation prompt.');
+for (const page of ['index.mdx', 'agent-skill.md']) {
+  const source = readFileSync(path.join(websiteRoot, `docs/zh/guide/${page}`), 'utf8');
+  expect(zhPrompt && source.includes('```text\n' + zhPrompt + '\n```'), `${page} Chinese prompt differs from the homepage.`);
+}
+
 if (existsSync(outputRoot)) {
-  const zhHome = html('index.html');
+  const zhHome = html('index.html').replaceAll('runbuoy-zh-', 'runbuoy-');
   const enHome = html('en/index.html');
+  expect(textContent(zhHome).includes('扫一眼，掌握任务的进展。'), 'Chinese hero must match approved copy.');
+  expect(zhHome.includes('Agent 报状态，ChatGPT 看全貌。') && zhHome.includes('私人预览'), 'Chinese Agent integration must include Skill and private-preview ChatGPT UI.');
+  expect(/<details[^>]*id="manual-install"[^>]*>/.test(zhHome) && !/<details[^>]*id="manual-install"[^>]*\bopen\b/.test(zhHome), 'Chinese manual installation must remain collapsed.');
+  expect(!enHome.includes('runbuoy-zh-'), 'Chinese homepage must not render on English routes.');
+
   const zhQuickStart = html('guide/index.html');
   const enQuickStart = html('en/guide/index.html');
   const zhSkill = html('guide/agent-skill.html');
@@ -131,7 +145,7 @@ if (existsSync(outputRoot)) {
   }
 
   for (const [name, source] of [['Chinese Skill page', zhSkill], ['English Skill page', enSkill]]) {
-    expect(source.includes('https://github.com/TANG617/RunBuoy/tree/main/skills/runbuoy'), `${name} is missing the Skill source URL.`);
+    expect(source.includes(`https://github.com/${name.startsWith('Chinese') ? 'Cabbyte' : 'TANG617'}/RunBuoy/tree/main/skills/runbuoy`), `${name} is missing the Skill source URL.`);
     expect(source.includes('SKILL.md'), `${name} is missing the required Skill files.`);
     expect(source.includes('references/installation.md'), `${name} does not route CLI installation through the Skill safety rules.`);
     expect(source.includes('runbuoy doctor --json'), `${name} is missing machine verification.`);

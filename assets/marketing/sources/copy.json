@@ -1,0 +1,22 @@
+{
+  "zh-Hans": {
+    "slides": [
+      {"id":"live-activity","title":"离开电脑，\n进度仍在眼前。","subtitle":"抬手看锁屏，就知道任务跑到哪了。","footnote":"Mac / Linux 长任务，在 iPhone 随身看"},
+      {"id":"results","title":"成了，还是出错了？\n看一眼就知道。","subtitle":"成功、失败与历史记录，清清楚楚。","footnote":"示例任务与演示数据"},
+      {"id":"multiple-tasks","title":"几台电脑，\n一处看清。","subtitle":"模型训练、构建、备份，集中查看。","footnote":"支持 macOS 与 Linux · 电脑需安装 RunBuoy CLI"},
+      {"id":"progress","title":"不只知道在跑，\n还知道跑到哪。","subtitle":"阶段、真实进度和任务消息，随时查看。","footnote":"百分比与时间估计来自任务显式报告"},
+      {"id":"pairing","title":"扫一下，\n连接你的电脑。","subtitle":"安装 CLI，扫码配对，再启动任务。","footnote":"iOS 18 及以上 · macOS / Linux · 需联网"},
+      {"id":"privacy","title":"工作留在电脑，\n状态带在身边。","subtitle":"命令、源码与完整日志默认留在本机。","footnote":"可选安全日志摘要需显式启用 · 手机端只读"}
+    ]
+  },
+  "en-US": {
+    "slides": [
+      {"id":"live-activity","title":"Step away.\nStay in the know.","subtitle":"Your task’s progress. Right on your Lock Screen.","footnote":"Long-running Mac & Linux tasks, within reach"},
+      {"id":"results","title":"Finished? Failed?\nKnow at a glance.","subtitle":"Clear results. A history you can come back to.","footnote":"Sample tasks and demonstration data"},
+      {"id":"multiple-tasks","title":"Your computers.\nOne clear view.","subtitle":"Training, builds, and backups — all together.","footnote":"macOS & Linux · RunBuoy CLI required on your computer"},
+      {"id":"progress","title":"See which phase.\nKnow how far.","subtitle":"Follow real progress, phases, and task messages.","footnote":"Percentages and time estimates require explicit task reports"},
+      {"id":"pairing","title":"Scan. Pair.\nYou’re connected.","subtitle":"Install the CLI, pair your phone, then start a task.","footnote":"iOS 18+ · macOS / Linux · Internet connection required"},
+      {"id":"privacy","title":"Take the status.\nKeep the work local.","subtitle":"Commands, source code, and full logs stay local by default.","footnote":"Sanitized log excerpts are opt-in · Your phone is read-only"}
+    ]
+  }
+}

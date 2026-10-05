@@ -1,0 +1,143 @@
+{
+  "exports" : [
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/zh-Hans/01-live-activity.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/zh-Hans/02-results.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/zh-Hans/03-multiple-tasks.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/zh-Hans/04-progress.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/zh-Hans/05-pairing.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/zh-Hans/06-privacy.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 1434,
+      "path" : "promoted/web/zh-Hans/active-runs.jpg",
+      "width" : 660
+    },
+    {
+      "alpha" : false,
+      "height" : 1120,
+      "path" : "promoted/web/zh-Hans/run-detail.jpg",
+      "width" : 660
+    },
+    {
+      "alpha" : false,
+      "height" : 290,
+      "path" : "promoted/web/zh-Hans/live-activity.png",
+      "width" : 1200
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/en-US/01-live-activity.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/en-US/02-results.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/en-US/03-multiple-tasks.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/en-US/04-progress.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/en-US/05-pairing.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 2868,
+      "path" : "promoted/app-store/en-US/06-privacy.png",
+      "width" : 1320
+    },
+    {
+      "alpha" : false,
+      "height" : 1434,
+      "path" : "promoted/web/en-US/active-runs.jpg",
+      "width" : 660
+    },
+    {
+      "alpha" : false,
+      "height" : 1120,
+      "path" : "promoted/web/en-US/run-detail.jpg",
+      "width" : 660
+    },
+    {
+      "alpha" : false,
+      "height" : 290,
+      "path" : "promoted/web/en-US/live-activity.png",
+      "width" : 1200
+    },
+    {
+      "alpha" : false,
+      "height" : 1024,
+      "path" : "promoted/web/buoy-calm-water.jpg",
+      "width" : 1536
+    },
+    {
+      "alpha" : false,
+      "height" : 630,
+      "path" : "promoted/web/og.png",
+      "width" : 1200
+    },
+    {
+      "alpha" : false,
+      "height" : 630,
+      "path" : "promoted/web/en-US/og.png",
+      "width" : 1200
+    },
+    {
+      "alpha" : false,
+      "height" : 1564,
+      "path" : "verification/app-store-zh-Hans-overview.jpg",
+      "width" : 1980
+    },
+    {
+      "alpha" : false,
+      "height" : 1564,
+      "path" : "verification/app-store-en-US-overview.jpg",
+      "width" : 1980
+    }
+  ],
+  "generator" : "scripts/render.swift"
+}

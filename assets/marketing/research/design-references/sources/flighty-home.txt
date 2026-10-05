@@ -1,0 +1,304 @@
+URL: https://flighty.com/
+Captured: 2026-10-02
+
+- navigation:
+  - link "NEW! Flighty Airports View Live":
+    - /url: https://www.flighty.com/airports
+    - paragraph: NEW! Flighty Airports
+    - paragraph: View Live
+  - link "Flighty":
+    - /url: ./
+    - paragraph: Flighty
+  - link "Pricing":
+    - /url: ./pricing
+    - paragraph: Pricing
+  - link "Gift Cards":
+    - /url: ./gift-cards
+    - paragraph: Gift Cards
+  - link "Passport":
+    - /url: ./passport
+    - paragraph: Passport
+  - link "Airports":
+    - /url: https://flighty.com/airports
+    - paragraph: Airports
+  - link "Help Center":
+    - /url: ./help
+    - paragraph: Help Center
+  - paragraph: Get the app
+  - link "Pricing":
+    - /url: ./pricing
+    - paragraph: Pricing
+  - link "About":
+    - /url: ./about
+    - paragraph: About
+  - link "Press":
+    - /url: ./press
+    - paragraph: Press
+  - link "Support":
+    - /url: ./
+    - paragraph: Support
+  - link "Gift Cards":
+    - /url: ./gift-cards
+    - paragraph: Gift Cards
+  - link "Businesses":
+    - /url: ./business
+    - paragraph: Businesses
+- heading "Get the truth when you travel" [level=1]
+- paragraph: The only app that tells you everything about your flight. Get real-time updates, the fastest alerts, and delay predictions so you're always the first to know and rebook—all in a sleek, easy-to-use app. Perfect for frequent flyers and simple enough for everyone.
+- paragraph: Apple Design Award
+- paragraph: Winner 2023
+- paragraph: App of the Year
+- paragraph: Finalist 2023
+- paragraph: Mom landed in New York
+- paragraph: 6:32am (22m early) and ☀️ 88º
+- paragraph: Gate changed
+- paragraph: Changed to ORD Terminal 2 • Gate 7
+- paragraph: AUS ✈️ JFK • Departed Gate
+- paragraph: Taxiing for 13m, for take off at 5:34PM.
+- paragraph: AUS ✈️ JFK • 70º 🌤️
+- paragraph: Good morning! Your flight today is on time.
+- paragraph: Check In is now open
+- paragraph: You can check-in at delta.com
+- paragraph: AUS ✈️ JFK • Delayed 45m
+- paragraph: ↗ FRA 6:30pm (45m late)
+- paragraph: AUS ✈️ JFK • Landed
+- paragraph: It’s 6:32am (22m early) and ☀️ 88º
+- paragraph: AUS ✈️ JFK • Flight changed
+- paragraph: "New Departure: 8:28pm (was 11:30pm)"
+- paragraph: Baggage Claim
+- paragraph: Assigned to Belt 6
+- paragraph: Baggage Claim
+- paragraph: Assigned to Belt 6
+- link "Preflight":
+  - /url: ./#before-fly
+  - paragraph: Preflight
+- link "At the airport":
+  - /url: ./#at-the-airport
+  - paragraph: At the airport
+- link "After landing":
+  - /url: ./#after-fly
+  - paragraph: After landing
+- link "Download":
+  - /url: https://apps.apple.com/app/apple-store/id1358823008?pt=118988326&ct=Our%20Website&mt=8
+  - paragraph: Download
+- paragraph: “The Smartest travelers can't imagine flying without Flighty”
+- paragraph: "\"A Must-Have for Anyone getting on a plane\""
+- paragraph: “There are Flight Trackers, and there’s Flighty”
+- paragraph: "\"Flighty gives users the exact reason behind delays\""
+- paragraph: "\"A must-have app for tracking your flights\""
+- heading "Everything you’ve ever wanted to know about your flight—and more." [level=2]
+- paragraph: "Flighty keeps you informed by tracking more information about your flight than any other app—like the #1 and #2 biggest causes of delays. Know exactly what’s happening and how it affects your flight, so you can finally just enjoy your trip."
+- paragraph: See why you’re delayed. Finally!
+- paragraph: Airlines often keep delay information under wraps until the last minute. Flighty doesn’t. We track the inbound aircraft 25 hours before your flight, so we can predict a new departure time long before the airline notifies you.
+- paragraph:
+  - text: Delay predictions. Long before airlines admit it.
+  - text: "Late planes are the #1 cause of delays. Flighty uses machine learning to predict delays due to late arriving aircraft — up to 6 hours before the airline says anything."
+- paragraph: "Direct from the tower. Air Traffic Control mandates are the #2 cause of delays. Flighty sifts through these and tells you what might impact your flight: like ground stops, weather, or airport issues."
+- paragraph: JFK Arrivals
+- paragraph: Flights to JFK Grounded
+- paragraph: Some flights to JFK (but not this flight currently) are grounded for the next 24 min. due to thunderstorms. Probability of extension is 30-60%.
+- paragraph: Thunderstorms
+- paragraph: Advisory from Air Traffic Control
+- paragraph: First to know. First to go. Hear about delays and gate changes before anyone else, even the pilot. Flighty’s alerts are instant, clear, and unfiltered, giving you the earliest heads-up to rebook quickly and avoid long lines.
+- paragraph: Putting the ‘Pro’ in approachable. Powerful, pilot-grade data that you can actually understand. Get gate info, departure times, baggage belts, and booking codes—all at a glance. Never stop and stare at a flight board again.
+- heading "Import your flights in seconds" [level=3]
+- paragraph: "You can magically (read: extremely quickly) make your flights appear on Flighty from your calendar, TripIt, or your email. Get up & running with Flighty faster than you can say, “have a nice flight”."
+- paragraph: Give Flighty a try
+- heading "Share your flying with friends and family." [level=2]
+- paragraph: Flighty Friends lets you instantly share your flying with your loved ones, so they can monitor your trip status and get notified when you land. Add your loved ones just once, and you’ll never have to manually share flight details again.
+- paragraph: Never hear, “can you send me your flight info?” ever again.
+- paragraph: Choose who you want to share your flying with. They can then customize the notifications they get about your trip (like when you’ve landed, whether there are delays, and more).
+- paragraph: Get perfectly-timed notifications about your loved ones’ flights.
+- paragraph: Mom is flying today
+- paragraph: AA101 to New York departs in 4h
+- paragraph: Mom took off for New York
+- paragraph: Arrives in 4h 30m at 8:34pm local time
+- paragraph: Mom landed in New York
+- paragraph: 6:32am (22m early) and ☀️ 88º
+- paragraph: Share to Instagram with Stories that actually look good.
+- heading "Look back on your travels with Flighty Passport" [level=2]
+- paragraph: Whether you fly one time per year or one hundred, Flighty Passport gives you a record of all the fun details about your flights. How many times have you traveled around the Earth? What was your worst delay? What's your most-flown plane? Sit back and enjoy your lifetime of flying history, all on an Apple Design Award-winning interface.
+- paragraph: A hall of fame for your flying history.
+- paragraph: Kick back, relax, and enjoy scrolling through the most in-depth (and beautiful) compilation of your flying highlights you’ll find anywhere. Yes, you can import past flights.
+- paragraph: Marvel at your most-flown aircraft. Keep track of your favorite seats and classes.
+- paragraph: Add up total time lost to delays.
+- heading "Know what’s happening at any airport. Right now." [level=2]
+- paragraph:
+  - text: Track 14,000+ airports worldwide with live arrivals, departures, delays, and operational performance — all in real time with
+  - link "Flighty Airports":
+    - /url: https://www.flighty.com/airports
+  - text: .
+- paragraph: Browse Live Airport Conditions Worldwide
+- paragraph:
+  - link "With Flighty Airports":
+    - /url: https://www.flighty.com/airports
+  - text: get thousands of synthesized and official airport communications per minute. Flighty knows exactly what's happening at each airport, why, and when it may clear.
+- paragraph: Know What Could Disrupt Your Flight
+- paragraph: New warnings for everything from hail, high wind, de-icing, and lighting to airport strikes, low staffing, or taxiway congestion. Even rare anomalies like buffalo on the runway.
+- paragraph: Runway Regulars
+- paragraph: Flighty now ranks you and your friends by airport activity so you can flex, reflect, or shoot them a text to ask which lounge is best.
+- list:
+  - paragraph: SEA
+  - paragraph: MEM
+  - paragraph: LAX
+  - paragraph: ANC
+  - paragraph: PHL
+  - paragraph: MCO
+  - paragraph: MIA
+- list:
+  - paragraph: BOS
+  - paragraph: PDX
+  - paragraph: AUS
+  - paragraph: DEN
+  - paragraph: SFO
+  - paragraph: LAS
+  - paragraph: SAN
+- list:
+  - paragraph: LGA
+  - paragraph: PHX
+  - paragraph: SLC
+  - paragraph: JFK
+  - paragraph: DTW
+  - paragraph: CLE
+  - paragraph: TPA
+- heading "Broadcast any airport meltdown live" [level=3]
+- paragraph:
+  - text: You can now live stream or broadcast the status of any airport with
+  - strong: TV Mode
+  - text: in Flighty Airports.
+- link "Go Live":
+  - /url: https://flighty.com/airports/tv
+  - paragraph: Go Live
+- heading "More reasons you’ll want to take Flighty on your next trip" [level=3]
+- paragraph: Family sharing. Share Flighty with up to 5 family members at a time.
+- paragraph: Privacy first. All of your flight details and history are viewable only by you.
+- heading "From first-time flyers to million-milers, people love Flighty." [level=3]
+- paragraph: David Pogue
+- paragraph: "@Pogue"
+- paragraph: "Ever since FlightTrack Pro died, I've searched for the ultimate flight-tracking app. Now I've found it: @Flighty. Beautiful, clear, useful info (even tracks the INBOUND plane for your flight). Often tells me about delays before the airline does!"
+- paragraph: Joel
+- paragraph: Jan 31, 2023
+- paragraph: Saved the day!
+- paragraph: "To: Flighty Crew"
+- paragraph: Two weeks ago, I had a one-day business trip planned—JFK to Buffalo for a quick meeting. At 7:30 am, Flighty alerted me to a delay two legs before my flight. JetBlue hadn’t posted anything, but I could see a delay was coming. I quickly booked a Delta flight out of LGA, arranged for my associates to meet me there, and made it to my meeting on time. If not for Flighty’s early alert, I’d have missed it. Thanks for a great experience!
+- paragraph: Joel
+- paragraph: Best Flight Tracking App
+- paragraph: Date
+- paragraph: •
+- paragraph: Bdawgno1
+- paragraph: I have used a lot of other flight tracking apps. Flighty takes all of them combined and make them look amateurish. Been using the app for several years. Yearly fee is less than a dinner out. And so worth paying!! It has saved me on both domestic and international flights - updates faster than airport boards on status. I know exactly where my arrival plane is and can judge how fast I need to in line to board my flight. Simply the best!!!!
+- paragraph: Great travel app!
+- paragraph: Sep 7, 2024
+- paragraph: •
+- paragraph: by BigPlayaz
+- paragraph: If you fly at all, Flighty is amazing. It really does get updates on delays faster than what you'll get from the airlines. The app itself is so clearly built with care, attention to detail, and skill. All the extra info on your flight and your all time passport are great as well.
+- paragraph: Brian Kelly
+- paragraph: 8h
+- paragraph: The Best By Far
+- paragraph: Mar 17, 2022
+- paragraph: •
+- paragraph: "@LPAppsSuck"
+- paragraph: The best flight tracking app I have ever experienced in 15 years and 650k miles of business travel. Extremely stable, very pretty, and easy to use. Best of all, the app is super fast with gate changes and delay notifications. Flighty alerts me before the gate agents even know of a change. I love it so much that I've paid for my team to get subscriptions.
+- paragraph: Parker Ortolani
+- paragraph: "@ParkerOrtolani"
+- paragraph: "@Flighty is one of the most well thought out and well executed apps I've ever seen."
+- paragraph: Favorite app on my phone
+- paragraph: Aug 20, 2024
+- paragraph: •
+- paragraph: a.czarnik
+- paragraph: "It's like the old Apple motto: It just works. It does exactly what it needs to, nothing more, and it does it all flawlessly. It's genuinely my favorite app on my phone. Literal perfection. No notes. Now, if only every other app on my phone worked as well as Flighty."
+- paragraph: Paul Robichaux
+- paragraph: "@paulrobichaux"
+- paragraph: "@Flighty just saved Christmas! My son's flight home tomorrow afternoon was cancelled and the \"bong bong bong\" alerted me before @Delta or @Triplt did. I immediately got on the phone with Delta, got them rebooked. And all is now well. Thanks, Flighty team."
+- paragraph: Charlie
+- paragraph: Aug 2, 2022
+- paragraph: How do you do it?
+- paragraph: "To: Flighty Crew"
+- paragraph: Last month, traveling from PHL to SFO, I got a Flighty alert about a 1-hour delay while standing by the crew at the gate. I asked the captain, who laughed and said I was wrong, suggesting I just listen to the P.A. 5 minutes later, he got a call—reassigned to another flight last minute. We were left without a pilot, and the flight was delayed an hour. The captain apologized as he left. Quite funny how it all unfolded. Information rules!
+- paragraph: Charlie
+- paragraph: Essential Travel App
+- paragraph: Jan 4, 2023
+- paragraph: •
+- paragraph: Doc Ricardo
+- paragraph: I’m a 2+ million mile flyer, and this app is essential for navigating the complexities of travel. Airport monitors are slow to update, but Flighty keeps you ahead. Forewarned is forearmed—this app equips you with the info you need to handle inevitable travel issues. Absolutely worth the annual fee.
+- paragraph: Hendrik Haandrikman
+- paragraph: "@HHaandr"
+- paragraph: Signed up for @Flighty in an ongoing effort to get them on @RevenueCat, and the very first flight I used it for was cancelled. They let me know 30m (!) before the airline did, which meant that I hadn't left home yet. I'd have been on a train and would've wasted hours 🤯
+- paragraph: Saved me HOURS of time! 6 Stars!
+- paragraph: 21 Sep, 2021
+- paragraph: •
+- paragraph: S0uthpaw96
+- paragraph: This app is one of the best on the App Store and worth every penny. The user interface is fast, and their notifications beat every airline. Yesterday, I had a 2+ hour layover in ATL on my way to MCI. There was an earlier flight, but Delta wouldn’t let me book it due to a tight connection time. I used Flighty to monitor it anyway. Mid-flight, at 30,000 ft., Flighty notified me the earlier flight was delayed by 15 minutes, while my flight was landing 5 minutes early. I had a chance! I rushed off, snagged a standby seat, and made it just in time. Got to see my family earlier because of this app. Thanks, Flighty devs!
+- paragraph: +3 million users enjoy Flighty
+- paragraph: View more
+- heading "Have a nice flight!" [level=3]
+- paragraph: We’ll handle the details. You just enjoy your trip. Available on iPhone, iPad, Mac and Apple Watch. Download for free.
+- paragraph: Give Flighty a try
+- paragraph: Product
+- link "Pricing":
+  - /url: ./pricing
+  - paragraph: Pricing
+- link "Passport":
+  - /url: ./passport
+  - paragraph: Passport
+- link "Gift Cards":
+  - /url: ./gift-cards
+  - paragraph: Gift Cards
+- link "Airports":
+  - /url: https://www.flighty.com/airports
+  - paragraph: Airports
+- link "Flighty Insiders":
+  - /url: ./insiders
+  - paragraph: Flighty Insiders
+- paragraph: Compare
+- link "FlightRadar24":
+  - /url: ./compare/flightradar24
+  - paragraph: FlightRadar24
+- link "TripIt":
+  - /url: ./compare/tripit
+  - paragraph: TripIt
+- link "Airline Apps":
+  - /url: ./compare/airline-apps
+  - paragraph: Airline Apps
+- link "FlightAware":
+  - /url: ./compare/flightaware
+  - paragraph: FlightAware
+- link "App In The Air":
+  - /url: ./compare/app-in-the-air
+  - paragraph: App In The Air
+- paragraph: Company
+- link "About":
+  - /url: ./about
+  - paragraph: About
+- link "Press":
+  - /url: ./press
+  - paragraph: Press
+- link "Careers":
+  - /url: ./careers
+  - paragraph: Careers
+- link "Privacy Policy":
+  - /url: ./legal/privacy
+  - paragraph: Privacy Policy
+- link "Terms of Service":
+  - /url: ./legal/terms
+  - paragraph: Terms of Service
+- paragraph: Support
+- link "Help Center":
+  - /url: ./help
+  - paragraph: Help Center
+- link "Business":
+  - /url: ./business
+  - paragraph: Business
+- link:
+  - /url: https://www.facebook.com/flightyapp/
+- link:
+  - /url: https://x.com/flighty
+- link:
+  - /url: https://www.instagram.com/flightyapp/
+- link:
+  - /url: https://www.linkedin.com/company/flighty/?originalSubdomain=es
+- paragraph: Made with love in Austin,
+- paragraph: Barcelona
+- paragraph: and Oslo.
+- button "Cookie Trigger":
+  - generic: Cookie Settings

@@ -58,8 +58,12 @@ runbuoy capabilities --json
 - 使用返回的 `progress_modes`，不要从帮助文本猜；
 - 必须保持 `remote_control=false`、`inbound_tcp=false` 的语义。
 
-如果 `command -v runbuoy` 失败，用户明确的 RunBuoy 请求允许执行
-`uv tool install --python 3.12 runbuoy`，再验证 version/doctor/capabilities。Python 项目只有在用户明确要求
+如果 `command -v runbuoy` 失败，先通过 `uv tool dir --bin` 检查实际目录，区分“未安装”和“已安装但 PATH 缺失”。
+仅在未安装时，用户明确的 RunBuoy 请求允许执行 `uv tool install --python 3.12 runbuoy`。
+uv 安装或 PATH 修复后，按 [Skill 安装参考](../../skills/runbuoy/references/installation.md) 运行
+`scripts/ensure_cli_path.py --repair`，验证不继承临时 PATH 的新交互式终端和登录终端；再在 Agent 当前执行 Shell
+启用 PATH、刷新缓存并直接运行 `runbuoy`。独立工具调用需要继续传入正确 PATH，子进程的 export 不会更新父进程。
+绝对路径可执行或 `uv run` 成功不能代替这两层检查。随后验证 version/doctor/capabilities。Python 项目只有在用户明确要求
 接入/修改代码时才添加 API：PEP 621/uv 项目使用名为 `runbuoy` 的 optional extra，requirements 项目使用
 独立 `requirements-runbuoy.txt`。完整步骤见[安装指导](installation.md)。sudo、系统包管理器或 curl installer
 仍需先取得确认。
@@ -406,6 +410,9 @@ runbuoy status RUN_ID --json
 ```text
 skills/runbuoy/
 ├── SKILL.md                 # 触发边界、永久安全规则、主流程
+├── agents/openai.yaml       # Skill 发现与调用元数据
+├── scripts/
+│   └── ensure_cli_path.py   # uv 路径修复与新终端验证
 └── references/
     ├── cli.md               # run/status/list/notify/错误和输出 schema
     ├── progress.md          # 四种 progress 决策与示例

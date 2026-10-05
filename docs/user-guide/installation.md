@@ -38,6 +38,12 @@ Agent 在用户明确要求使用/安装 RunBuoy 时，可以执行上述 `uv to
 （brew/apt/dnf/pacman）或 curl installer 都必须先取得用户确认。Python 接入必须使用项目实际解释器检查
 import；普通运行请求不得自动修改项目代码或依赖。
 
+安装结束必须同时确认：当前 Shell 可直接运行 `runbuoy`，新打开的用户终端也可直接运行。
+`uv tool install` 成功、绝对路径可执行、`uv run` 成功都不能单独证明 PATH 已配置。
+Agent 应遵循 [Skill 的 PATH 修复与验证流程](../../skills/runbuoy/references/installation.md#register-path-and-prove-it-persists)，
+使用随 Skill 一起安装的 `scripts/ensure_cli_path.py --repair`。它从 `uv tool dir --bin` 获取实际目录，
+兼容 `UV_TOOL_BIN_DIR` / XDG 配置，并避免继承 Agent 的临时 PATH 导致新终端检查误通过。
+
 ## 系统要求
 
 - macOS 或 Linux；当前不支持 Windows。
@@ -81,6 +87,10 @@ export PATH="$(uv tool dir --bin):$PATH"
 
 ```bash
 uv tool install --python 3.12 runbuoy
+uv tool update-shell
+export PATH="$(uv tool dir --bin):$PATH"
+hash -r
+command -v runbuoy
 runbuoy --version
 ```
 
@@ -139,11 +149,36 @@ export PATH="$(uv tool dir --bin):$PATH"
 
 ```bash
 uv tool install --python 3.12 runbuoy
+uv tool update-shell
+export PATH="$(uv tool dir --bin):$PATH"
+hash -r
+command -v runbuoy
 runbuoy --version
 
 runbuoy completion install bash
 # 使用 zsh/fish 时替换为对应名称
 ```
+
+以上 PATH 命令适用于 Bash / Zsh。Fish 使用 `fish_add_path (uv tool dir --bin)`。
+安装后在新终端再次执行 `command -v runbuoy` 和 `runbuoy --version`；只在当前终端成功还不算完成。
+
+## 已安装，但找不到命令
+
+先检查真实安装目录，不要直接重装：
+
+```bash
+runbuoy_bin_dir="$(uv tool dir --bin)"
+"$runbuoy_bin_dir/runbuoy" --version
+```
+
+若绝对路径可运行，问题通常在 PATH。`uv tool update-shell` 在当前 PATH 已含工具目录时会跳过更新，
+因此 Agent 临时 export 后的成功不能证明终端配置已保存。已安装 Skill 时，优先使用其 PATH 检查脚本，
+要求当前会话、新交互式终端、新登录终端均通过；它会在去除临时路径的环境中调用 uv 并复查。
+
+手动修复时，将 `uv tool dir --bin` 返回的实际目录加入用户自己的 Shell 启动配置，并保留现有 PATH。
+Zsh 需注意 `ZDOTDIR`，Bash 需兼顾交互与登录启动文件，Fish 需使用 Fish 语法。
+检查后续配置是否又覆盖了 PATH；不要用 alias 掩盖命令不可发现的问题，也不要在不同 Shell 间随意 source 配置。
+修复后重新打开终端验证；已经打开的 Agent 会话还需要显式带上 PATH 或重启该会话。
 
 ## 手动接入 Python 项目
 

@@ -1,0 +1,106 @@
+URL: https://workingcopy.app/
+Captured: 2026-10-02
+
+- link "Download on the App Store":
+  - /url: https://apps.apple.com/app/apple-store/id896694807?pt=15897&ct=website&mt=8
+  - img "Download on the App Store"
+- banner:
+  - heading "Working Copy" [level=1]
+  - text: the powerful Git client for iOS that clones, edits, commits, pushes &
+  - link "more":
+    - /url: "#"
+  - text: .
+- img "Working Copy on iPad Pro clones a Git repository which is edited with Textastic and committed then a Swift PLayground inside Working Copy is opened from Files app."
+- img "Shortcuts app icon"
+- heading "Git Shortcuts" [level=3]
+- paragraph:
+  - text: Use
+  - link "Shortcuts":
+    - /url: /manual.html#shortcuts
+  - text: and
+  - link "x-callback-url":
+    - /url: /url-schemes.html#x-callback-url
+  - text: for automation.
+- img "cute robot head"
+- heading "GPT Assistance" [level=3]
+- paragraph:
+  - text: Code
+  - link "Agent":
+    - /url: /manual.html#repository-agent
+  - text: "&"
+  - link "commit suggestions":
+    - /url: /manual.html#ai-suggestions
+  - text: . Respects your data with opt-in.
+- img "magnifying glass"
+- heading "Search repositories" [level=3]
+- paragraph:
+  - text: Navigate by
+  - link "querying":
+    - /url: /manual.html#search
+  - text: filenames, symbols or text occurrences.
+- img "GitHub Octomark"
+- img "GitHub Octomark"
+- img "BitBucket logo"
+- heading "Hosting Services" [level=3]
+- paragraph:
+  - link "Lists":
+    - /url: /manual.html#clone-catalog
+  - text: your repositories on GitHub &
+  - link "many":
+    - /url: /manual.html#hosting-provider
+  - text: other services.
+- img "GPG icon"
+- heading "Signed Commits" [level=3]
+- paragraph:
+  - text: Take part in secure workflows by
+  - link "signing":
+    - /url: /manual.html#signed-commits
+  - text: commits.
+- img "Two nodes merged to one."
+- heading "Resolve Tool" [level=3]
+- paragraph:
+  - text: Fix merge & rebase
+  - link "conflicts":
+    - /url: /manual.html#resolve-tool
+  - text: with speed and safety.
+- img "Git Large File Storage icon"
+- heading "Large File Storage" [level=3]
+- paragraph: Use Git LFS to efficiently handle videos and other huge assets.
+- img "HTML"
+- heading "Web IDE" [level=3]
+- paragraph:
+  - text: HTML
+  - link "Preview":
+    - /url: /manual.html#preview
+  - text: with Javascript console.
+- img "Airplane mode"
+- heading "Work Offline" [level=3]
+- paragraph:
+  - link "Clone":
+    - /url: /manual.html#cloning-repos
+  - text: repositories making them fully available even when offline.
+- contentinfo:
+  - text: Read the
+  - link "users’ guide":
+    - /url: /manual.html
+  - text: or the
+  - link "newsletter":
+    - /url: /newsletter/
+  - text: and get in touch on
+  - link "Mastodon":
+    - /url: https://indieapps.space/@WorkingCopy
+  - text: or by
+  - link "email":
+    - /url: mailto:anders@workingcopyapp.com
+  - text: .
+- img "5 stars"
+- 'heading "feoh: I have been dreaming of this app for years!" [level=4]'
+- paragraph: I have been yearning for a way to commit and push to Github for years.
+- paragraph: The app id's solid and lets me use whatever editor I want to create my content.
+- paragraph: My mobile development and blogging dreams have come true!
+- link "Privacy":
+  - /url: privacy.html
+- link "Refunds":
+  - /url: refund.html
+- link "Terms of Use":
+  - /url: terms.html

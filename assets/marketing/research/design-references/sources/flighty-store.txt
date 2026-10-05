@@ -1,0 +1,353 @@
+URL: https://apps.apple.com/us/app/flighty-live-flight-tracker/id1358823008
+Captured: 2026-10-02
+
+- navigation:
+  - img "App Store":
+  - button "App Store":
+    - text: for iPhone
+  - generic: Search
+  - searchbox "Search"
+  - list:
+    - button "Today":
+      - generic: Today
+    - button "Games":
+      - generic: Games
+    - button "Apps":
+      - generic: Apps
+    - button "Arcade":
+      - generic: Arcade
+  - generic: Categories
+  - list "Categories":
+    - button "Categories":
+      - generic: Categories
+    - button "Photo & Video":
+      - generic: Photo & Video
+    - button "Health & Fitness":
+      - generic: Health & Fitness
+    - button "Productivity":
+      - generic: Productivity
+    - button "Entertainment":
+      - generic: Entertainment
+    - button "Action":
+      - generic: Action
+    - button "Adventure":
+      - generic: Adventure
+    - button "Puzzle":
+      - generic: Puzzle
+    - button "Indie":
+      - generic: Indie
+  - list
+- main:
+  - heading "Flighty – Live Flight Tracker" [level=1]:
+    - generic: Flighty – Live Flight Tracker
+  - paragraph: World's Fastest Delay Alerts
+  - paragraph: Free · In‑App Purchases
+  - button "View in Mac App Store":
+    - generic: View in Mac App Store
+  - button "Share":
+  - button "Previous Page" [disabled]:
+  - list:
+    - link "155K Ratings 4.8 Stars":
+      - /url: "#productRatings"
+      - term:
+        - generic: 155K Ratings
+      - definition:
+        - generic: "4.8"
+        - list "4.8 Stars":
+    - link "Awards Editors’ Choice Apps":
+      - /url: "#productRatings"
+      - term:
+        - generic: Awards
+      - definition:
+        - generic: Editors’ Choice
+        - generic: Apps
+    - link "Age Rating 4+ Years":
+      - /url: "#information"
+      - term:
+        - generic: Age Rating
+      - definition:
+        - generic: 4+
+        - generic: Years
+    - 'link "Chart #61 Travel"':
+      - /url: https://apps.apple.com/us/iphone/charts/6003?chart=top-free
+      - term:
+        - generic: Chart
+      - definition:
+        - generic: "#61"
+        - generic: Travel
+    - link "Developer Flighty LLC":
+      - /url: https://apps.apple.com/us/developer/flighty-llc/id1358822345?platform=iphone
+      - term:
+        - generic: Developer
+      - definition:
+        - generic: Flighty LLC
+    - link "Language EN English":
+      - /url: "#information"
+      - term:
+        - generic: Language
+      - definition:
+        - generic: EN
+        - generic: English
+    - link:
+      - /url: "#information"
+      - term:
+        - generic: Size
+      - definition:
+        - generic: "408.7"
+        - generic: MB
+  - button "Next Page":
+  - region "iPhone App Previews and Screenshots":
+    - button "Previous Page":
+    - list:
+      - generic "Screenshot"
+      - generic "Screenshot"
+      - generic "Screenshot"
+      - generic "Screenshot"
+    - button "Next Page" [active]:
+  - button "iPhone, iPad, Mac, Apple Watch":
+    - generic: iPhone, iPad, Mac, Apple Watch
+  - paragraph:
+    - generic: "\"Don't Fly Without This App\" WSJ • Finalist for App of The Year • Winner of Apple Design Award The flight tracker your pilot uses. Free trial does not required credit card. No account required. No newsletters. No ads. ▶ WORLD'S FASTEST DELAY ALERTS - 2-90 minutes faster than airline apps - 24-48 hours faster cancellation alerts - Always be the first to know, with no effort ▶ INDUSTRY-FIRST FEATURES - See WHY you're flight is delayed - 25-hour where's my plane - Flighty Friends – private sharing among family/friends - Pilot-Grade data – FAA and Eurocontrol - Delay Predictions - Gate Predictions - Flighty Passport – auto-create your personal flight map - Airport Intelligence – plain word summary of the status - Taxi times - Ground radar - Proximity radar ▶ AUTOMATIONS - Calendar sync - TripIt sync - Email forwarding - Flighty Friends: private flight sharing with friends ▶ PILOT-GRADE DATA - Live-streaming - Actual flight plans - Commercial data – same source used by your pilot - FAA advisories, warnings, and delays - Tail number – with birthday, type, and even name - Full flight timetable - Proximity radar - see flights around you - Ground radar - radar even while taxiing ▶ BE THE FIRST TO KNOW - Late arriving aircraft delays – up to 6 hours before your airline! - Alerts for canceled inbound aircraft - Alerts for airport weather or traffic - Delay forecast ▶ ASSISTANTS - Morning-Of Assistant - wake up informed - Check In Assistant - your reservation number and check in link at the right time - Connection Assistant - see all the checkpoints required for your connection and how long it typically takes - Import Assistant - seamless import (plus data enrichment!) from myFlightradar24, App In The Air, OpenFlights.org, FlightMemory, Logmyflight, and JetLovers ▶ WORLDWIDE + LIVE + UNLIMITED - Every airline - Every flight - 24/7/365 live global coverage ▶ FLIGHTY FRIENDS - Often sharing with Family and Friends? Invite them to see your flights and never manually share again! - Picking someone up, excited for a friend to visit, meeting a colleague? Share your live flight status with one tap. ▶ WHAT'S FREE? - No ads - Unlimited flights - Flighty Friends - Live data - Weather - Actual flight route - Aircraft model and image - Personal flight log and map - Personal all-time and annual stats - Apple Watch app - iCloud backup & sync - Historical flight input and import limited to past 365 days (due to costs) - Lock screen widgets (limited refresh for costs) - Airport Intelligence ▶ WHAT'S PRO? - See why your flight is delayed - Pilot-grade FAA delay alerts - Delay predictions, including the reason why - Industry's fastest push alerts - 25-hour where's my plane - Live lock screen widgets - Live data, even on 'messaging-only' plane wifi - Live activities - Unlimited past flight lookup - Unlimited bulk import - Delay predictions - Arrival forecast - TripIt sync - Calendar sync - Email forwarding - Apple Watch complications - Airport - Tail number - Taxi times - And more Pro is free on your first flight. No trial required. flightyapp.com/privacy Zero personal information is required. flightyapp.com/terms Personal use only. Business@flightyapp.com for business usage."
+    - button "more"
+  - region "Ratings & Reviews":
+    - link "Ratings & Reviews":
+      - /url: https://apps.apple.com/us/app/1358823008?see-all=reviews&platform=iphone
+      - heading "Ratings & Reviews" [level=2]
+    - list:
+      - generic: "4.8"
+      - generic: out of 5
+      - generic: 155K Ratings
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.other.one**":
+  - button "Previous Page" [disabled]:
+  - list:
+    - heading "Editors’ Choice" [level=3]:
+      - text: Editors’ Choice
+    - paragraph: Beautifully designed and powerful to use, Flighty is a first-class flight tracker for those on the move. The app offers detailed flight maps, live tracking, and delay forecasting — but the real magic is the perfectly timed notifications that keep you up to date and stress-free.
+    - button "MORE"
+    - generic "Flight attendant":
+      - heading "Flight attendant" [level=3]
+      - list "5 Stars":
+      - time: 01/04/2024
+      - generic: Aimee1980
+      - paragraph: "Edit update- shocker. My airline app was the issue. 😑Edit Jan 2024- the app stopped syncing with my calendar but when the app updated two weeks ago it was fixed. Now iOS has updated again and the app OS back to not updating. I have a ton on my schedule and would like if it was synced again. I tried to send a message through the website but it said I needed to report issues through the app. When I tried to do that it just kept making a zip file without ever giving me a way to email anyone so I’ve resorted to deducting a start and hoping someone can reach out with a solution.I love this app! Since my airline banned being able to use some 3rd party apps I’ve really struggled with finding something that keeps me up to date on my flights. The only drawbacks are: I would love to see this available for for Apple Watch, I would love to be able to save individual trips. I know I can see past trips but they are all just grouped together as a long list of flights. It would be nice to see what I did on a three day work block a month ago. I love that this app keeps track of my inbound plane and when it’s delayed. I also love all the info on the aircraft like it’s age. This app is well worth the money for pro if you fly a lot. It gives me alternate routes if it looks like I won’t make a flight and I love know what gate we are going into as well as baggage claim info that I can give to my passengers!"
+      - button "MORE"
+    - heading [level=3]: LOVE, but…
+    - list:
+    - time: 11/03/2023
+    - generic: ItsTheJu
+    - paragraph: "This app is amazing. So much so I gladly pay for the Pro subscription. However, there’s one major flaw. When you plug in a flight that has two flights under the same flight number (out and backs/round trip flights) you can’t select the right one! It automatically assumes which one you want, and you can’t change it. All you can do is delete it. Come on guys! This should have been thought of. ): **Edit: This issue only happens when I search just the flight number. You can search by city pair and it finds the correct flight. Upgrading my rating since the amazing developers messaged back and clarified some. Thanks guys! 🛫💛Response to developers: First, THANK YOU for replying back and asking for more info! That speaks volumes. If you’d like, share your email address (unless it’s somewhere I’m not seeing) and I’ll send screenshots. I work for a US airline and we have a lot of departures from the HUB, then the return back to the HUB has the same flight number. For example, AAL1782 DFW to MSP, then MSP back to DFW with the same flight number. Every time I try to add the flight before either of the trips has started or been completed, the app will only show one of the trips, not both. And it doesn’t give an option to dive deeper into the flight so you can pick the right leg. That being said, I did not realize you could search by city pair. I just tried that and it does find the right legs depending on which departure and arrival airport is searched. So it’s just when searching by only the flight number that issue shows up. Sorry for the long explanation. Again, thank you so much for responding! Literally the best app ever!"
+    - button [disabled]: MORE
+    - text: Developer Response
+    - paragraph: Can you clarify? After entering AA101, you tap which one you want. You can also search by route too.
+    - button [disabled]: MORE
+    - heading [level=3]: Best App for flight info
+    - list:
+    - time: 10/10/2025
+    - generic: Bodiemeister
+    - paragraph: I travel about 180 days a year and have tried countless flight tracking apps, but Flighty is by far the best. One of my favorite features is how seamlessly it integrates with my calendar—once I input my flight details, my schedule is automatically updated, saving me a ton of time and keeping me organized even during hectic travel weeks.Flighty is also linked directly to the airlines, so it automatically updates your flight information in the app whenever there are changes. This includes delays, gate changes, or cancellations, ensuring you always have the most accurate and current details. The best feature, in my opinion, is the gate information, especially for connecting flights. It shows your arrival gate, estimates the time needed to get to your next gate, and even provides an average travel time with a clear graph. This makes it easy to see whether you have a long connection to relax or a short one that requires you to move quickly. It’s like having a personal travel assistant guiding you through the airport.Overall, Flighty has made traveling smoother, less stressful, and much more organized. For anyone who flies frequently, it’s an essential app that delivers real-time updates, practical guidance, and peace of mind.
+    - button [disabled]: MORE
+  - button "Next Page":
+  - region "What’s New":
+    - button "What’s New":
+      - heading "What’s New" [level=2]
+    - generic "What’s New":
+      - paragraph:
+        - generic: "A refined Dynamic Island, flight answers from Siri, and two new looks for your Home Screen. # DYNAMIC ISLAND REFINEMENTS See how long until departure with a countdown that now appears even in the compact Dynamic Island. We’ve refined the gate badge, added a new arc showing your in-flight progress, and included support for smaller layouts on the newest devices. # TWO NEW APP ICONS Introducing Mappy and Speedy. Mappy brings a glassy map to your Home Screen, while Speedy celebrates the unmistakable Concorde. Try Speedy in dark mode to see the flames. # ASK SIRI ABOUT YOUR FLIGHT Check your flight status or find your next departure gate by asking Siri. Perfect when you’re juggling bags, coffee, and a boarding pass. Try: “Hey Siri, ask Flighty, what's the status of my flight?” “Hey Siri, ask Flighty, what's the gate for my next flight?”"
+        - button "more"
+      - generic: Version 4.11.1
+      - time: Sep 18
+  - region "App Privacy":
+    - button "App Privacy":
+      - link "App Privacy":
+        - /url: "#"
+        - heading "App Privacy" [level=2]
+    - paragraph:
+      - text: The developer, Flighty LLC, indicated that the app’s privacy practices may include handling of data as described below. For more information, see the
+      - link "Developer’s Privacy Policy":
+        - /url: https://www.flighty.app/privacy
+        - generic: developer’s privacy policy
+      - text: .
+  - list:
+    - generic "Data Linked to You":
+      - heading "Data Linked to You" [level=3]
+      - paragraph: "The following data may be collected and linked to your identity:"
+      - list:
+        - text: Contact Info
+        - text: Identifiers
+        - text: Usage Data
+  - paragraph:
+    - text: Privacy practices may vary, for example, based on the features you use or your age.
+    - link "Learn More":
+      - /url: https://apps.apple.com/us/iphone/story/id1538632801
+  - region "Accessibility":
+    - heading "Accessibility" [level=2]
+    - paragraph:
+      - text: The developer has not yet indicated which accessibility features this app supports.
+      - link "Learn More":
+        - /url: https://apps.apple.com/story/id1814164299
+  - region "Information":
+    - heading "Information" [level=2]
+    - term: Seller
+    - definition: Flighty LLC
+    - term: Size
+    - definition: 408.7 MB
+    - term: Category
+    - definition: Travel
+    - term: Compatibility
+    - definition:
+      - generic "Requires iOS 18.0 or later.":
+        - text: Requires iOS 18.0 or later.
+    - term: Location
+    - definition: This app may use your location even when it isn’t open, which can decrease device battery life.
+    - term: Languages
+    - definition: English
+    - term: Age Rating
+    - definition:
+      - generic "4+":
+        - text: 4+
+    - term: In-App Purchases
+    - definition:
+      - generic "Yes":
+        - text: "Yes"
+    - term: Copyright
+    - definition: © 2018 Flighty LLC
+  - link "Developer Website ↗":
+    - /url: https://www.flighty.com
+    - generic: Developer Website
+    - text: ↗
+  - link "Privacy Policy ↗":
+    - /url: https://www.flighty.app/privacy
+    - generic: Privacy Policy
+    - text: ↗
+  - link "License Agreement":
+    - /url: "#"
+  - region "Supports":
+    - heading "Supports" [level=2]
+    - list:
+      - heading "Family Sharing" [level=3]
+      - paragraph:
+        - text: Some in-app purchases and subscriptions may be shareable with your family group when Family Sharing is enabled.
+        - link "Learn More":
+          - /url: https://apps.apple.com/us/iphone/story/id1563279606
+  - region "Featured In":
+    - heading "Featured In" [level=2]
+    - list:
+      - link "Travel With Pride":
+        - /url: https://apps.apple.com/us/iphone/story/id1740445554
+        - generic: PRIDE
+        - heading "Travel With Pride" [level=3]
+        - paragraph: The best apps for LGBTQ+ travelers.
+      - link "Know Everything About Your Flight":
+        - /url: https://apps.apple.com/us/iphone/story/id1477246546
+        - heading "APPS WE LOVE" [level=4]
+        - heading "Know Everything About Your Flight" [level=3]
+        - paragraph: Arrival and departure times—and so much more.
+      - link "5 Ways Flighty Makes Flying a Breeze":
+        - /url: https://apps.apple.com/us/iphone/story/id1477505677
+        - generic: GET STARTED
+        - heading "5 Ways Flighty Makes Flying a Breeze" [level=3]
+        - paragraph: A must-have app for smooth travels.
+  - region "You Might Also Like":
+    - link "You Might Also Like":
+      - /url: https://apps.apple.com/us/app/1358823008?see-all=customers-also-bought-apps&platform=iphone
+      - heading "You Might Also Like" [level=2]
+    - button "Previous Page" [disabled]:
+    - list:
+      - link "View Flight Tracker + Live Plane Radar. Delay Alerts":
+        - /url: https://apps.apple.com/us/app/flight-tracker/id533365777
+        - generic: View
+        - generic: Flight Tracker +
+        - generic: Live Plane Radar. Delay Alerts
+      - link "View FlightAware Flight Tracker Airplane & flight tracker":
+        - /url: https://apps.apple.com/us/app/flightaware-flight-tracker/id316793974
+        - generic: View
+        - generic: FlightAware Flight Tracker
+        - generic: Airplane & flight tracker
+      - link "View Plane Finder ⁃ Flight Tracker Flight Radar & Live Tracker":
+        - /url: https://apps.apple.com/us/app/plane-finder-flight-tracker/id361273585
+        - generic: View
+        - generic: Plane Finder ⁃ Flight Tracker
+        - generic: Flight Radar & Live Tracker
+      - link "View StaffTraveler Non-Rev Made Simple":
+        - /url: https://apps.apple.com/us/app/stafftraveler/id1115912521
+        - generic: View
+        - generic: StaffTraveler
+        - generic: Non-Rev Made Simple
+      - link "View FlightStats Real-Time Flight Status":
+        - /url: https://apps.apple.com/us/app/flightstats/id572700574
+        - generic: View
+        - generic: FlightStats
+        - generic: Real-Time Flight Status
+      - link "View Flightview - Flight Tracker Real-Time Flight Tracker":
+        - /url: https://apps.apple.com/us/app/flightview-flight-tracker/id399057337
+        - generic: View
+        - generic: Flightview - Flight Tracker
+        - generic: Real-Time Flight Tracker
+      - link "View Timeshifter Jet lag app":
+        - /url: https://apps.apple.com/us/app/timeshifter/id1380684374
+        - generic: View
+        - generic: Timeshifter
+        - generic: Jet lag app
+      - link "View seats.aero Fly more with your points":
+        - /url: https://apps.apple.com/us/app/seats-aero/id6449265212
+        - generic: View
+        - generic: seats.aero
+        - generic: Fly more with your points
+      - link "View ID90 Travel Travel":
+        - /url: https://apps.apple.com/us/app/id90-travel/id1032894432
+        - generic: View
+        - generic: ID90 Travel
+        - generic: Travel
+      - link:
+        - /url: https://apps.apple.com/us/app/tripsy-travel-planner/id1429967544
+        - generic: View
+        - generic: "Tripsy: Travel Planner"
+        - generic: Trip Plan Itinerary Organizer
+    - button "Next Page":
+- button "United States"
+- list:
+  - link "This page is available in Español (México)":
+    - /url: "?l=es-MX"
+    - text: Español (México)
+  - link "This page is available in العربية":
+    - /url: "?l=ar"
+    - text: العربية
+  - link "This page is available in Русский":
+    - /url: "?l=ru"
+    - text: Русский
+  - link "This page is available in 简体中文":
+    - /url: "?l=zh-Hans-CN"
+    - text: 简体中文
+  - link "This page is available in Français (France)":
+    - /url: "?l=fr-FR"
+    - text: Français (France)
+  - link "This page is available in 한국어":
+    - /url: "?l=ko"
+    - text: 한국어
+  - link "This page is available in Português (Brazil)":
+    - /url: "?l=pt-BR"
+    - text: Português (Brazil)
+  - link "This page is available in Tiếng Việt":
+    - /url: "?l=vi"
+    - text: Tiếng Việt
+  - link "This page is available in 繁體中文 (台灣)":
+    - /url: "?l=zh-Hant-TW"
+    - text: 繁體中文 (台灣)
+- paragraph:
+  - text: Copyright © 2026
+  - link "Apple Inc.":
+    - /url: https://www.apple.com
+  - text: All rights reserved.
+- list:
+  - link "Internet Service Terms":
+    - /url: https://www.apple.com/legal/internet-services/
+  - link "App Store & Privacy":
+    - /url: https://www.apple.com/legal/privacy/data/en/app-store/
+  - link "Cookie Warning":
+    - /url: https://www.apple.com/privacy/use-of-cookies/
+  - link "Support":
+    - /url: https://support.apple.com/billing

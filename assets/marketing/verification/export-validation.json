@@ -1,0 +1,192 @@
+{
+  "status": "passed",
+  "app_store_exports": 12,
+  "dimensions": "1320x2868",
+  "alpha": false,
+  "assets": [
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/zh-Hans/01-live-activity.png",
+      "width": 1320,
+      "sha256": "8b7e490777912b8a45302f39e33ba2473c489fa03a22724fc58e662db7abdcb4",
+      "bytes": 1786532
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/zh-Hans/02-results.png",
+      "width": 1320,
+      "sha256": "e2aaa72f9d4d1bf5752061a689961060d22491785bb6d8f8f131a5150e443e34",
+      "bytes": 602837
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/zh-Hans/03-multiple-tasks.png",
+      "width": 1320,
+      "sha256": "c2c4682a0bad2eeb92b9e8a11d4443d7ab49e750259b8311f32e685b3ff4f762",
+      "bytes": 915602
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/zh-Hans/04-progress.png",
+      "width": 1320,
+      "sha256": "9994203f6ee382420ef4416d575b5341560ed248cfd4ea57b8887d4fb05ee6d3",
+      "bytes": 1258250
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/zh-Hans/05-pairing.png",
+      "width": 1320,
+      "sha256": "7ff7b26ab763ec72ea4ca594e0876653be0a5c7cee327bf62666f389a085c258",
+      "bytes": 520627
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/zh-Hans/06-privacy.png",
+      "width": 1320,
+      "sha256": "532340ddee5523f542258139782ff26d87351b70d8f4f0cda12d041f478f4010",
+      "bytes": 502794
+    },
+    {
+      "alpha": false,
+      "height": 1434,
+      "path": "promoted/web/zh-Hans/active-runs.jpg",
+      "width": 660,
+      "sha256": "765f1b4abc7598f34206b5896d7b52d912b8465d9ed083c88297046baae53f4b",
+      "bytes": 162914
+    },
+    {
+      "alpha": false,
+      "height": 1120,
+      "path": "promoted/web/zh-Hans/run-detail.jpg",
+      "width": 660,
+      "sha256": "77d1632c71b303dc2cab34a69bff56a6400ad2e42c970469449535df6e78b5a2",
+      "bytes": 125459
+    },
+    {
+      "alpha": false,
+      "height": 290,
+      "path": "promoted/web/zh-Hans/live-activity.png",
+      "width": 1200,
+      "sha256": "e538206abc9fefc98538751352fcd897d45ce06ba4c6dd554ffbba56161b8ee4",
+      "bytes": 131153
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/en-US/01-live-activity.png",
+      "width": 1320,
+      "sha256": "fe482395f9f8dd31e6fadaa6fb64f1fa3376b1bcdef961d88d15f5cb1349beeb",
+      "bytes": 1797165
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/en-US/02-results.png",
+      "width": 1320,
+      "sha256": "6fea0f6c77f2899bfec9a87069498baa1b1009ff300648b9a8406ea560204eb4",
+      "bytes": 631700
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/en-US/03-multiple-tasks.png",
+      "width": 1320,
+      "sha256": "4d0cc10b5abf9afca30874a8bc4a7371acff82b8a6457d7a5dbc0aade9674a98",
+      "bytes": 941845
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/en-US/04-progress.png",
+      "width": 1320,
+      "sha256": "4497fa77a222f0bb8b46d494f92529f952db8dd3214a558d8b491d4ad00ff9cf",
+      "bytes": 1262133
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/en-US/05-pairing.png",
+      "width": 1320,
+      "sha256": "65e3c9759dfa232211c4462c40ca7348e090441e1f47f4f44311b01ced5ed3ea",
+      "bytes": 531434
+    },
+    {
+      "alpha": false,
+      "height": 2868,
+      "path": "promoted/app-store/en-US/06-privacy.png",
+      "width": 1320,
+      "sha256": "dab445e5974481a06b473781222305b621bafbf00e4cf384c72971a1479d3915",
+      "bytes": 505214
+    },
+    {
+      "alpha": false,
+      "height": 1434,
+      "path": "promoted/web/en-US/active-runs.jpg",
+      "width": 660,
+      "sha256": "8744bc271c2ce474476fead85d2c301ce8d491942ac86cdadb1f9252e8dc7349",
+      "bytes": 177148
+    },
+    {
+      "alpha": false,
+      "height": 1120,
+      "path": "promoted/web/en-US/run-detail.jpg",
+      "width": 660,
+      "sha256": "faad10bd604cd7860aa8132c758344c546ec284ddb177313612dc5663eefeb83",
+      "bytes": 137049
+    },
+    {
+      "alpha": false,
+      "height": 290,
+      "path": "promoted/web/en-US/live-activity.png",
+      "width": 1200,
+      "sha256": "0b66aa698026b99cfc3c9ac6714193c0da094ebbdd790f58cf9942072c550e13",
+      "bytes": 133968
+    },
+    {
+      "alpha": false,
+      "height": 1024,
+      "path": "promoted/web/buoy-calm-water.jpg",
+      "width": 1536,
+      "sha256": "0d92e5894736a8c899f2a4fc28a6599ec21d3641526b9203b457d7d534bd699b",
+      "bytes": 150669
+    },
+    {
+      "alpha": false,
+      "height": 630,
+      "path": "promoted/web/og.png",
+      "width": 1200,
+      "sha256": "15d59287a6bea10ab6f6a3b87a6805c537ecbf10ba492362a94a5b0ca8a87a23",
+      "bytes": 706584
+    },
+    {
+      "alpha": false,
+      "height": 630,
+      "path": "promoted/web/en-US/og.png",
+      "width": 1200,
+      "sha256": "025db4f0e80ffa86902890a5727493b35ec6260809b90052bef63f254657a288",
+      "bytes": 709448
+    },
+    {
+      "alpha": false,
+      "height": 1564,
+      "path": "verification/app-store-zh-Hans-overview.jpg",
+      "width": 1980,
+      "sha256": "56b80b3295fe3dc2a457308763081e2018636f59690ef474d78647a4510cd839",
+      "bytes": 383696
+    },
+    {
+      "alpha": false,
+      "height": 1564,
+      "path": "verification/app-store-en-US-overview.jpg",
+      "width": 1980,
+      "sha256": "95f683ce46fa19457083d5cb477654474ed8a7c5d5862e19b910859144cfb81f",
+      "bytes": 421788
+    }
+  ]
+}

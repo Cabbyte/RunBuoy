@@ -1,0 +1,244 @@
+URL: https://structured.app/
+Captured: 2026-10-02
+
+- navigation:
+  - link "Structured Structured":
+    - /url: /
+    - img "Structured"
+    - generic: Structured
+  - button "features":
+    - text: features
+  - link "reviews":
+    - /url: /#community-reviews
+  - link "team":
+    - /url: /#team
+  - link "support":
+    - /url: https://help.structured.app/
+  - link "blog":
+    - /url: /blog
+  - link "research":
+    - /url: /research
+  - link "Structured Web":
+    - /url: https://web.structured.app/
+    - text: Structured Web
+  - button "Start planning for free!":
+    - generic: Start planning for free!
+- img "Structured app planning preview"
+- button "Play video"
+- button "Scroll down":
+- button "Play":
+- button "Unmute":
+- main:
+  - heading "your all in one focus timer calendar" [level=1]:
+    - generic: your all in one
+    - generic: focus timer
+    - generic: calendar
+  - paragraph: Structured combines all your tasks and to-dos into a single visual timeline.
+  - button "Start planning for free!"
+  - img "Structured app timeline"
+  - heading "the day planner app that everyone is using" [level=2]:
+    - generic: the day planner app
+    - generic: that everyone is using
+  - img "tasks daily"
+  - paragraph: 600K+
+  - paragraph: tasks daily
+  - img "downloads"
+  - paragraph: 15M+
+  - paragraph: downloads
+  - img "pro users"
+  - paragraph: 500K+
+  - paragraph: pro users
+  - img "languages"
+  - paragraph: 30+
+  - paragraph: languages
+  - img "5-star reviews"
+  - paragraph: 400K+
+  - paragraph: 5-star reviews
+  - paragraph: 600K+
+  - paragraph: tasks daily
+  - paragraph: 15M+
+  - paragraph: downloads
+  - paragraph: 500K+
+  - paragraph: pro users
+  - paragraph: 30+
+  - paragraph: languages
+  - paragraph: 400K+
+  - paragraph: 5-star reviews
+  - paragraph: 600K+
+  - paragraph: tasks daily
+  - paragraph: 15M+
+  - paragraph: downloads
+  - paragraph: 500K+
+  - paragraph: pro users
+  - paragraph: 30+
+  - paragraph: languages
+  - paragraph: 400K+
+  - paragraph: 5-star reviews
+  - paragraph: 600K+
+  - paragraph: tasks daily
+  - paragraph: 15M+
+  - paragraph: downloads
+  - paragraph: 500K+
+  - paragraph: pro users
+  - paragraph: 30+
+  - paragraph: languages
+  - paragraph: 400K+
+  - paragraph: 5-star reviews
+  - button "I'm convinced":
+    - generic: I'm convinced
+  - heading "one planner, one timeline, 99 appointments" [level=2]:
+    - text: one planner, one timeline,
+    - text: 99 appointments
+  - img "Structured app on iPhone showing daily timeline"
+  - img "Call Mom"
+  - img "Structure Tomorrow"
+  - img "Book Vacation"
+  - img "Rise and Shine"
+  - img "Yoga Workout"
+  - img "Take a Shower"
+  - img "Have a Coffee"
+  - img "Bike to Office"
+  - heading "split your day into tasks and visualize them in a timeline." [level=3]
+  - heading "create tasks in seconds or import your existing calendar" [level=3]
+  - heading "stay on top with weekly and monthly view" [level=3]
+  - heading "start planning on your phone" [level=3]
+  - heading "finish on your computer" [level=3]
+  - heading "and view it on your smart watch" [level=3]
+  - img "Structured web app on MacBook"
+  - img "Structured on Apple Watch"
+  - generic: explore more
+  - generic: features
+  - link "visual planning visual planning":
+    - /url: /visual-planning
+    - img "visual planning"
+    - text: visual
+    - text: planning
+  - link "import calendars import calendars":
+    - /url: /import-calendars
+    - img "import calendars"
+    - text: import
+    - text: calendars
+  - link "plan with AI plan with AI":
+    - /url: /planning-assistance
+    - img "plan with AI"
+    - text: plan
+    - text: with AI
+  - link "access everywhere access everywhere":
+    - /url: /access-everywhere
+    - img "access everywhere"
+    - text: access
+    - text: everywhere
+  - link "align your rhythm align your rhythm":
+    - /url: /align-your-rythm
+    - img "align your rhythm"
+    - text: align
+    - text: your rhythm
+  - heading "known from" [level=2]
+  - img "Forbes"
+  - img "Stern"
+  - img "TechCrunch"
+  - img "AppleInsider"
+  - generic: Visualize
+  - generic: your
+  - generic: day
+  - generic: split
+  - generic: it
+  - generic: into
+  - generic: tasks,
+  - generic: set
+  - generic: deadlines,
+  - generic: get
+  - generic: an
+  - generic: overview
+  - generic: store
+  - generic: your
+  - generic: thoughts
+  - generic: build
+  - generic: habits,
+  - generic: reduce
+  - generic: overwhelm
+  - generic: plan
+  - generic: mobile
+  - generic: or
+  - generic: at
+  - generic: home
+  - generic: integrate
+  - generic: meetings
+  - generic: get
+  - generic: notifications,
+  - generic: add
+  - generic: widgets,
+  - generic: focus
+  - generic: "on"
+  - generic: your
+  - generic: tasks
+  - generic: become
+  - generic: structured
+  - generic: join more than 1 million
+  - generic: happy planners
+  - img "5 stars"
+  - paragraph: “Just downloaded this app & setup my week. As someone who struggles with scheduling things, I’ve looked for a simple clean app for years”.
+  - generic: Instagram Comment
+  - img "5 stars"
+  - paragraph: “I invested in the lifetime membership because this app has saved me at least two hours a week — which adds up to over 100 hours a year.”
+  - generic: App Store Review
+  - img "5 stars"
+  - paragraph: “If you’ve never tried this app, take the plunge. One of the BEST apps for productivity and organization!”
+  - generic: Instagram Comment
+  - img "5 stars"
+  - paragraph: “Just downloaded this app & setup my week. As someone who struggles with scheduling things, I’ve looked for a simple clean app for years”.
+  - generic: Instagram Comment
+  - img "5 stars"
+  - paragraph: “I invested in the lifetime membership because this app has saved me at least two hours a week — which adds up to over 100 hours a year.”
+  - generic: App Store Review
+  - img "5 stars"
+  - paragraph: “If you’ve never tried this app, take the plunge. One of the BEST apps for productivity and organization!”
+  - generic: Instagram Comment
+  - img "5 stars"
+  - paragraph: “Life changing app. Helped me so much. Can’t imagine living without it anymore.”
+  - generic: App Store Review
+  - img "5 stars"
+  - paragraph: “To anyone finding it hard to keep yourself accountable try @structured_app! It literally changed the way I spend my working days.”
+  - generic: X Post
+  - img "5 stars"
+  - paragraph: “I’ve tried countless planners, todo lists, Calenders. Structured really combines it all in the best way and lets you bring ‘structure’ into your day”.
+  - generic: App Store Review
+  - img "5 stars"
+  - paragraph: “Life changing app. Helped me so much. Can’t imagine living without it anymore.”
+  - generic: App Store Review
+  - img "5 stars"
+  - paragraph: “To anyone finding it hard to keep yourself accountable try @structured_app! It literally changed the way I spend my working days.”
+  - generic: X Post
+  - img "5 stars"
+  - paragraph: “I’ve tried countless planners, todo lists, Calenders. Structured really combines it all in the best way and lets you bring ‘structure’ into your day”.
+  - generic: App Store Review
+  - generic: the team
+  - generic: behind structured
+  - generic: frequently asked
+  - generic: questions
+  - button "Is Structured free?":
+    - paragraph: Is Structured free?
+  - button "I use Google Calendar! How is Structured different?":
+    - paragraph: I use Google Calendar! How is Structured different?
+  - button "Do you show ads or sell my data?":
+    - paragraph: Do you show ads or sell my data?
+  - button "Who is Structured for?":
+    - paragraph: Who is Structured for?
+  - button "What if it's not right for me?":
+    - paragraph: What if it's not right for me?
+  - link "Help center":
+    - /url: https://help.structured.app/
+    - generic: Help center
+  - generic: trusted by
+  - generic: millions of planners
+  - generic: more than 400K
+  - generic: 5-star reviews
+  - button "Try Structured for free":
+    - generic: Try Structured for free
+- alert
+- iframe [id="front-chat-iframe"]:
+  - button "Show":
+    - button "Show":
+      - generic: "0"
+      - button "Launch Front Chat":
+        - button "Launch Front Chat"

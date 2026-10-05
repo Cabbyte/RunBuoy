@@ -1,0 +1,175 @@
+URL: https://www.pushcut.io/guides/homekit-api-schedule-cancel
+Captured: 2026-10-02
+
+- banner:
+  - link "Pushcut Pushcut":
+    - /url: /
+    - img "Pushcut"
+    - text: Pushcut
+  - navigation:
+    - link "Guides":
+      - /url: /guides
+    - link "Widgets":
+      - /url: /guides_widgets
+    - link "Support":
+      - /url: /support
+    - link "Videos":
+      - /url: /videos
+    - link "Shortcuts":
+      - /url: /shortcuts_actions
+    - link "Updates":
+      - /url: /blog
+- main "Content":
+  - link " Guides & Examples - Notifications & Triggers":
+    - /url: /guides
+    - generic: 
+    - text: Guides & Examples - Notifications & Triggers
+  - heading "Schedule and Cancel Notifications with the API" [level=1]
+  - article:
+    - list:
+      - 'link "Step 1: Create a new Pushcut notification"':
+        - /url: "#step_1"
+      - 'link "Step 2: Create an API Key"':
+        - /url: "#step_2"
+      - 'link "Step 3: Create the first HomeKit automation"':
+        - /url: "#step_3"
+      - 'link "Step 4: Create the second HomeKit automation"':
+        - /url: "#step_4"
+      - 'link "Step 5: Relax and enjoy!"':
+        - /url: "#step_5"
+    - paragraph:
+      - text: If you want notifications when a door or a window has been left open for a period of time, or to learn how to use the
+      - link "Pushcut API":
+        - /url: /webapi
+      - text: then this guide is for you!
+    - 'heading "Step 1: Create a new Pushcut notification" [level=2]'
+    - paragraph: Add a new notification in the Pushcut app.
+    - paragraph: Set a name and enter a title and a message.
+    - paragraph
+    - 'heading "Step 2: Create an API Key" [level=2]'
+    - paragraph: In the app under the Account tab, scroll to Integrations and tap Add API Key. Set the name to HomeKit and then tap Generate.
+    - paragraph
+    - 'heading "Step 3: Create the first HomeKit automation" [level=2]'
+    - list:
+      - text: In HomeKit use the
+      - code: +
+      - text: icon to create a new automation.
+      - listitem: Set the trigger to when your door opens.
+      - text: Select Convert to Shortcut instead of a scene (under
+      - emphasis: Advanced
+      - text: at the bottom).
+      - text: Delete the
+      - emphasis: Set Scenes and Accessories
+      - text: action.
+      - text: Add the
+      - emphasis: URL
+      - text: action and paste in the webhook URL of your notification (from
+      - link "Step 1":
+        - /url: "#step_1"
+      - text: ).
+      - text: Add the
+      - emphasis: Get Contents of URL
+      - text: action and make sure the URL parameter is set.
+      - text: Tap on the
+      - code: ">"
+      - text: to expand the
+      - emphasis: Get Contents of URL
+      - text: action, and change the method from
+      - code: GET
+      - text: to
+      - code: POST
+      - text: .
+      - list:
+        - text: "Add a new field: set the type to"
+        - emphasis: Text
+        - text: ", the key to"
+        - code: identifier
+        - text: and the value to
+        - code: door_open
+        - text: .
+        - text: "Add another new field: set the type to"
+        - emphasis: Text
+        - text: ", the key to"
+        - code: delay
+        - text: and the value to
+        - code: 10m
+        - text: .
+      - listitem: Tap Next and Done.
+    - paragraph
+    - 'heading "Step 4: Create the second HomeKit automation" [level=2]'
+    - list:
+      - text: In HomeKit use the
+      - code: +
+      - text: icon to create a new automation.
+      - listitem: Set the trigger to when your door closes.
+      - text: Select Convert to Shortcut instead of a scene (under
+      - emphasis: Advanced
+      - text: at the bottom).
+      - text: Delete the
+      - emphasis: Set Scenes and Accessories
+      - text: action.
+      - text: Add the
+      - emphasis: URL
+      - text: action and paste in
+      - code: https://api.pushcut.io/v1/submittedNotifications/door_open
+      - text: . (The
+      - code: door_open
+      - text: part at the end is the identifier you set earlier).
+      - text: Add the
+      - emphasis: Get Contents of URL
+      - text: action and make sure the URL parameter is set.
+      - text: Tap on the
+      - code: ">"
+      - text: to expand the
+      - emphasis: Get Contents of URL
+      - text: action, and change the method from
+      - code: GET
+      - text: to
+      - code: DELETE
+      - text: .
+      - list:
+        - text: "Add a new header: set the key to"
+        - code: API-Key
+        - text: and the value to the API Key from
+        - link "Step 2":
+          - /url: "#step_2"
+        - text: .
+    - 'heading "Step 5: Relax and enjoy!" [level=2]'
+    - paragraph: "That's it, you are all set! Now whenever your door opens a new notification will be scheduled for in 10 minutes time. If your door closes before the 10 minutes are up it will be cancelled, but otherwise you'll be notified! And the best part: when the door is then closed the notification will disappear."
+    - paragraph:
+      - text: You could also use this to schedule a server action (using the same
+      - code: delay
+      - text: parameter), and send yourself a notification allowing you to cancel it.
+- contentinfo:
+  - paragraph: © Simon Leeb 2019
+  - paragraph: Apple, the Apple logo, iPhone, iPad, and Apple Watch are trademarks of Apple Inc., registered in the U.S. and other countries. App Store is a service mark of Apple Inc. Shortcuts is an app produced by Apple. We are not affiliated with it in any way.
+  - link "Snailed It Development Ltd (Company No. 13620216) is registered in England and Wales at 7 Bell Yard, London, WC2A 2JR.":
+    - /url: https://snailedit.dev
+    - text: Snailed It Development Ltd (Company No. 13620216) is registered in England and Wales at 7 Bell Yard, London, WC2A 2JR.
+  - list:
+    - link "Guides":
+      - /url: /guides
+    - link "Widgets":
+      - /url: /guides_widgets
+    - link "Support":
+      - /url: /support
+    - link "Videos":
+      - /url: /videos
+    - link "Shortcuts":
+      - /url: /shortcuts_actions
+    - link "Updates":
+      - /url: /blog
+    - link "App Store":
+      - /url: /appstore
+    - link "IFTTT":
+      - /url: /ifttt
+    - link "Mastodon":
+      - /url: /mastodon
+    - link "Privacy":
+      - /url: /privacy
+    - link "Reddit":
+      - /url: /reddit
+    - link "Terms of Use":
+      - /url: /terms
+    - link "Web API":
+      - /url: /webapi

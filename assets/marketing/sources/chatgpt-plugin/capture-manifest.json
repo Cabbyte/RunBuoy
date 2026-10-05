@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-05",
+  "timezone": "Asia/Shanghai",
+  "source_commit": "45930228b7d59c4352b738f0daad51f67f3b76ae",
+  "kind": "actual UI rendered locally with bundled demo fixtures",
+  "preview_url": "http://127.0.0.1:5179/?demo&lang=zh&mode=inline",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "full_page": true,
+  "language": "zh",
+  "contains_chatgpt_host_frame": false,
+  "promoted": false,
+  "source_hashes": {
+    "apps/chatgpt/src/Dashboard.tsx": "64359d7fe062c301a8242918a342c3b9e7033498b1c53786f087efe46a431810",
+    "apps/chatgpt/src/bridge.ts": "0f98f2466e3c586fae052ad2a4f3669a79862659302c341c8c7239deb6ecf791",
+    "apps/chatgpt/src/demo.ts": "4f9f062290eea5dee520e272b0a56d10e1a53589f564b896401255b7953af3cf",
+    "server/app/plugin_mcp.py": "8375d6d0494fa21e3a978836b222fc339e81cf661c7cd5161dccd69ea6080274",
+    "plugins/runbuoy/plugin.json": "8ba4b01af3340b2ccd59d8e6befe63eaecf0c2583b1b304a7cf9cd75971e8d66"
+  },
+  "captures": [
+    {
+      "file": "history-zh.jpg",
+      "bytes": 29209,
+      "sha256": "a80af2394bbc0326fcd8bfb59ebc48c446d8b6256a5fddeded44d9510d86b166"
+    },
+    {
+      "file": "inline-zh.jpg",
+      "bytes": 44670,
+      "sha256": "041ea92b2a4ee11bb7e3d0d52b855675051d9de61eca1267d47a0507502a7643"
+    },
+    {
+      "file": "machines-zh.jpg",
+      "bytes": 42110,
+      "sha256": "b4184b822cfcb9caaff9e4cebfbbec55dadaac498d6401741022ef3a1a6665e1"
+    },
+    {
+      "file": "messages-zh.jpg",
+      "bytes": 31097,
+      "sha256": "a7fa16ff6df769549117413a60e45875480406c935e68b8caf328c16faec505e"
+    },
+    {
+      "file": "workspace-detail-zh.jpg",
+      "bytes": 96452,
+      "sha256": "7880ee13c1256f40e88c382f6fb2809f4dde09e614d05882120d5cb631da1aec"
+    }
+  ]
+}

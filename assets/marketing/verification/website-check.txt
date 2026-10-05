@@ -1,0 +1,102 @@
+
+> check
+> npm run typecheck && npm run build && npm run check:site
+
+
+> typecheck
+> tsc --noEmit
+
+
+> build
+> rspress build
+
+🔥 Rspress v2.0.18
+
+info    build started...
+info    Rendering pages...
+success Pages rendered in 118 ms.
+ready   built in 0.94s (web)
+ready   built in 0.95s (node)
+
+File (web)                                                   Size       Gzip   
+doc_build/static/js/async/435.c341ecc9bf.js                  0.11 kB    0.10 kB
+doc_build/static/js/styles.194930a865.js                     0.62 kB    0.29 kB
+doc_build/static/js/async/route-97a7c2faca5e.1cdc265b41.js   1.6 kB     1.1 kB
+doc_build/static/js/async/route-888a1c9fc6fc.16bf3e6c50.js   1.6 kB     0.94 kB
+doc_build/static/js/async/route-c53faf926459.4d627ea694.js   3.2 kB     1.2 kB
+doc_build/static/js/async/route-a06ff468785e.65b3d24d8c.js   3.3 kB     1.1 kB
+doc_build/static/js/async/route-d0a095b25abe.f76d6a4557.js   3.5 kB     1.6 kB
+doc_build/static/js/async/route-2cbc6e02dea5.1913c0cdea.js   3.8 kB     1.6 kB
+doc_build/static/js/async/route-49e4effcd9cd.f6194adef9.js   3.8 kB     1.4 kB
+doc_build/static/js/async/route-515296531c16.ae7cd9174b.js   3.9 kB     1.7 kB
+doc_build/static/js/async/route-9c22476b0395.ba4a6ba8a2.js   3.9 kB     1.7 kB
+doc_build/static/js/async/route-da3e740eea59.aca3951ef4.js   4.0 kB     1.5 kB
+doc_build/static/js/async/route-b08700e531ce.ba41a2cc24.js   4.1 kB     1.5 kB
+doc_build/static/js/async/route-f382d7f0c80b.b2c4b63e08.js   4.2 kB     1.6 kB
+doc_build/static/js/async/route-e9db5722bb22.94e80995df.js   5.4 kB     1.5 kB
+doc_build/static/js/async/route-8c2aaf997086.05af87a78a.js   5.7 kB     1.4 kB
+doc_build/static/js/async/route-2c1709a8c3e4.17a849211f.js   6.7 kB     2.1 kB
+doc_build/static/js/async/route-4de00ad492f3.d6777653a4.js   7.0 kB     1.9 kB
+doc_build/static/js/async/route-6c92e1822fab.6a95022ac2.js   7.3 kB     2.4 kB
+doc_build/static/js/async/route-21b119659c07.297935b1e2.js   7.7 kB     2.2 kB
+doc_build/static/js/async/route-c9b532a7f31b.aa52703be8.js   9.2 kB     3.4 kB
+doc_build/static/js/async/route-eeecf6ae985f.45d248f357.js   10.1 kB    3.2 kB
+doc_build/static/js/async/route-a04cf536cfc3.45e2158495.js   13.6 kB    2.3 kB
+doc_build/static/js/async/route-032fb1f4bef7.b7d2140ae4.js   14.1 kB    2.2 kB
+doc_build/static/js/async/route-fb05e8cef799.b4cf994381.js   14.8 kB    2.5 kB
+doc_build/static/js/async/route-c5e0ae0a6c7a.84552ae7e0.js   15.0 kB    2.2 kB
+doc_build/static/js/async/route-0562051ba1e5.5e9582a1ac.js   19.5 kB    2.9 kB
+doc_build/static/js/async/route-b209c9d56840.fa78b152c6.js   19.9 kB    2.7 kB
+doc_build/static/js/async/route-80a6af5d82d9.eec954665d.js   22.4 kB    4.0 kB
+doc_build/static/js/async/route-071f8031de57.a2e2c652d8.js   22.9 kB    3.7 kB
+doc_build/static/search_index.zh.91eb1741.json               33.9 kB    11.7 kB
+doc_build/static/js/lib-router.447a9193bc.js                 34.4 kB    12.4 kB
+doc_build/static/search_index.en.fdf6b6f4.json               37.9 kB    11.4 kB
+doc_build/static/js/index.1be40917e8.js                      59.3 kB    18.9 kB
+doc_build/runbuoy-icon-light.png                             60.1 kB 
+doc_build/static/css/styles.28f2b9aacc.css                   77.2 kB    14.7 kB
+doc_build/static/js/lib-react.4b67e3ae8d.js                  189.2 kB   59.8 kB
+doc_build/static/js/603.f9b9e88dc7.js                        245.8 kB   78.1 kB
+
+                                                    Total:   980.8 kB   325.0 kB
+
+File (node)                           Size       Gzip   
+doc_build/404.html                    10.6 kB    3.0 kB
+doc_build/status.html                 16.1 kB    4.7 kB
+doc_build/docs/index.html             16.1 kB    4.3 kB
+doc_build/support.html                16.2 kB    4.6 kB
+doc_build/en/docs/index.html          16.3 kB    4.1 kB
+doc_build/download.html               16.4 kB    4.6 kB
+doc_build/en/status.html              16.5 kB    4.5 kB
+doc_build/en/download.html            16.5 kB    4.4 kB
+doc_build/en/support.html             16.5 kB    4.4 kB
+doc_build/security.html               18.1 kB    5.1 kB
+doc_build/en/security.html            18.5 kB    4.9 kB
+doc_build/privacy.html                21.2 kB    6.4 kB
+doc_build/en/privacy.html             22.1 kB    6.1 kB
+doc_build/self-hosting.html           23.5 kB    5.5 kB
+doc_build/en/self-hosting.html        23.8 kB    5.3 kB
+doc_build/guide/agent-skill.html      24.5 kB    6.0 kB
+doc_build/guide/pairing.html          24.5 kB    5.2 kB
+doc_build/en/guide/pairing.html       24.8 kB    5.0 kB
+doc_build/en/guide/agent-skill.html   24.9 kB    5.7 kB
+doc_build/index.html                  34.5 kB    9.3 kB
+doc_build/en/index.html               34.8 kB    8.8 kB
+doc_build/guide/progress.html         35.3 kB    6.0 kB
+doc_build/en/guide/progress.html      35.8 kB    5.8 kB
+doc_build/guide/run.html              41.6 kB    6.3 kB
+doc_build/en/guide/run.html           41.8 kB    5.9 kB
+doc_build/guide/install.html          48.4 kB    7.0 kB
+doc_build/en/guide/install.html       48.9 kB    6.7 kB
+doc_build/guide/index.html            57.5 kB    8.2 kB
+doc_build/en/guide/index.html         58.1 kB    7.8 kB
+
+                             Total:   803.6 kB   165.6 kB
+
+info    Checking language parity...
+success Language parity checked successfully.
+
+> check:site
+> node scripts/check-site.mjs
+
+Static content and internal-link checks passed.

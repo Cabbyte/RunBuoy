@@ -53,4 +53,4 @@ RUNBUOY_API_BASE_URL=https://runbuoy.example.com
 - 数据库与 Token 加密密钥必须配套备份。
 - 明确共享的日志片段应在 24 小时内删除。
 
-完整部署说明见 [docs/developer-guide/self-hosting.md](https://github.com/TANG617/RunBuoy/blob/main/docs/developer-guide/self-hosting.md)。
+完整部署说明见 [docs/developer-guide/self-hosting.md](https://github.com/Cabbyte/RunBuoy/blob/main/docs/developer-guide/self-hosting.md)。

@@ -1,0 +1,12 @@
+{
+  "zh": {
+    "html": "website/doc_build/index.html",
+    "og_image": "https://www.runbuoy.cloud/og.png",
+    "unique": true
+  },
+  "en": {
+    "html": "website/doc_build/en/index.html",
+    "og_image": "https://www.runbuoy.cloud/marketing/en-US/og.png",
+    "unique": true
+  }
+}
