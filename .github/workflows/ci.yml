@@ -68,8 +68,8 @@ jobs:
       - name: Root checks
         run: |
           uv sync --group dev
-          uv run ruff check packages/protocol/tests scripts skills/runbuoy/tests
-          uv run ruff format --check packages/protocol/tests scripts skills/runbuoy/tests
+          uv run ruff check packages/protocol/tests scripts skills/runbuoy/tests skills/runbuoy/scripts
+          uv run ruff format --check packages/protocol/tests scripts skills/runbuoy/tests skills/runbuoy/scripts
       - name: CLI checks
         working-directory: cli
         run: |

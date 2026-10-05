@@ -9,7 +9,7 @@ RunBuoy 目前没有对外公布支持邮箱。请使用下面的渠道，让问
 
 ## 产品帮助与问题报告
 
-安装问题、可复现缺陷、无障碍问题和功能建议，请提交 [GitHub Issue](https://github.com/TANG617/RunBuoy/issues)。提交前：
+安装问题、可复现缺陷、无障碍问题和功能建议，请提交 [GitHub Issue](https://github.com/Cabbyte/RunBuoy/issues)。提交前：
 
 1. 运行 `runbuoy doctor --json`，并移除令牌、主机名、路径、命令参数及其他敏感值。
 2. 写明正在使用的 RunBuoy CLI、Server 和 iOS 版本。
@@ -19,7 +19,7 @@ RunBuoy 目前没有对外公布支持邮箱。请使用下面的渠道，让问
 
 ## 安全问题
 
-疑似安全漏洞不要提交公开 Issue。请遵循[安全策略](https://github.com/TANG617/RunBuoy/security/policy)，并使用 [GitHub 私密漏洞报告](https://github.com/TANG617/RunBuoy/security/advisories/new)。
+疑似安全漏洞不要提交公开 Issue。请遵循[安全策略](https://github.com/Cabbyte/RunBuoy/security/policy)，并使用 [GitHub 私密漏洞报告](https://github.com/Cabbyte/RunBuoy/security/advisories/new)。
 
 ## 服务与自托管
 

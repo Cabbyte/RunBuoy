@@ -1,0 +1,294 @@
+{
+  "app": {
+    "bundle_id": "dev.runbuoy.app",
+    "base_branch": "main",
+    "base_commit": "9ad840519fe8e5ff66ad9dd4a71c8c1b30b34177",
+    "version": "1.0.6",
+    "build": "1",
+    "configuration": "Debug",
+    "additional_changes": "Local marketing routes and ActivityKit demo timing, guarded by DEBUG and UI-test showcase flags; no production UI changes."
+  },
+  "device": {
+    "name": "iPhone 17 Pro Max",
+    "os": "iOS 27.0",
+    "simulator_udid": "C58AD745-83BB-4C0B-8423-56BECF5BCB85"
+  },
+  "method": "xcrun simctl io screenshot after observing the requested native UI; ActivityKit rendered locally for lock-screen captures",
+  "data": "Constructed showcase fixture tasks and machines; no personal runs or credentials. Live Activity sample 72%; main training sample 78%.",
+  "clock": "Status-bar time is fixed for in-app shots; lock-screen clock/date remain simulator presentation and are not task timing evidence.",
+  "captures": [
+    {
+      "path": "sources/screenshots/en-US/active-runs.png",
+      "locale": "en-US",
+      "screen": "active-runs",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:09:26.812755+00:00",
+      "sha256": "b188ac3c4a6605dd06ef79ec4058b0d50f0dd90916911ddbba0efdf6d7185872",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcaseEnglish",
+        "-AppleLanguages",
+        "(en)",
+        "-AppleLocale",
+        "en_US"
+      ]
+    },
+    {
+      "path": "sources/screenshots/en-US/data.png",
+      "locale": "en-US",
+      "screen": "data",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:18:18.099677+00:00",
+      "sha256": "5427ce5bde9d1a2ee7b08323df72c11a44456ee43753cc93afc20d583995169c",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcaseEnglish",
+        "-AppleLanguages",
+        "(en)",
+        "-AppleLocale",
+        "en_US",
+        "-runbuoy-marketing-screen",
+        "data"
+      ]
+    },
+    {
+      "path": "sources/screenshots/en-US/history.png",
+      "locale": "en-US",
+      "screen": "history",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:09:47.335201+00:00",
+      "sha256": "621474c33ba616e5c3ed8af54590a78beb5fdca34180078f6c152f3766485e03",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcaseEnglish",
+        "-AppleLanguages",
+        "(en)",
+        "-AppleLocale",
+        "en_US",
+        "-runbuoy-ui-preview-tab",
+        "history"
+      ]
+    },
+    {
+      "path": "sources/screenshots/en-US/lock-screen.png",
+      "locale": "en-US",
+      "screen": "lock-screen",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:13:51.051236+00:00",
+      "sha256": "8a547cbfa23b4b0c9934d77f3192c93f1fa3b9b7cec8d1e841de4d82860b12b8",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcaseEnglish",
+        "-AppleLanguages",
+        "(en)",
+        "-AppleLocale",
+        "en_US",
+        "-runbuoy-ui-url",
+        "runbuoy://demo/notification",
+        "-runbuoy-marketing-activity",
+        "2"
+      ]
+    },
+    {
+      "path": "sources/screenshots/en-US/pairing.png",
+      "locale": "en-US",
+      "screen": "pairing",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:17:51.011969+00:00",
+      "sha256": "ff1e07351303498326e360b66e9ea4fe71d20b8b4aaafe8d2ff203d4d861d105",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcaseEnglish",
+        "-AppleLanguages",
+        "(en)",
+        "-AppleLocale",
+        "en_US",
+        "-runbuoy-marketing-screen",
+        "pairing"
+      ]
+    },
+    {
+      "path": "sources/screenshots/en-US/run-detail.png",
+      "locale": "en-US",
+      "screen": "run-detail",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:18:14.391286+00:00",
+      "sha256": "54b418a39ac7f1c4f3c7706f800ed9296bebc89b2dc244217ac44953f5250412",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcaseEnglish",
+        "-AppleLanguages",
+        "(en)",
+        "-AppleLocale",
+        "en_US",
+        "-runbuoy-ui-preview-run",
+        "018f0d8a-8c0a-7000-8000-000000000101"
+      ]
+    },
+    {
+      "path": "sources/screenshots/zh-Hans/active-runs.png",
+      "locale": "zh-Hans",
+      "screen": "active-runs",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:06:36.065451+00:00",
+      "sha256": "33896571ec6945a1672f51a3ef7f63e21314a2e036fd8d4acd3825cb9af0569c",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcase",
+        "-AppleLanguages",
+        "(zh-Hans)",
+        "-AppleLocale",
+        "zh_CN"
+      ]
+    },
+    {
+      "path": "sources/screenshots/zh-Hans/data.png",
+      "locale": "zh-Hans",
+      "screen": "data",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:06:50.611639+00:00",
+      "sha256": "b29fc2e02e482ce213084805a53be2f105f16b83d8c4984421ac4093f22af0f9",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcase",
+        "-AppleLanguages",
+        "(zh-Hans)",
+        "-AppleLocale",
+        "zh_CN",
+        "-runbuoy-marketing-screen",
+        "data"
+      ]
+    },
+    {
+      "path": "sources/screenshots/zh-Hans/history.png",
+      "locale": "zh-Hans",
+      "screen": "history",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:06:40.853448+00:00",
+      "sha256": "29ae3e2ee71bc5f6096cd49df1695497ddff6efebb9e2e2847574a18d2494ce1",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcase",
+        "-AppleLanguages",
+        "(zh-Hans)",
+        "-AppleLocale",
+        "zh_CN",
+        "-runbuoy-ui-preview-tab",
+        "history"
+      ]
+    },
+    {
+      "path": "sources/screenshots/zh-Hans/lock-screen.png",
+      "locale": "zh-Hans",
+      "screen": "lock-screen",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:16:28.565354+00:00",
+      "sha256": "1990576388078648539f12b96fd63f34cae845c0d6c1499c77b0267af60dd4b7",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcase",
+        "-AppleLanguages",
+        "(zh-Hans)",
+        "-AppleLocale",
+        "zh_CN",
+        "-runbuoy-ui-url",
+        "runbuoy://demo/notification",
+        "-runbuoy-marketing-activity",
+        "2"
+      ]
+    },
+    {
+      "path": "sources/screenshots/zh-Hans/pairing.png",
+      "locale": "zh-Hans",
+      "screen": "pairing",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:05:56.433577+00:00",
+      "sha256": "d5c695c7e0faeed013cbb10f53c9664afb230d06f7a617f8a28505f713da9ec7",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcase",
+        "-AppleLanguages",
+        "(zh-Hans)",
+        "-AppleLocale",
+        "zh_CN",
+        "-runbuoy-marketing-screen",
+        "pairing"
+      ]
+    },
+    {
+      "path": "sources/screenshots/zh-Hans/run-detail.png",
+      "locale": "zh-Hans",
+      "screen": "run-detail",
+      "width": 1320,
+      "height": 2868,
+      "modified_at_utc": "2026-10-02T16:06:45.615563+00:00",
+      "sha256": "969d935583c88d8685764f78c5fa4633e423482e4092c1549155f54b62d178f2",
+      "launch_args": [
+        "-runbuoy-ui-testing",
+        "-runbuoy-ui-scenario",
+        "showcase",
+        "-AppleLanguages",
+        "(zh-Hans)",
+        "-AppleLocale",
+        "zh_CN",
+        "-runbuoy-ui-preview-run",
+        "018f0d8a-8c0a-7000-8000-000000000101"
+      ]
+    }
+  ],
+  "crops_in_original_pixels": {
+    "lock_screen_activity": [
+      60,
+      2136,
+      1200,
+      290
+    ],
+    "app_store_history": [
+      0,
+      160,
+      1320,
+      2061
+    ],
+    "app_store_detail": [
+      0,
+      140,
+      1320,
+      2160
+    ],
+    "app_store_data_card": [
+      0,
+      130,
+      1320,
+      601
+    ],
+    "web_detail": [
+      0,
+      160,
+      1320,
+      2240
+    ]
+  },
+  "release_status": "Prepared for next app release; not uploaded or published."
+}

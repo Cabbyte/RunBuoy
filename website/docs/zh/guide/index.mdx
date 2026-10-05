@@ -6,7 +6,9 @@ description: 使用 Agent 提示词或手动流程，在 macOS 或 Linux 上安�
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-RunBuoy Skill 与 CLI 当前都可以安装。推荐先把完整提示词交给支持 Skill 的 Agent；希望逐条控制命令时，也可以使用下面的手动流程。完整的手机配对需要一台安装了 RunBuoy iOS 18+ App 的 iPhone。
+先在 iPhone [从 App Store 下载 RunBuoy](https://apps.apple.com/cn/app/runbuoy/id6795591930)（iOS 18+），再在 Mac 或 Linux 安装 CLI。推荐把下面的安装提示词交给支持 Skill 的 Agent；手动安装步骤在下方折叠区。
+
+安装交给 Agent，状态带到 iPhone。完整流程是：**下载 App → Agent 安装 → 配对电脑 → 运行任务**。安装与验证完成后，继续本文末尾的手机配对与演示。
 
 <div id="agent-install"></div>
 
@@ -22,25 +24,29 @@ Agent 会先安装 RunBuoy Skill，再读取 Skill 自带的安全规则安装�
 请帮我安装并验证 RunBuoy：
 
 1. 使用你原生支持的 Skill 安装机制，从
-https://github.com/TANG617/RunBuoy/tree/main/skills/runbuoy
-安装 RunBuoy Skill，完整保留 SKILL.md、agents/openai.yaml 和 references/ 目录，不要猜测安装路径。
+https://github.com/Cabbyte/RunBuoy/tree/main/skills/runbuoy
+安装或更新 RunBuoy Skill，完整保留 SKILL.md、agents/openai.yaml、references/ 和 scripts/ 目录，不要猜测安装路径。
 
-2. 安装后读取该 Skill 的 references/installation.md，并按照其中的安全规则安装 RunBuoy CLI。先检查 command -v runbuoy；如果缺失且 uv 已可用，执行：
+2. 读取该 Skill 的 references/installation.md，按其中的规则检测 CLI。先检查 command -v runbuoy；找不到命令且 uv 已可用时，用 uv tool dir --bin 检查实际目录中是否已有 runbuoy。已安装但不在 PATH 中时修复路径，不要重复安装；确实未安装且 uv 已可用时，执行：
 uv tool install --python 3.12 runbuoy
 
 3. 如果缺少 uv、tmux，或者需要 sudo、系统包管理器或 curl 安装器，请先说明将执行的命令并等待我的确认。
 
-4. 最后运行：
+4. 对 uv 安装的 CLI，按安装文档运行 Skill 自带的 scripts/ensure_cli_path.py --repair，验证移除临时 PATH 后，新开的交互式终端和登录终端都能找到命令。再按输出在当前执行 Shell 中启用 PATH、刷新命令缓存。后续独立工具调用也需保留该 PATH。不要把绝对路径可运行或 uv run 成功当作安装完成；若验证失败，继续检查 Shell 配置并说明未通过的项目。
+
+5. 在当前 Shell 直接运行：
+command -v runbuoy
 runbuoy --version
 runbuoy doctor --json
 runbuoy capabilities --json
 
-只汇报 Skill 是否能以 $runbuoy 被发现、CLI 版本、local_ready 和 delivery 状态。不要启动配对、Demo、被监控命令，也不要上传日志。
+汇报 Skill 是否能以 $runbuoy 被发现、CLI 路径与版本、当前及新终端的 PATH 验证结果、local_ready 和 delivery 状态。不要启动配对、Demo、被监控命令，也不要上传日志。
 ```
 
 这个流程只负责安装与验证，不会配对手机或启动任务。[了解 Agent 安装提示词的设计与使用方式](/guide/agent-skill)。
 
-<div id="manual-install"></div>
+<details id="manual-install">
+<summary>手动安装 CLI 与可选 Python API</summary>
 
 ## 手动安装 CLI
 
@@ -95,7 +101,13 @@ uv tool update-shell
 
 ```bash
 uv tool install --python 3.12 runbuoy
+uv tool update-shell
+export PATH="$(uv tool dir --bin):$PATH"
+hash -r
+command -v runbuoy
 ```
+
+以上 PATH 命令适用于 Bash / Zsh；Fish 使用 `fish_add_path (uv tool dir --bin)`。安装后在新终端再次运行 `command -v runbuoy` 和 `runbuoy --version`，确认配置已保存。若仍找不到命令，请查看[PATH 排查](/guide/install#troubleshooting)。
 
 根据实际使用的 Shell 选择一个补全命令：
 
@@ -149,16 +161,29 @@ uv sync --extra runbuoy
 
 仍然可以在任何时候使用上面的 Agent 提示词补装 Skill。Agent 会先运行 `command -v runbuoy`，检测到现有 CLI 后不会重复安装，只会继续验证环境。
 
-## 已有可用 iOS App？继续配对
+</details>
 
-只有在你已经获得并安装 RunBuoy iOS 18+ App 后，才继续以下步骤：
+## 连接手机并验证第一条动态
+
+打开已安装的 App，完成引导。在电脑运行：
 
 ```bash
 runbuoy device pair
-runbuoy run -- python3 experiment.py
 ```
 
-扫描一次性配对码后，命令仍在电脑上运行；iPhone 只显示经过筛选的状态、进度、时间与结果。现有 Demo 命令可用于独立验证，但不是安装必经步骤。
+用 App 扫描终端二维码，核对电脑身份并完成配对，然后主动运行一次演示：
+
+```bash
+runbuoy demo live-activity
+```
+
+确认 iPhone 收到演示状态后，将自己的命令放在 `runbuoy run --` 后启动。下面的脚本名需要替换为你自己的脚本：
+
+```bash
+runbuoy run -- python3 your_task.py
+```
+
+任务仍在电脑上运行，iPhone 只展示状态。普通命令提供运行状态与结果；百分比、阶段和预计完成时间需要任务显式报告。演示与真实任务都由你主动启动，安装提示词不会代你执行。
 
 ## 下一步
 
@@ -166,3 +191,7 @@ runbuoy run -- python3 experiment.py
 - [配对更多电脑](/guide/pairing)
 - [运行命令与发送通知](/guide/run)
 - [配置真实进度](/guide/progress)
+
+## 在 ChatGPT 里查看
+
+问一句，查进展；点一下，看全貌。已获得私人预览权限后，可连接 [ChatGPT Plugin 与交互看板](/guide/agent-skill#chatgpt)，在对话中查询任务，选中任务后继续提问。它提供只读查看，任务仍在电脑执行。

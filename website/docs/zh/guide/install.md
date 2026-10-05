@@ -40,10 +40,16 @@ uv tool update-shell
 
 ```bash
 uv tool install --python 3.12 runbuoy
+uv tool update-shell
+export PATH="$(uv tool dir --bin):$PATH"
+hash -r
+command -v runbuoy
 runbuoy --version
 runbuoy doctor
 runbuoy capabilities --json
 ```
+
+以上 PATH 命令适用于 Bash / Zsh；Fish 使用 `fish_add_path (uv tool dir --bin)`。安装后在新终端再次运行 `command -v runbuoy` 和 `runbuoy --version`，确认配置已保存。若仍找不到命令，请查看[PATH 排查](/guide/install#troubleshooting)。
 
 升级或卸载：
 
@@ -117,9 +123,11 @@ uv remove --optional runbuoy runbuoy
 
 SDK 的 `progress()` 等调用必须发生在 RunBuoy 启动的目标进程树中。若不能修改项目依赖，可从目标进程使用 `runbuoy emit`；参见[进度模式](/guide/progress)。
 
+<span id="troubleshooting"></span>
+
 ## 故障排查
 
-- 找不到 `runbuoy`：运行 `uv tool update-shell` 或 `pipx ensurepath`，然后重启终端。
+- 找不到 `runbuoy`：先用 `uv tool dir --bin` 找到实际目录；若其中的 `runbuoy` 可通过绝对路径执行，只需修复 PATH，无需重装。运行 `uv tool update-shell` 后启用当前 Shell 的 PATH，并在新终端再次验证。uv 在当前 PATH 已含工具目录时会跳过配置更新；如果新终端仍失败，可将上面的现象交给 [Agent 安装提示词](/guide/agent-skill)检查。Skill 的脚本会去掉继承的临时路径后修复并复查。如果手动处理，应检查实际 Shell 启动文件中是否缺少路径或有后续 PATH 覆盖。pipx 安装则使用 `pipx ensurepath`，保留原安装方式。
 - `doctor` 报告缺少 tmux：使用上面的系统包管理器命令安装，不要尝试用 pip 安装。
 - `local_ready=true` 但 `delivery.ready=false`：本地执行仍已就绪；配对或 Server 可达性不可用，事件会保留在本地 outbox。
 - 项目无法安装 API：确认项目 `requires-python` 包含 Python 3.12+，不要让安装器自动扩大项目支持范围。

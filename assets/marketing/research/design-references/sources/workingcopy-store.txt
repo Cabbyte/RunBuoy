@@ -1,0 +1,345 @@
+URL: https://apps.apple.com/us/app/git-client-working-copy/id896694807
+Captured: 2026-10-02
+
+- navigation:
+  - img "App Store":
+  - button "App Store":
+    - text: for iPhone
+  - generic: Search
+  - searchbox "Search"
+  - list:
+    - button "Today":
+      - generic: Today
+    - button "Games":
+      - generic: Games
+    - button "Apps":
+      - generic: Apps
+    - button "Arcade":
+      - generic: Arcade
+  - generic: Categories
+  - list "Categories":
+    - button "Categories":
+      - generic: Categories
+    - button "Photo & Video":
+      - generic: Photo & Video
+    - button "Health & Fitness":
+      - generic: Health & Fitness
+    - button "Productivity":
+      - generic: Productivity
+    - button "Entertainment":
+      - generic: Entertainment
+    - button "Action":
+      - generic: Action
+    - button "Adventure":
+      - generic: Adventure
+    - button "Puzzle":
+      - generic: Puzzle
+    - button "Indie":
+      - generic: Indie
+  - list
+- main:
+  - heading "Git client - Working Copy" [level=1]:
+    - generic: Git client - Working Copy
+  - paragraph: for GitHub and self-hosted
+  - paragraph: Free · In‑App Purchases
+  - button "Share":
+    - text: Share
+  - list:
+    - link "3.8K Ratings 4.8 Stars":
+      - /url: "#productRatings"
+      - term:
+        - generic: 3.8K Ratings
+      - definition:
+        - generic: "4.8"
+        - list "4.8 Stars":
+    - link "Age Rating 4+ Years":
+      - /url: "#information"
+      - term:
+        - generic: Age Rating
+      - definition:
+        - generic: 4+
+        - generic: Years
+    - 'link "Chart #75 Developer Tools"':
+      - /url: https://apps.apple.com/us/iphone/charts/6026?chart=top-free
+      - term:
+        - generic: Chart
+      - definition:
+        - generic: "#75"
+        - generic: Developer Tools
+    - link "Developer Anders Borum":
+      - /url: https://apps.apple.com/us/developer/anders-borum/id343532883?platform=iphone
+      - term:
+        - generic: Developer
+      - definition:
+        - generic: Anders Borum
+    - link "Language EN + 4 More":
+      - /url: "#information"
+      - term:
+        - generic: Language
+      - definition:
+        - generic: EN
+        - generic: + 4 More
+    - link "Size 97.2 MB":
+      - /url: "#information"
+      - term:
+        - generic: Size
+      - definition:
+        - generic: "97.2"
+        - generic: MB
+  - region "iPhone App Previews and Screenshots":
+    - button "Previous Page" [disabled]:
+    - list:
+      - generic "Screenshot"
+      - generic "Screenshot"
+      - generic "Screenshot"
+      - generic "Screenshot"
+    - button "Next Page":
+  - button "iPhone, iPad":
+    - generic: iPhone, iPad
+  - paragraph:
+    - generic: Access Git repositories on the go. Clone, edit, commit and push while allowing other apps access to repositories. Git is a important part of our work-life and iOS can take part in this. The ability to commit even when offline has added utility on a device that moves in and out of network coverage. Cloning repositories gets you a local copy on your iOS device with commits for all branches. You can browse the content from within the app and make changes. Other applications supporting the Files app, WebDAV or x-callback-url has access to these files. Changes made can be committed and the commits can in turn be pushed back to the remote. The idea of doing significant programming on iOS might seem far fetched when you are used to a large screen, a physical keyboard and a full IDE. But just as it turned out that not every email is serious prose, then not everything that goes on in Git is significant programming. Sometimes you just want to update a TODO file or make adjustments to your Jekyll site. Sometimes you just need to add a file the designer sent after hours. If you ever make reminders about small things to do with the code-base, then you should give Working Copy a try. You will spend less time moving stuff around and you will get much better commit messages when you write them for fixes that are still fresh in your mind. You won't be leaving your computer behind any time soon, but sometimes it is faster to just fix things with the device in your hand. When you do need to perform real work on iOS, Working Copy is a powerful tool. Editor has syntax highlighting for more than 50 programming languages and a built-in color picker. Preview images, Markdown and HTML files with a Javascript console pointing to errors in your code. Create new branches and merge or rebase them back, with a brilliant merge-tool for handling conflicts. If you need to automate your work there are Working Copy actions in the Shortcuts app for most operations. Even if you never edit a line of code on iOS, Working Copy is a great companion for reviewing and discussing code. Repositories are cross indexed and with powerful fuzzy search you can quickly jump from a symbol to the declaration or reverse from the declaration to all usages. A graph of your commits lets you zoom out for a overview of the commit tree or zoom in for specifics about each commit, with speed and beauty you won’t find in desktop Git applications. Review the changes your files have gone through with a diff viewer that is great for text and images. There is even hex-dump mode for that obscure occasion. Working Copy is a free download but you need to unlock pro features such as the ability to push commits and manage more than 5 repositories. There is no venture capital, large company or ads funding development and your support through in-app purchase directly sustains development. Try out pro features with a 10 day free trial. When you pay to unlock you get permanent access to all pro features at the time of purchase as well as any added the next year. When 12 months have passed you keep all existing pro features but any new ones introduced are locked until you renew your unlock.
+    - button "more"
+  - region "Ratings & Reviews":
+    - link "Ratings & Reviews":
+      - /url: https://apps.apple.com/us/app/896694807?see-all=reviews&platform=iphone
+      - heading "Ratings & Reviews" [level=2]
+    - list:
+      - generic: "4.8"
+      - generic: out of 5
+      - generic: 3.8K Ratings
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.other.one**":
+  - button "Previous Page" [disabled]:
+  - list:
+    - generic "Take my money!":
+      - heading "Take my money!" [level=3]
+      - list "5 Stars":
+      - time: 11/21/2021
+      - generic: Woojamon
+      - paragraph: "Literally within the first 10 minutes of using this app I wanted to give this man my money. And I did. I was able to connect to my github account with ease and even create a PGP key in a few taps and I don’t even know what the heck a PGP key is except that it verifies my identity on github somehow when I push changes. I originally was looking for a markdown editor with source control capabilities and this app fits the bill. I was able to create some markdown and reference image files elsewhere in the repository and it all worked, and it even has a nifty markdown preview capability. I opened a second instance of the app side by side on my ipad and had one instance in editor mode and the other in preview mode, and although it’s not a live update, as soon as I tapped “Done” though the instance in preview mode reflected the changes immediately, which I more than I had hoped for from an app that wasn’t trying to be a markdown editor! I could still edit the markdown on the first instance too just by tapping on the text area again. EDIT: I just noticed that the markdown preview refreshed about every 5 seconds or so, so even though it’s still not a live update, the auto refresh updates the preview fast enough! Even if you don’t download the app just send the man your money anyways; he totally deserves it."
+      - button "MORE"
+    - generic "good but why have push pro only?":
+      - heading "good but why have push pro only?" [level=3]
+      - list "5 Stars":
+      - time: 11/30/2018
+      - generic: Sean D. Hunt
+      - paragraph: "I find it stupid that pushing is a pro only feature. Because of that this app becomes useless after the trial forcing me back to the even more useless git2go because I cant zip up a repository that I cloned on my phone and transferred to my laptop to make changes and commited on to push it on my phone as the laptop has no internet as the wifi driver in 1803 and the latest windows insiders keeps disconnecting me. This is why I got this app to replace that trash app but with push being pro it makes this one trash too. Sorry but if you want people want to be able to use it without them being forced to buy pro or people like me who cannot get a job because of my mental stability and so I do open source to pass time. Please take this into consideration. I love the fact of gpg signing too something git2go does not have. Although I would like it if I could press some rebase button on a commit that asks me if I want to squash it into the previous commit and possibly ones after it or fixup the previous one using only the currently opened one to basically amend the one before it. Other than that keep up the good work. :wink: Even I would like to help with making this app if it itself was also open source."
+      - button "MORE"
+      - text: Developer Response
+      - paragraph: I need to make push a pro feature to make the people seriously using the app pay for it. It can support the salary of one developer (me) and I work full time to improve it.This is frustrating when it's too expensive, but the alternative would not be better for you. I wouldn't have been able to spend much time developing a free app as it would be done after completing my paying day job and the result would not be close to the quality that Working Copy is now.I'm working on ways to amend, squash and split commits.
+      - button "MORE"
+    - heading [level=3]: Fantastic app by a fantastic developer that is definitely deserving of your support
+    - list:
+    - time: 09/17/2022
+    - generic: Rando8989
+    - paragraph: I’ll preface by saying that I am not a developer, just a hobbyist. I really don’t use git a ton aside from cloning repositories for self hosted apps on my raspberry pi or digital ocean server etc. In fact, I use this developer’s other app, secure shellfish (also a fantastic app- best ssh client for iOS hands down), for all of that. That being said, I have a good understanding of how git works and an appreciation for well developed apps. This one is outstanding. Both of this developer’s apps continue to amaze me with their ability to seemingly push the limits of what’s possible with iOS. I don’t think any other apps integrate so seamlessly with the iOS files app and are as feature rich as secure shellfish and working copy. The UIs are also extremely visually pleasing. Although I can do everything (and more) that I need just from the free version, I felt compelled to pay for the pro features. As another reviewer said, give this guy your money. He definitely deserves it.
+    - button [disabled]: MORE
+    - heading [level=3]: What Can I Do For Everyone Else Always?
+    - list:
+    - time: 03/20/2018
+    - generic: Seattle Rex
+    - paragraph: I'm just a little burned out on the App Store shenanigans lately. I've lost count of the number of "Pro" upgrades of purchased which are now "free" and covered with ads. I'm tired of plunking down cash for expensive programs that, months later, switch to a subscription model, taking my cash and flushing it in the process. I'm tired of paying for apps, only to find them still filled with Ads. Maybe I'm just having a bad run, but the App Store truly feels like a scammer's bazaar these days. There are pick-pockets everywhere. I don't really lump the Working Copy folks into the group ... because they at least make a quality product and seem to put real effort into it. This is why I paid for a "permanent" Pro upgrade 14 months ago. And just paid $8 again for another "permanent" Pro upgrade. Like many other things, "permanent" doesn't mean what I thought it did. I'm sure it it's worth it, and I'm glad to support them, I just feel a little burned out and a little "over-used". I bought last Christmas and it just doesn't feel that long ago to get hit up again. I feel like I get rolled like a drunken sailor every time I log into the app store these days. I really like the app though. Nice work, guys.
+    - button [disabled]: MORE
+    - text: Developer Response
+    - paragraph: Hi Rex, I understand that it can feel a bit much with many apps asking you to pay again and again. The upgrade mechanism in Working Copy is made to be fully voluntary. You can delay upgrading if the added pro features are not enticing and you can decide never to upgrade and the pro features you already have will stick around forever. The app will still be updated with bug-fixes and non-pro features without you having to pay again. If you can accept a delay in when you get the latest pro features every other year you could even delay purchasing the upgrade, such that you only upgrade every 24 months keeping down the costs.
+    - button [disabled]: MORE
+  - button "Next Page":
+  - region "What’s New":
+    - button "What’s New":
+      - heading "What’s New" [level=2]
+    - generic "What’s New":
+      - paragraph:
+        - generic: Repositories can be linked to hidden folders such as .vim inside iSH or iVim. The Files app never shows folders starting with a dot, so the new Hidden Directory option has you pick the folder containing it and then choose among the hidden folders inside. Auto-Sync no longer reports a failed sync when the device is locked while syncing, or when a remote on your local network cannot be reached because the device is on another network. Syncing continues at the next unlock or once you are back on that network. Includes latest improvements to 7.0.0 Repository Agent can now run on Apple's Private Cloud Compute, using a larger model than the one on your device while keeping your code inside Apple's privacy guarantees. It needs no API key and no subscription, and appears in the service menu on devices with Apple Intelligence running the latest version of iOS. When the daily allowance runs out, Working Copy offers to continue with whichever AI service you have set up. Fetch, Pull, Push and Sync actions for Shortcuts are no longer cut short when they take a while. A slow transfer keeps running with progress and a Stop button, so pushing a large repository from an automation finishes instead of stopping halfway, and the Fetch button on the widget works the same way. This needs the latest version of iOS.
+        - button "more"
+      - generic: Version 7.0.2
+      - time: Sep 18
+  - region "In-App Purchases":
+    - heading "In-App Purchases" [level=2]
+    - list:
+      - heading "Working Copy Pro Unlock" [level=3]
+      - paragraph: Push to remote and all other pro features.
+      - paragraph: $35.99
+  - region "App Privacy":
+    - button "App Privacy":
+      - link "App Privacy":
+        - /url: "#"
+        - heading "App Privacy" [level=2]
+    - paragraph:
+      - text: The developer, Anders Borum, indicated that the app’s privacy practices may include handling of data as described below. For more information, see the
+      - link "Developer’s Privacy Policy":
+        - /url: https://workingcopy.app/privacy.html
+        - generic: developer’s privacy policy
+      - text: .
+  - list:
+    - generic "Data Not Linked to You":
+      - heading "Data Not Linked to You" [level=3]
+      - paragraph: "The following data may be collected but it is not linked to your identity:"
+      - list:
+        - text: Usage Data
+  - paragraph:
+    - text: Privacy practices may vary, for example, based on the features you use or your age.
+    - link "Learn More":
+      - /url: https://apps.apple.com/us/iphone/story/id1538632801
+  - region "Accessibility":
+    - heading "Accessibility" [level=2]
+    - paragraph:
+      - text: The developer has not yet indicated which accessibility features this app supports.
+      - link "Learn More":
+        - /url: https://apps.apple.com/story/id1814164299
+  - region "Information":
+    - heading "Information" [level=2]
+    - term: Seller
+    - definition: Anders Borum
+    - term: Size
+    - definition: 97.2 MB
+    - term: Category
+    - definition: Developer Tools
+    - term: Compatibility
+    - definition:
+      - generic "Requires iOS 18.2 or later.":
+        - text: Requires iOS 18.2 or later.
+    - term: Location
+    - definition: This app may use your location even when it isn’t open, which can decrease device battery life.
+    - term: Languages
+    - definition:
+      - generic "English and 4 more":
+        - text: English and 4 more
+    - term: Age Rating
+    - definition:
+      - generic "4+":
+        - text: 4+
+    - term: In-App Purchases
+    - definition:
+      - generic "Yes":
+        - text: "Yes"
+    - term: Copyright
+    - definition: © 2014-2026 Anders Borum
+  - link "Developer Website ↗":
+    - /url: https://workingcopy.app/
+    - generic: Developer Website
+    - text: ↗
+  - link "Privacy Policy ↗":
+    - /url: https://workingcopy.app/privacy.html
+    - generic: Privacy Policy
+    - text: ↗
+  - region "Supports":
+    - heading "Supports" [level=2]
+    - list:
+      - heading "Family Sharing" [level=3]
+      - paragraph:
+        - text: Some in-app purchases and subscriptions may be shareable with your family group when Family Sharing is enabled.
+        - link "Learn More":
+          - /url: https://apps.apple.com/us/iphone/story/id1563279606
+  - region "More by Anders Borum":
+    - link "More by Anders Borum":
+      - /url: https://apps.apple.com/us/developer/anders-borum/id343532883
+      - heading "More by Anders Borum" [level=2]
+    - list:
+      - link "View SSH Client - Secure ShellFish Terminal, Files & Finder":
+        - /url: https://apps.apple.com/us/app/ssh-client-secure-shellfish/id1336634154
+        - generic: View
+        - generic: SSH Client - Secure ShellFish
+        - generic: Terminal, Files & Finder
+  - region "You Might Also Like":
+    - link "You Might Also Like":
+      - /url: https://apps.apple.com/us/app/896694807?see-all=customers-also-bought-apps&platform=iphone
+      - heading "You Might Also Like" [level=2]
+    - button "Previous Page" [disabled]:
+    - list:
+      - link "View Jayson JSON editor with Shortcuts":
+        - /url: https://apps.apple.com/us/app/jayson/id1447750768
+        - generic: View
+        - generic: Jayson
+        - generic: JSON editor with Shortcuts
+      - 'link "View Swifty Compiler: Swift IDE Code Editor & Playground"':
+        - /url: https://apps.apple.com/us/app/swifty-compiler-swift-ide/id1544749600
+        - generic: View
+        - generic: "Swifty Compiler: Swift IDE"
+        - generic: Code Editor & Playground
+      - link "View Kodex A powerful code editor":
+        - /url: https://apps.apple.com/us/app/kodex/id1038574481
+        - generic: View
+        - generic: Kodex
+        - generic: A powerful code editor
+      - link "View Textastic Code Editor Text, Coding, SFTP Client, SSH":
+        - /url: https://apps.apple.com/us/app/textastic-code-editor/id1049254261
+        - generic: View
+        - generic: Textastic Code Editor
+        - generic: Text, Coding, SFTP Client, SSH
+      - link "View Blink Shell, Build & Code The Pro tool for developers":
+        - /url: https://apps.apple.com/us/app/blink-shell-build-code/id1594898306
+        - generic: View
+        - generic: Blink Shell, Build & Code
+        - generic: The Pro tool for developers
+      - link "View Rev for Vercel Vercel Mobile":
+        - /url: https://apps.apple.com/us/app/rev-for-vercel/id6740740427
+        - generic: View
+        - generic: Rev for Vercel
+        - generic: Vercel Mobile
+      - link "View Runestone Text Editor Edit plain text and code":
+        - /url: https://apps.apple.com/us/app/runestone-text-editor/id1548193893
+        - generic: View
+        - generic: Runestone Text Editor
+        - generic: Edit plain text and code
+      - link "View Network Sniffer Inspect HTTPS / Socket Request":
+        - /url: https://apps.apple.com/us/app/network-sniffer/id6450956188
+        - generic: View
+        - generic: Network Sniffer
+        - generic: Inspect HTTPS / Socket Request
+      - link "View Device Info Tool Hardware and software details":
+        - /url: https://apps.apple.com/us/app/device-info-tool/id6448629269
+        - generic: View
+        - generic: Device Info Tool
+        - generic: Hardware and software details
+      - link:
+        - /url: https://apps.apple.com/us/app/vibe-code-ai-code-generator/id6469298113
+        - generic: View
+        - generic: "Vibe Code: AI Code Generator"
+        - generic: AI Coding Assistant
+    - button "Next Page":
+- button "United States"
+- list:
+  - link "This page is available in Español (México)":
+    - /url: "?l=es-MX"
+    - text: Español (México)
+  - link "This page is available in العربية":
+    - /url: "?l=ar"
+    - text: العربية
+  - link "This page is available in Русский":
+    - /url: "?l=ru"
+    - text: Русский
+  - link "This page is available in 简体中文":
+    - /url: "?l=zh-Hans-CN"
+    - text: 简体中文
+  - link "This page is available in Français (France)":
+    - /url: "?l=fr-FR"
+    - text: Français (France)
+  - link "This page is available in 한국어":
+    - /url: "?l=ko"
+    - text: 한국어
+  - link "This page is available in Português (Brazil)":
+    - /url: "?l=pt-BR"
+    - text: Português (Brazil)
+  - link "This page is available in Tiếng Việt":
+    - /url: "?l=vi"
+    - text: Tiếng Việt
+  - link "This page is available in 繁體中文 (台灣)":
+    - /url: "?l=zh-Hant-TW"
+    - text: 繁體中文 (台灣)
+- paragraph:
+  - text: Copyright © 2026
+  - link "Apple Inc.":
+    - /url: https://www.apple.com
+  - text: All rights reserved.
+- list:
+  - link "Internet Service Terms":
+    - /url: https://www.apple.com/legal/internet-services/
+  - link "App Store & Privacy":
+    - /url: https://www.apple.com/legal/privacy/data/en/app-store/
+  - link "Cookie Warning":
+    - /url: https://www.apple.com/privacy/use-of-cookies/
+  - link "Support":
+    - /url: https://support.apple.com/billing

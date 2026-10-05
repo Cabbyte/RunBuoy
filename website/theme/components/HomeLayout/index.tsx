@@ -1,3 +1,5 @@
+import { useLang } from '@rspress/core/runtime';
+import { ChineseHome } from '../ChineseHome';
 import {
   HomeBackground,
   type HomeLayoutProps,
@@ -16,6 +18,8 @@ function HomeLayout({
   beforeFeatures,
   afterFeatures,
 }: HomeLayoutProps) {
+  const lang = useLang();
+  if (lang.startsWith('zh')) return <ChineseHome {...{ beforeHero, afterHero, beforeHeroActions, afterHeroActions, beforeFeatures, afterFeatures }} />;
   return (
     <>
       <HomeBackground />

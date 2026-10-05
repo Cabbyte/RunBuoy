@@ -5,7 +5,7 @@ import { defineConfig } from '@rspress/core';
 export default defineConfig({
   root: path.join(__dirname, 'docs'),
   title: 'RunBuoy',
-  description: '在 iPhone 上随时掌握 Mac 和 Linux 长任务的进度与结果。',
+  description: '扫一眼，掌握任务的进展。安装交给 Agent，状态带到 iPhone。',
   icon: '/brand/runbuoy-icon-light.png',
   logo: {
     light: '/brand/runbuoy-icon-light.png',
@@ -18,7 +18,7 @@ export default defineConfig({
       lang: 'zh',
       label: '简体中文',
       title: 'RunBuoy',
-      description: '在 iPhone 上随时掌握 Mac 和 Linux 长任务的进度与结果。',
+      description: '扫一眼，掌握任务的进展。安装交给 Agent，状态带到 iPhone。',
     },
     {
       lang: 'en',
@@ -54,11 +54,11 @@ export default defineConfig({
         href: '/brand/apple-touch-icon.png',
       },
     ],
-    [
+    route => [
       'meta',
       {
         property: 'og:image',
-        content: 'https://www.runbuoy.cloud/og.png',
+        content: `https://www.runbuoy.cloud/${route.lang === 'zh' ? 'marketing/zh-Hans/og.png' : 'og.png'}`,
       },
     ],
     [
@@ -87,6 +87,7 @@ export default defineConfig({
     enabled: true,
   },
   themeConfig: {
+    localeRedirect: 'never',
     lastUpdated: true,
     socialLinks: [
       {

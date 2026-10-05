@@ -1,0 +1,3824 @@
+{
+  "date": "2026-10-03",
+  "status": "Awaiting copy review; only Agent-first installation changes implemented",
+  "sourceHashes": {
+    "website/docs/zh/index.mdx": "202081f35f5203b00646c974b8e6289b549eeef9e3090cfa344d3819afd38f6d",
+    "website/docs/en/index.mdx": "29e5706e2a9e11ecfce5bf070cff5da96eb7506e8b6ae81292a8194f7993d0ec",
+    "website/theme/components/HomeHero/index.tsx": "4a5d7f23f6f888cf2ec4619e38e2b36c764adf7f48ddece4c705185a1787b4d0",
+    "website/theme/components/HomeFeature/index.tsx": "54d39f144771f1aa1db209f110fcce797df87cb4f12b795bfcb4173911736f6a",
+    "website/theme/components/HomeContent/index.tsx": "4d813cfe86197e5265cedb7660eec20b73cadfdb8ba09458d68789a9924807ea",
+    "website/theme/components/HomeFooter/index.tsx": "8692edaf37759e6df37945ec6a2474f6638b2dc8516cef65a83fb21671ef355e",
+    "website/docs/zh/_nav.json": "3506eb096420ea61c5f1af1fc30da557c9e7239a7066d4c5fae17ffef70cae24",
+    "website/docs/en/_nav.json": "5366dca8b588287c65b5c1d50a10529a548124c284fd1284f5c69bca24916303",
+    "assets/marketing/sources/copy.json": "4ee79c38fa72d22335783b2eec8f164cdb3858fe91f7865a902b9fdcd25f116d",
+    "assets/marketing/scripts/render.swift": "d862ab80f800f306b15e91851b3f3775c4a06e4879c87e8adc8bdc41aa6796f2",
+    "website/theme/components/HomeContent/installPrompts.ts": "7db304bfa3ce393aea4fc81a6daefd74036309f8a88cf5848d74998aade763a1",
+    "website/docs/zh/download.md": "6c20afdce7a1b70909c804c62e7ca89433258d166e9f2b474c412b33df761605",
+    "website/docs/en/download.md": "621d6041e2b7e8702d47706dde1462dced8ff57c9b7d12f159e7d11ffa1d19f7",
+    "website/docs/zh/guide/index.mdx": "24794ae318b8746fa28f96d0f375e6570f3276bab330fdd5f20eb584838a7652",
+    "website/docs/en/guide/index.mdx": "cb3e4fdc77ffa0457ea424fec95dbd1763b8ad49f437179f7b9b318c3d8a8b65"
+  },
+  "entries": [
+    {
+      "id": "H01",
+      "section": "首页首屏",
+      "label": "主标题",
+      "zh": "离开电脑，\n也知道任务跑到哪了。",
+      "en": "Step away.\nStay in the know.",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 6
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 6
+        }
+      ],
+      "intent": "说明离开电脑后仍能获知任务状态。",
+      "concern": "它只表达结果，没有直接说明服务哪些任务、通过什么接入；也是上一版重复最多的意思。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "H02",
+      "section": "首页首屏",
+      "label": "首屏说明",
+      "zh": "训练模型、等待构建、处理数据。让 Mac 与 Linux 上的长任务继续跑，在 iPhone 上看进度、等结果。",
+      "en": "Training a model. Waiting on a build. Processing data. Let your Mac or Linux machine keep working, and follow its progress from your iPhone.",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 9
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 9
+        }
+      ],
+      "intent": "给出使用场景与 Mac/Linux → iPhone 的方向。",
+      "concern": "场景先列训练、构建、处理数据，Agent 没有出现；这未经用户确认，不应默认为核心场景排序。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "H03",
+      "section": "首页首屏",
+      "label": "页面描述 / 搜索摘要",
+      "zh": "离开电脑，也知道任务跑到哪了。RunBuoy 将 Mac 与 Linux 的长任务状态、阶段和结果，带到 iPhone 的锁定屏幕、灵动岛和 App。",
+      "en": "Step away from your computer. Keep long-running Mac and Linux tasks in sight with RunBuoy on your iPhone Lock Screen, Dynamic Island, and in the app.",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 3
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 3
+        }
+      ],
+      "intent": "搜索与分享时说明产品用途。",
+      "concern": "需要与最终核心定位一致；目前仍围绕进度与长任务。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "H04",
+      "section": "首页首屏",
+      "label": "首屏按钮 1",
+      "zh": "App Store 下载",
+      "en": "Get on the App Store",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 12
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 12
+        }
+      ],
+      "intent": "获取 iPhone App。",
+      "concern": "",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "H05",
+      "section": "首页首屏",
+      "label": "首屏按钮 2",
+      "zh": "连接我的电脑",
+      "en": "Connect my computer",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 15
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 15
+        }
+      ],
+      "intent": "进入已改为 Agent 优先的安装区。",
+      "concern": "",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "HX01",
+      "section": "首页首屏辅助文字",
+      "label": "系统要求",
+      "zh": "免费 · iOS 18 及以上 · 需在 Mac / Linux 安装 CLI",
+      "en": "Free · iOS 18+ · CLI setup on Mac or Linux required",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeHero/index.tsx",
+          "line": 36
+        }
+      ],
+      "intent": "说明价格、设备要求和电脑端安装要求。",
+      "concern": "CLI 是实现依赖；安装方式应由 Agent 优先的入口解释。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "HX02",
+      "section": "首页首屏辅助文字",
+      "label": "任务列表替代文字",
+      "zh": "RunBuoy 运行中：Mac Studio 上的训练、MacBook 上的构建、Linux 上的备份",
+      "en": "RunBuoy active runs: training on Mac Studio, a MacBook build and a Linux backup",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeHero/index.tsx",
+          "line": 43
+        }
+      ],
+      "intent": "为读屏用户描述示例图。",
+      "concern": "示例数据不是用户真实任务；“真实界面”与“真实业务数据”要区分。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "HX03",
+      "section": "首页首屏辅助文字",
+      "label": "锁屏图注",
+      "zh": "锁屏一瞥，进度在这里",
+      "en": "A glance at your Lock Screen",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeHero/index.tsx",
+          "line": 46
+        }
+      ],
+      "intent": "指出锁屏中的状态展示。",
+      "concern": "“进度在这里”仍与主标题重复。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "HX04",
+      "section": "首页首屏辅助文字",
+      "label": "实时活动替代文字",
+      "zh": "真实实时活动：任务进度 72%，显示当前阶段与运行时间",
+      "en": "Real Live Activity showing 72% progress, the current phase and elapsed time",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeHero/index.tsx",
+          "line": 47
+        }
+      ],
+      "intent": "为读屏用户描述实时活动截图。",
+      "concern": "72% 是构造的演示数据。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "F01",
+      "section": "首页功能区",
+      "label": "区块眉题",
+      "zh": "从开始，到结束",
+      "en": "From the first step to the final result",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFeature/index.tsx",
+          "line": 75
+        }
+      ],
+      "intent": "引出任务从开始到结束的过程。",
+      "concern": "抽象过渡句，没有新增产品信息。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "F02",
+      "section": "首页功能区",
+      "label": "区块标题",
+      "zh": "不用守着终端，也能心里有数。",
+      "en": "Less checking. More knowing.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFeature/index.tsx",
+          "line": 78
+        }
+      ],
+      "intent": "强调减少反复查看。",
+      "concern": "与 H01 重复，没有说明哪些状态变化值得关注。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "F03",
+      "section": "首页功能区",
+      "label": "区块说明",
+      "zh": "正在跑、跑到哪、结果如何。需要的状态，就在手边。",
+      "en": "Running, making progress, or finished. The state that matters stays within reach.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFeature/index.tsx",
+          "line": 82
+        }
+      ],
+      "intent": "列出运行状态、进度和结果。",
+      "concern": "没有提到任务消息与显式关注提醒。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "F04",
+      "section": "首页功能区",
+      "label": "功能 1 标题",
+      "zh": "进度，就在锁屏上",
+      "en": "Progress on your Lock Screen",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 18
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 18
+        }
+      ],
+      "intent": "锁屏与灵动岛展示。",
+      "concern": "“不用反复看终端”较泛，应说明用户能获知的具体信息。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "F05",
+      "section": "首页功能区",
+      "label": "功能 1 说明",
+      "zh": "用实时活动和灵动岛查看阶段、进度与运行时间，不必反复切回终端。",
+      "en": "See the current phase, progress, and elapsed time in Live Activities and Dynamic Island. Fewer trips back to the terminal.",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 19
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 19
+        }
+      ],
+      "intent": "锁屏与灵动岛展示。",
+      "concern": "“不用反复看终端”较泛，应说明用户能获知的具体信息。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "F06",
+      "section": "首页功能区",
+      "label": "功能 2 标题",
+      "zh": "结束了，知道结果",
+      "en": "Know how it finished",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 22
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 22
+        }
+      ],
+      "intent": "显示任务结果与历史。",
+      "concern": "只写查看结果，主动提醒与显式关注消息没有讲清。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "F07",
+      "section": "首页功能区",
+      "label": "功能 2 说明",
+      "zh": "任务成功还是失败，一眼分清。回到 App，还能查看历史与阶段记录。",
+      "en": "Tell success from failure at a glance. Open the app to revisit past runs and the phases along the way.",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 23
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 23
+        }
+      ],
+      "intent": "显示任务结果与历史。",
+      "concern": "只写查看结果，主动提醒与显式关注消息没有讲清。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "F08",
+      "section": "首页功能区",
+      "label": "功能 3 标题",
+      "zh": "Agent 工作，也看得见",
+      "en": "Keep your agent in view",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 26
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 26
+        }
+      ],
+      "intent": "让支持 Skill 的 Agent 接入 RunBuoy。",
+      "concern": "Agent 被放在第三个功能项；默认安装方式已明确，但是否也是第一核心场景还需用户定义。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "F09",
+      "section": "首页功能区",
+      "label": "功能 3 说明",
+      "zh": "为 Codex 等支持 Skill 的 Agent 接入 RunBuoy，让它按阶段报告长任务的状态。",
+      "en": "Give Codex or another Skill-enabled agent the RunBuoy Skill so it can report the phases of your long-running work.",
+      "sources": [
+        {
+          "file": "website/docs/zh/index.mdx",
+          "line": 27
+        },
+        {
+          "file": "website/docs/en/index.mdx",
+          "line": 27
+        }
+      ],
+      "intent": "让支持 Skill 的 Agent 接入 RunBuoy。",
+      "concern": "Agent 被放在第三个功能项；默认安装方式已明确，但是否也是第一核心场景还需用户定义。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "S01",
+      "section": "使用场景",
+      "label": "场景区眉题",
+      "zh": "给每一段等待，一个交代",
+      "en": "For the work worth waiting for",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 19
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 55
+        }
+      ],
+      "intent": "引入等待场景。",
+      "concern": "“给等待一个交代”含义抽象，不能帮助理解产品。",
+      "status": "待用户审阅",
+      "sourceKey": "storyEyebrow"
+    },
+    {
+      "id": "S02",
+      "section": "使用场景",
+      "label": "场景区标题",
+      "zh": "电脑继续忙，\n你可以先离开。",
+      "en": "Your computer is busy.\nYou don’t have to be.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 20
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 56
+        }
+      ],
+      "intent": "说明电脑任务可继续执行。",
+      "concern": "“你可以先离开”仍重复 H01；未呈现 Agent/任务与 RunBuoy 的关系。",
+      "status": "待用户审阅",
+      "sourceKey": "storyTitle"
+    },
+    {
+      "id": "S03",
+      "section": "使用场景",
+      "label": "场景区说明",
+      "zh": "多台电脑的任务集中在一处。需要知道的不只是“还在跑”，还有现在跑到哪一步。",
+      "en": "Bring tasks from your computers into one view. See more than “still running”: know which phase they have reached.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 21
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 57
+        }
+      ],
+      "intent": "将多机任务放到一个视图。",
+      "concern": "“不只是还在跑”容易暗示所有任务都有细粒度进度；须有显式上报。",
+      "status": "待用户审阅",
+      "sourceKey": "storyLead"
+    },
+    {
+      "id": "S04",
+      "section": "使用场景",
+      "label": "场景 1 标题",
+      "zh": "模型训练与实验",
+      "en": "Model training & experiments",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 23
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 59
+        }
+      ],
+      "intent": "说明一个具体任务场景或接入方式。",
+      "concern": "训练、构建、备份的优先顺序尚未作为产品定位得到确认。",
+      "status": "待用户审阅",
+      "sourceKey": "scenarios.0.0"
+    },
+    {
+      "id": "S05",
+      "section": "使用场景",
+      "label": "场景 1 说明",
+      "zh": "看轮次、样本数与阶段，出门后也能掌握训练状态。",
+      "en": "Follow epochs, sample counts, and phases while you step away.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 23
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 59
+        }
+      ],
+      "intent": "说明一个具体任务场景或接入方式。",
+      "concern": "训练、构建、备份的优先顺序尚未作为产品定位得到确认。",
+      "status": "待用户审阅",
+      "sourceKey": "scenarios.0.1"
+    },
+    {
+      "id": "S06",
+      "section": "使用场景",
+      "label": "场景 2 标题",
+      "zh": "编译、测试与构建",
+      "en": "Compiles, tests & builds",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 24
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 60
+        }
+      ],
+      "intent": "说明一个具体任务场景或接入方式。",
+      "concern": "训练、构建、备份的优先顺序尚未作为产品定位得到确认。",
+      "status": "待用户审阅",
+      "sourceKey": "scenarios.1.0"
+    },
+    {
+      "id": "S07",
+      "section": "使用场景",
+      "label": "场景 2 说明",
+      "zh": "知道构建还在执行，或是已经成功、失败。",
+      "en": "Know whether a build is still running, succeeded, or failed.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 24
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 60
+        }
+      ],
+      "intent": "说明一个具体任务场景或接入方式。",
+      "concern": "训练、构建、备份的优先顺序尚未作为产品定位得到确认。",
+      "status": "待用户审阅",
+      "sourceKey": "scenarios.1.1"
+    },
+    {
+      "id": "S08",
+      "section": "使用场景",
+      "label": "场景 3 标题",
+      "zh": "数据处理与备份",
+      "en": "Data processing & backups",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 25
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 61
+        }
+      ],
+      "intent": "说明一个具体任务场景或接入方式。",
+      "concern": "训练、构建、备份的优先顺序尚未作为产品定位得到确认。",
+      "status": "待用户审阅",
+      "sourceKey": "scenarios.2.0"
+    },
+    {
+      "id": "S09",
+      "section": "使用场景",
+      "label": "场景 3 说明",
+      "zh": "把脚本报告的进度带到手边，减少来回查看。",
+      "en": "Keep the progress your scripts report within reach. Check back less.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 25
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 61
+        }
+      ],
+      "intent": "说明一个具体任务场景或接入方式。",
+      "concern": "训练、构建、备份的优先顺序尚未作为产品定位得到确认。",
+      "status": "待用户审阅",
+      "sourceKey": "scenarios.2.1"
+    },
+    {
+      "id": "S10",
+      "section": "使用场景",
+      "label": "进度能力条件",
+      "zh": "百分比与预计完成时间来自任务显式报告。普通命令也能跟踪状态和结果，不会自动推算百分比。",
+      "en": "Percentages and time estimates come from explicit task reports. Ordinary commands still report status and results; RunBuoy does not invent a percentage.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 27
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 63
+        }
+      ],
+      "intent": "限定百分比与 ETA 的来源。",
+      "concern": "是功能解释，放在主要卖点下面只能补充，不能修复主标题的绝对承诺。",
+      "status": "待用户审阅",
+      "sourceKey": "progressNote"
+    },
+    {
+      "id": "S11",
+      "section": "使用场景",
+      "label": "进度接入链接",
+      "zh": "如何接入真实进度",
+      "en": "Connect real progress",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 28
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 64
+        }
+      ],
+      "intent": "说明一个具体任务场景或接入方式。",
+      "concern": "训练、构建、备份的优先顺序尚未作为产品定位得到确认。",
+      "status": "待用户审阅",
+      "sourceKey": "progressLink"
+    },
+    {
+      "id": "I01",
+      "section": "安装区",
+      "label": "安装区眉题",
+      "zh": "从电脑到手边",
+      "en": "From your computer to your pocket",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 29
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 65
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "setupEyebrow"
+    },
+    {
+      "id": "I02",
+      "section": "安装区",
+      "label": "安装区标题",
+      "zh": "使用 Agent 安装 RunBuoy。",
+      "en": "Install RunBuoy with your agent.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 30
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 66
+        }
+      ],
+      "intent": "把 Agent 安装设为主路径。",
+      "concern": "本轮已按用户明确要求修改。",
+      "status": "已按 Agent 优先调整；措辞仍待审阅",
+      "sourceKey": "setupTitle",
+      "previous": {
+        "zh": "下载，然后\n连接你的电脑。",
+        "en": "Get the app. Connect your computer."
+      }
+    },
+    {
+      "id": "I03",
+      "section": "安装区",
+      "label": "安装区说明",
+      "zh": "复制安装提示词，交给 Codex 或其他支持 Skill 的 Agent。",
+      "en": "Copy the installation prompt into Codex or another Skill-enabled agent.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 31
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 67
+        }
+      ],
+      "intent": "说明把提示词交给什么工具。",
+      "concern": "不承诺所有 Agent 都支持 Skill。",
+      "status": "已按 Agent 优先调整；措辞仍待审阅",
+      "sourceKey": "setupLead",
+      "previous": {
+        "zh": "iPhone 负责展示。任务仍从 Mac 或 Linux 启动。",
+        "en": "Your iPhone shows the status. Tasks still start on your Mac or Linux machine."
+      }
+    },
+    {
+      "id": "I04",
+      "section": "安装区",
+      "label": "手动步骤 1 标题",
+      "zh": "在 iPhone 下载",
+      "en": "Get RunBuoy on iPhone",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 33
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 69
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "steps.0.0"
+    },
+    {
+      "id": "I05",
+      "section": "安装区",
+      "label": "手动步骤 1 说明",
+      "zh": "从 App Store 安装 RunBuoy，打开 App 完成引导。",
+      "en": "Download from the App Store and follow the in-app introduction.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 33
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 69
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "steps.0.1"
+    },
+    {
+      "id": "I06",
+      "section": "安装区",
+      "label": "手动步骤 2 标题",
+      "zh": "在电脑安装",
+      "en": "Install on your computer",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 34
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 70
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "steps.1.0"
+    },
+    {
+      "id": "I07",
+      "section": "安装区",
+      "label": "手动步骤 2 说明",
+      "zh": "先准备 uv 与 tmux。以下命令适用于 Bash / Zsh；完成后在新终端验证 runbuoy --version。",
+      "en": "Set up uv and tmux. Use these commands in Bash / Zsh, then verify runbuoy --version in a new terminal.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 34
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 70
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "已按 Agent 优先调整；措辞仍待审阅",
+      "sourceKey": "steps.1.1",
+      "previous": {
+        "zh": "先准备 uv 与 tmux，再安装 CLI。支持 macOS 和 Linux。",
+        "en": "Set up uv and tmux, then install the CLI. Works on macOS and Linux."
+      }
+    },
+    {
+      "id": "I08",
+      "section": "安装区",
+      "label": "手动步骤 3 标题",
+      "zh": "配对你的电脑",
+      "en": "Pair your computer",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 35
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 71
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "steps.2.0"
+    },
+    {
+      "id": "I09",
+      "section": "安装区",
+      "label": "手动步骤 3 说明",
+      "zh": "在终端运行配对命令，用 App 扫描二维码并确认电脑身份。",
+      "en": "Run the pairing command, scan the QR code in the app, and confirm the computer.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 35
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 71
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "steps.2.1"
+    },
+    {
+      "id": "I10",
+      "section": "安装区",
+      "label": "手动步骤 4 标题",
+      "zh": "看到第一条动态",
+      "en": "See your first update",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 36
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 72
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "steps.3.0"
+    },
+    {
+      "id": "I11",
+      "section": "安装区",
+      "label": "手动步骤 4 说明",
+      "zh": "配对后运行演示，确认 iPhone 收到状态，再接入自己的长任务。",
+      "en": "Run the demo after pairing. Once it reaches your iPhone, connect your own long-running work.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 36
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 72
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "steps.3.1"
+    },
+    {
+      "id": "I12",
+      "section": "安装区",
+      "label": "下载入口",
+      "zh": "App Store 下载",
+      "en": "Get on the App Store",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 38
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 74
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "download"
+    },
+    {
+      "id": "I13",
+      "section": "安装区",
+      "label": "依赖说明链接",
+      "zh": "准备依赖与完整安装说明",
+      "en": "Dependencies and installation guide",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 38
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 74
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "dependencies"
+    },
+    {
+      "id": "I14",
+      "section": "安装区",
+      "label": "配对指南链接",
+      "zh": "完整配对与使用指南",
+      "en": "Full pairing and usage guide",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 39
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 75
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "待用户审阅",
+      "sourceKey": "guide"
+    },
+    {
+      "id": "I15",
+      "section": "安装区",
+      "label": "Agent 安装卡片标题",
+      "zh": "安装 Skill 与 CLI",
+      "en": "Install the Skill and CLI",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 40
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 76
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "已按 Agent 优先调整；措辞仍待审阅",
+      "sourceKey": "agentTitle",
+      "previous": {
+        "zh": "正在使用 Codex 或其他 Agent？",
+        "en": "Already working with Codex or another agent?"
+      }
+    },
+    {
+      "id": "I16",
+      "section": "安装区",
+      "label": "Agent 安装卡片说明",
+      "zh": "Agent 会安装并验证 RunBuoy Skill 与 CLI。完成后，继续配对手机与运行任务。",
+      "en": "Your agent installs and verifies the RunBuoy Skill and CLI. Then pair your phone and start a task.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 41
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 77
+        }
+      ],
+      "intent": "说明 Agent 会安装与验证哪些组件。",
+      "concern": "安装与真正接入任务是两个步骤；不能写成粘贴后自动跟踪一切。",
+      "status": "已按 Agent 优先调整；措辞仍待审阅",
+      "sourceKey": "agentLead",
+      "previous": {
+        "zh": "也可以让支持 Skill 的 Agent 帮你安装和验证。完成后，由你继续配对与运行任务。",
+        "en": "A Skill-enabled agent can help install and verify RunBuoy. You then pair your phone and start a task."
+      }
+    },
+    {
+      "id": "I17",
+      "section": "安装区",
+      "label": "手动安装折叠入口",
+      "zh": "手动安装与配对步骤",
+      "en": "Manual installation and pairing",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 42
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 78
+        }
+      ],
+      "intent": "将手动安装作为折叠后的备选路径。",
+      "concern": "本轮已按用户明确要求修改。",
+      "status": "已按 Agent 优先调整；措辞仍待审阅",
+      "sourceKey": "manualSummary",
+      "previous": {
+        "zh": null,
+        "en": null
+      }
+    },
+    {
+      "id": "I18",
+      "section": "安装区",
+      "label": "安装提示词复制按钮",
+      "zh": "复制安装提示词",
+      "en": "Copy installation prompt",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 42
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 78
+        }
+      ],
+      "intent": "引导安装、配对或查看操作说明。",
+      "concern": "Agent 默认展开；手动安装相关内容默认折叠。",
+      "status": "已按 Agent 优先调整；措辞仍待审阅",
+      "sourceKey": "promptCopy",
+      "previous": {
+        "zh": "复制完整提示词",
+        "en": "Copy full prompt"
+      }
+    },
+    {
+      "id": "I19",
+      "section": "安装区",
+      "label": "安装提示词执行范围",
+      "zh": "这条提示词只安装和验证，不会自动配对、启动任务或上传日志。",
+      "en": "This prompt only installs and verifies. It does not pair devices, start tasks, or upload logs.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 43
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 79
+        }
+      ],
+      "intent": "说明安装提示词的实际执行范围。",
+      "concern": "配对、任务启动仍需用户主动发起；不是全自动安装到推送闭环。",
+      "status": "待用户审阅",
+      "sourceKey": "promptNote"
+    },
+    {
+      "id": "P01",
+      "section": "数据与执行边界",
+      "label": "数据边界眉题",
+      "zh": "数据边界，清清楚楚",
+      "en": "Clear data boundaries",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 44
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 80
+        }
+      ],
+      "intent": "引出数据范围。",
+      "concern": "“清清楚楚”是评价词，信息量低。",
+      "status": "待用户审阅",
+      "sourceKey": "boundaryEyebrow"
+    },
+    {
+      "id": "P02",
+      "section": "数据与执行边界",
+      "label": "数据边界标题",
+      "zh": "状态随身，工作留在电脑。",
+      "en": "Take the status. Keep the work local.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 44
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 80
+        }
+      ],
+      "intent": "说明状态外发与本地执行分离。",
+      "concern": "“工作留在电脑”过宽；不应让人误以为业务依赖的云端 AI 也变成本地执行。",
+      "status": "待用户审阅",
+      "sourceKey": "boundaryTitle"
+    },
+    {
+      "id": "P03",
+      "section": "数据与执行边界",
+      "label": "数据边界说明",
+      "zh": "命令、源码、环境变量与完整日志默认留在本机。你可以显式启用经过清理的日志摘要。",
+      "en": "Commands, source code, environment variables, and full logs stay on your computer by default. Sanitized log excerpts are an explicit opt-in.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 45
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 81
+        }
+      ],
+      "intent": "说明默认不上传的数据及日志片段例外。",
+      "concern": "功能边界应准确；“经过清理”不等于绝对无敏感信息。",
+      "status": "待用户审阅",
+      "sourceKey": "boundaryLead"
+    },
+    {
+      "id": "P04",
+      "section": "数据与执行边界",
+      "label": "数据流节点 1 标题",
+      "zh": "Mac / Linux",
+      "en": "Mac / Linux",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 46
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 82
+        }
+      ],
+      "intent": "说明数据流与手机权限。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "nodes.0.0"
+    },
+    {
+      "id": "P05",
+      "section": "数据与执行边界",
+      "label": "数据流节点 1 说明",
+      "zh": "执行任务 · 保留完整日志",
+      "en": "Runs tasks · Keeps full logs",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 46
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 82
+        }
+      ],
+      "intent": "说明数据流与手机权限。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "nodes.0.1"
+    },
+    {
+      "id": "P06",
+      "section": "数据与执行边界",
+      "label": "数据流节点 2 标题",
+      "zh": "RunBuoy Server",
+      "en": "RunBuoy Server",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 46
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 82
+        }
+      ],
+      "intent": "说明数据流与手机权限。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "nodes.1.0"
+    },
+    {
+      "id": "P07",
+      "section": "数据与执行边界",
+      "label": "数据流节点 2 说明",
+      "zh": "转发阶段、进度与结果",
+      "en": "Relays phases, progress & results",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 46
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 82
+        }
+      ],
+      "intent": "说明数据流与手机权限。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "nodes.1.1"
+    },
+    {
+      "id": "P08",
+      "section": "数据与执行边界",
+      "label": "数据流节点 3 标题",
+      "zh": "iPhone",
+      "en": "iPhone",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 46
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 82
+        }
+      ],
+      "intent": "说明数据流与手机权限。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "nodes.2.0"
+    },
+    {
+      "id": "P09",
+      "section": "数据与执行边界",
+      "label": "数据流节点 3 说明",
+      "zh": "查看状态 · 接收提醒",
+      "en": "Shows status · Receives alerts",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 46
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 82
+        }
+      ],
+      "intent": "说明数据流与手机权限。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "nodes.2.1"
+    },
+    {
+      "id": "P10",
+      "section": "数据与执行边界",
+      "label": "手机权限说明",
+      "zh": "手机端只读：不启动、停止或重试电脑任务。",
+      "en": "The phone is read-only. It cannot start, stop, or retry tasks on your computer.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 47
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 83
+        }
+      ],
+      "intent": "说明手机的查看权限边界。",
+      "concern": "这是重要边界，但是否作为前列宣传卖点需要单独决定。",
+      "status": "待用户审阅",
+      "sourceKey": "readonly"
+    },
+    {
+      "id": "P11",
+      "section": "数据与执行边界",
+      "label": "隐私入口",
+      "zh": "了解隐私与数据保留规则",
+      "en": "Privacy and data retention",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 48
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 84
+        }
+      ],
+      "intent": "说明数据流与手机权限。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "privacy"
+    },
+    {
+      "id": "C01",
+      "section": "收尾号召",
+      "label": "收尾标题",
+      "zh": "让等待，轻一点。",
+      "en": "A little less waiting around.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 49
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 85
+        }
+      ],
+      "intent": "收尾情绪性号召。",
+      "concern": "“让等待轻一点”过泛，无法区分 RunBuoy。",
+      "status": "待用户审阅",
+      "sourceKey": "finalTitle"
+    },
+    {
+      "id": "C02",
+      "section": "收尾号召",
+      "label": "收尾说明",
+      "zh": "下一次开始长任务，就把进度带在身边。",
+      "en": "Bring the next long-running task along with you.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 50
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 86
+        }
+      ],
+      "intent": "引导下一次任务接入。",
+      "concern": "仍重复“带在身边”，没有给出 Agent 的具体使用动作。",
+      "status": "待用户审阅",
+      "sourceKey": "finalLead"
+    },
+    {
+      "id": "C03",
+      "section": "收尾号召",
+      "label": "收尾第二入口",
+      "zh": "连接我的电脑",
+      "en": "Connect my computer",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 51
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 87
+        }
+      ],
+      "intent": "辅助导航、无障碍或操作反馈。",
+      "concern": "不承担核心卖点。",
+      "status": "待用户审阅",
+      "sourceKey": "finalSecondary"
+    },
+    {
+      "id": "U01",
+      "section": "辅助与反馈",
+      "label": "复制成功反馈",
+      "zh": "已复制",
+      "en": "Copied",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 51
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 87
+        }
+      ],
+      "intent": "辅助导航、无障碍或操作反馈。",
+      "concern": "不承担核心卖点。",
+      "status": "待用户审阅",
+      "sourceKey": "copied"
+    },
+    {
+      "id": "U02",
+      "section": "辅助与反馈",
+      "label": "复制按钮辅助标签",
+      "zh": "复制",
+      "en": "Copy",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 51
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 87
+        }
+      ],
+      "intent": "辅助导航、无障碍或操作反馈。",
+      "concern": "不承担核心卖点。",
+      "status": "待用户审阅",
+      "sourceKey": "copy"
+    },
+    {
+      "id": "U03",
+      "section": "辅助与反馈",
+      "label": "复制失败反馈",
+      "zh": "复制失败，请选择下方文字手动复制。",
+      "en": "Copy failed. Select the text below to copy it manually.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 51
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 87
+        }
+      ],
+      "intent": "辅助导航、无障碍或操作反馈。",
+      "concern": "不承担核心卖点。",
+      "status": "待用户审阅",
+      "sourceKey": "copyFailed"
+    },
+    {
+      "id": "U04",
+      "section": "辅助与反馈",
+      "label": "详情截图替代文字",
+      "zh": "任务详情显示 78% 的真实示例进度、训练阶段和安全消息",
+      "en": "Real task detail showing 78% sample progress, the training phase and a safe message",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 52
+        },
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 88
+        }
+      ],
+      "intent": "为读屏用户描述任务详情。",
+      "concern": "“真实示例进度”容易混淆：实际界面、构造的任务数据。",
+      "status": "待用户审阅",
+      "sourceKey": "screenshotAlt"
+    },
+    {
+      "id": "I99",
+      "section": "安装区",
+      "label": "Agent 提示词旁的指南链接",
+      "zh": "使用指南",
+      "en": "Read the guide",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/index.tsx",
+          "line": 145
+        }
+      ],
+      "intent": "打开完整安装指南。",
+      "concern": "",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "N01",
+      "section": "页脚与导航",
+      "label": "页脚产品概括",
+      "zh": "让 Mac 与 Linux 长任务的进度，始终在手边。",
+      "en": "Keep long-running work on Mac and Linux within reach.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 10
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 25
+        }
+      ],
+      "intent": "概括产品用途。",
+      "concern": "“始终”比当前确认/过期状态的实际语义更绝对。",
+      "status": "待用户审阅",
+      "sourceKey": "tagline"
+    },
+    {
+      "id": "N02",
+      "section": "页脚与导航",
+      "label": "页脚产品分组",
+      "zh": "产品",
+      "en": "Product",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 11
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 26
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "product"
+    },
+    {
+      "id": "N03",
+      "section": "页脚与导航",
+      "label": "页脚资源分组",
+      "zh": "资源",
+      "en": "Resources",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 12
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 27
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "resources"
+    },
+    {
+      "id": "N04",
+      "section": "页脚与导航",
+      "label": "快速开始入口",
+      "zh": "快速开始",
+      "en": "Quick Start",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 13
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 28
+        },
+        {
+          "file": "website/docs/zh/_nav.json",
+          "line": 7
+        },
+        {
+          "file": "website/docs/en/_nav.json",
+          "line": 7
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "quickStart"
+    },
+    {
+      "id": "N05",
+      "section": "页脚与导航",
+      "label": "下载入口",
+      "zh": "下载 App",
+      "en": "Get the app",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 14
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 29
+        },
+        {
+          "file": "website/docs/zh/_nav.json",
+          "line": 3
+        },
+        {
+          "file": "website/docs/en/_nav.json",
+          "line": 3
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "download"
+    },
+    {
+      "id": "N06",
+      "section": "页脚与导航",
+      "label": "文档入口",
+      "zh": "使用文档",
+      "en": "Docs",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 15
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 30
+        },
+        {
+          "file": "website/docs/zh/_nav.json",
+          "line": 11
+        },
+        {
+          "file": "website/docs/en/_nav.json",
+          "line": 11
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "docs"
+    },
+    {
+      "id": "N07",
+      "section": "页脚与导航",
+      "label": "隐私入口",
+      "zh": "隐私",
+      "en": "Privacy",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 16
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 31
+        },
+        {
+          "file": "website/docs/zh/_nav.json",
+          "line": 16
+        },
+        {
+          "file": "website/docs/en/_nav.json",
+          "line": 16
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "privacy"
+    },
+    {
+      "id": "N08",
+      "section": "页脚与导航",
+      "label": "安全入口",
+      "zh": "安全",
+      "en": "Security",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 17
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 32
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "security"
+    },
+    {
+      "id": "N09",
+      "section": "页脚与导航",
+      "label": "服务状态入口",
+      "zh": "服务状态",
+      "en": "Service status",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 18
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 33
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "status"
+    },
+    {
+      "id": "N10",
+      "section": "页脚与导航",
+      "label": "支持入口",
+      "zh": "支持",
+      "en": "Support",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 19
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 34
+        },
+        {
+          "file": "website/docs/zh/_nav.json",
+          "line": 20
+        },
+        {
+          "file": "website/docs/en/_nav.json",
+          "line": 20
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "support"
+    },
+    {
+      "id": "N11",
+      "section": "页脚与导航",
+      "label": "自托管入口",
+      "zh": "自托管",
+      "en": "Self-hosting",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 20
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 35
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "selfHosting"
+    },
+    {
+      "id": "N12",
+      "section": "页脚与导航",
+      "label": "源码入口",
+      "zh": "GitHub",
+      "en": "GitHub",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 21
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 36
+        }
+      ],
+      "intent": "导航标签。",
+      "concern": "",
+      "status": "待用户审阅",
+      "sourceKey": "github"
+    },
+    {
+      "id": "N13",
+      "section": "页脚与导航",
+      "label": "版权与品牌声明",
+      "zh": "© 2026 RunBuoy。开源、可审计，并以隐私为先。",
+      "en": "© 2026 RunBuoy. Open source, auditable, and privacy-first.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 22
+        },
+        {
+          "file": "website/theme/components/HomeFooter/index.tsx",
+          "line": 37
+        }
+      ],
+      "intent": "品牌署名与开源、隐私定位。",
+      "concern": "“隐私为先”是定位表态；需要由默认数据范围来支撑。",
+      "status": "待用户审阅",
+      "sourceKey": "copyright"
+    },
+    {
+      "id": "A01.T",
+      "section": "App Store 宣传图",
+      "label": "第 1 张标题",
+      "zh": "离开电脑，\n进度仍在眼前。",
+      "en": "Step away.\nStay in the know.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 4
+        }
+      ],
+      "intent": "展示锁屏状态。",
+      "concern": "首张仍强调“看进度”；Agent 接入和重要消息没有体现，“就知道跑到哪”也依赖任务上报。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A01.S",
+      "section": "App Store 宣传图",
+      "label": "第 1 张副标题",
+      "zh": "抬手看锁屏，就知道任务跑到哪了。",
+      "en": "Your task’s progress. Right on your Lock Screen.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 4
+        }
+      ],
+      "intent": "展示锁屏状态。",
+      "concern": "首张仍强调“看进度”；Agent 接入和重要消息没有体现，“就知道跑到哪”也依赖任务上报。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A01.N",
+      "section": "App Store 宣传图",
+      "label": "第 1 张脚注",
+      "zh": "Mac / Linux 长任务，在 iPhone 随身看",
+      "en": "Long-running Mac & Linux tasks, within reach",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 4
+        }
+      ],
+      "intent": "示例说明或兼容性/功能条件。",
+      "concern": "检查是否把理解主卖点必需的条件藏进小字。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A02.T",
+      "section": "App Store 宣传图",
+      "label": "第 2 张标题",
+      "zh": "成了，还是出错了？\n看一眼就知道。",
+      "en": "Finished? Failed?\nKnow at a glance.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 5
+        }
+      ],
+      "intent": "展示成功/失败与历史。",
+      "concern": "“成了/出错了”口语风格需确认；英文 Finished 包含失败结束，二者不是互斥结果。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A02.S",
+      "section": "App Store 宣传图",
+      "label": "第 2 张副标题",
+      "zh": "成功、失败与历史记录，清清楚楚。",
+      "en": "Clear results. A history you can come back to.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 5
+        }
+      ],
+      "intent": "展示成功/失败与历史。",
+      "concern": "“成了/出错了”口语风格需确认；英文 Finished 包含失败结束，二者不是互斥结果。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A02.N",
+      "section": "App Store 宣传图",
+      "label": "第 2 张脚注",
+      "zh": "示例任务与演示数据",
+      "en": "Sample tasks and demonstration data",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 5
+        }
+      ],
+      "intent": "示例说明或兼容性/功能条件。",
+      "concern": "检查是否把理解主卖点必需的条件藏进小字。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A03.T",
+      "section": "App Store 宣传图",
+      "label": "第 3 张标题",
+      "zh": "几台电脑，\n一处看清。",
+      "en": "Your computers.\nOne clear view.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 6
+        }
+      ],
+      "intent": "展示多机任务。",
+      "concern": "默认展示训练/构建/备份，未体现 Agent；多机是否值得占第三张还需确认。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A03.S",
+      "section": "App Store 宣传图",
+      "label": "第 3 张副标题",
+      "zh": "模型训练、构建、备份，集中查看。",
+      "en": "Training, builds, and backups — all together.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 6
+        }
+      ],
+      "intent": "展示多机任务。",
+      "concern": "默认展示训练/构建/备份，未体现 Agent；多机是否值得占第三张还需确认。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A03.N",
+      "section": "App Store 宣传图",
+      "label": "第 3 张脚注",
+      "zh": "支持 macOS 与 Linux · 电脑需安装 RunBuoy CLI",
+      "en": "macOS & Linux · RunBuoy CLI required on your computer",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 6
+        }
+      ],
+      "intent": "示例说明或兼容性/功能条件。",
+      "concern": "检查是否把理解主卖点必需的条件藏进小字。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A04.T",
+      "section": "App Store 宣传图",
+      "label": "第 4 张标题",
+      "zh": "不只知道在跑，\n还知道跑到哪。",
+      "en": "See which phase.\nKnow how far.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 7
+        }
+      ],
+      "intent": "展示阶段、进度与消息。",
+      "concern": "与第 1 张高度重复；“真实”指上报来源，截图数据本身是示例。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A04.S",
+      "section": "App Store 宣传图",
+      "label": "第 4 张副标题",
+      "zh": "阶段、真实进度和任务消息，随时查看。",
+      "en": "Follow real progress, phases, and task messages.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 7
+        }
+      ],
+      "intent": "展示阶段、进度与消息。",
+      "concern": "与第 1 张高度重复；“真实”指上报来源，截图数据本身是示例。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A04.N",
+      "section": "App Store 宣传图",
+      "label": "第 4 张脚注",
+      "zh": "百分比与时间估计来自任务显式报告",
+      "en": "Percentages and time estimates require explicit task reports",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 7
+        }
+      ],
+      "intent": "示例说明或兼容性/功能条件。",
+      "concern": "检查是否把理解主卖点必需的条件藏进小字。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A05.T",
+      "section": "App Store 宣传图",
+      "label": "第 5 张标题",
+      "zh": "扫一下，\n连接你的电脑。",
+      "en": "Scan. Pair.\nYou’re connected.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 8
+        }
+      ],
+      "intent": "展示配对路径。",
+      "concern": "副标题直接让用户安装 CLI，没有表达 Agent 是主要安装手段；等核心文案确认后一起重出图片。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A05.S",
+      "section": "App Store 宣传图",
+      "label": "第 5 张副标题",
+      "zh": "安装 CLI，扫码配对，再启动任务。",
+      "en": "Install the CLI, pair your phone, then start a task.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 8
+        }
+      ],
+      "intent": "展示配对路径。",
+      "concern": "副标题直接让用户安装 CLI，没有表达 Agent 是主要安装手段；等核心文案确认后一起重出图片。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A05.N",
+      "section": "App Store 宣传图",
+      "label": "第 5 张脚注",
+      "zh": "iOS 18 及以上 · macOS / Linux · 需联网",
+      "en": "iOS 18+ · macOS / Linux · Internet connection required",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 8
+        }
+      ],
+      "intent": "示例说明或兼容性/功能条件。",
+      "concern": "检查是否把理解主卖点必需的条件藏进小字。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A06.T",
+      "section": "App Store 宣传图",
+      "label": "第 6 张标题",
+      "zh": "工作留在电脑，\n状态带在身边。",
+      "en": "Take the status.\nKeep the work local.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 9
+        }
+      ],
+      "intent": "说明本地执行与数据边界。",
+      "concern": "“工作留在电脑”边界过宽；具体可证明的是 RunBuoy 不上传默认排除字段、手机只读。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A06.S",
+      "section": "App Store 宣传图",
+      "label": "第 6 张副标题",
+      "zh": "命令、源码与完整日志默认留在本机。",
+      "en": "Commands, source code, and full logs stay local by default.",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 9
+        }
+      ],
+      "intent": "说明本地执行与数据边界。",
+      "concern": "“工作留在电脑”边界过宽；具体可证明的是 RunBuoy 不上传默认排除字段、手机只读。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A06.N",
+      "section": "App Store 宣传图",
+      "label": "第 6 张脚注",
+      "zh": "可选安全日志摘要需显式启用 · 手机端只读",
+      "en": "Sanitized log excerpts are opt-in · Your phone is read-only",
+      "sources": [
+        {
+          "file": "assets/marketing/sources/copy.json",
+          "line": 9
+        }
+      ],
+      "intent": "示例说明或兼容性/功能条件。",
+      "concern": "检查是否把理解主卖点必需的条件藏进小字。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A01.L",
+      "section": "App Store 宣传图",
+      "label": "第一张功能标签",
+      "zh": "实时活动 · 灵动岛",
+      "en": "Live Activities · Dynamic Island",
+      "sources": [
+        {
+          "file": "assets/marketing/scripts/render.swift",
+          "line": 114
+        }
+      ],
+      "intent": "标识 iOS 展示形式。",
+      "concern": "图片实际展示锁屏；灵动岛是能力标签，不是该图实截。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A06.D1",
+      "section": "App Store 宣传图",
+      "label": "数据流 1",
+      "zh": "电脑执行任务",
+      "en": "Your computer runs it",
+      "sources": [
+        {
+          "file": "assets/marketing/scripts/render.swift",
+          "line": 128
+        }
+      ],
+      "intent": "说明执行位置。",
+      "concern": "",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A06.D2",
+      "section": "App Store 宣传图",
+      "label": "数据流 2",
+      "zh": "Server 转发状态",
+      "en": "Server relays status",
+      "sources": [
+        {
+          "file": "assets/marketing/scripts/render.swift",
+          "line": 128
+        }
+      ],
+      "intent": "说明服务端职责。",
+      "concern": "Server 是实现术语；用户是否需要在宣传图理解它值得讨论。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A06.D3",
+      "section": "App Store 宣传图",
+      "label": "数据流 3",
+      "zh": "iPhone 只读展示",
+      "en": "iPhone keeps you in view",
+      "sources": [
+        {
+          "file": "assets/marketing/scripts/render.swift",
+          "line": 128
+        }
+      ],
+      "intent": "说明手机职责。",
+      "concern": "英文没有明确表达只读，与中文语义不完全一致。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "A06.L",
+      "section": "App Store 宣传图",
+      "label": "权限说明",
+      "zh": "不在手机上启动、停止或重试任务。",
+      "en": "No remote start, stop, or retry.",
+      "sources": [
+        {
+          "file": "assets/marketing/scripts/render.swift",
+          "line": 136
+        }
+      ],
+      "intent": "说明手机不执行控制操作。",
+      "concern": "",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "O01",
+      "section": "分享卡片",
+      "label": "主标题",
+      "zh": "离开电脑，\n进度就在手边。",
+      "en": "Step away.\nStay in the know.",
+      "sources": [
+        {
+          "file": "assets/marketing/scripts/render.swift",
+          "line": 150
+        }
+      ],
+      "intent": "分享时概括使用收益。",
+      "concern": "仍重复离开电脑/在手边；需要跟随最终定位。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "O02",
+      "section": "分享卡片",
+      "label": "平台说明",
+      "zh": "Mac / Linux → iPhone",
+      "en": "Mac / Linux → iPhone",
+      "sources": [
+        {
+          "file": "assets/marketing/scripts/render.swift",
+          "line": 151
+        }
+      ],
+      "intent": "说明平台与方向。",
+      "concern": "",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "H00",
+      "section": "通用固定文字",
+      "label": "品牌名",
+      "zh": "RunBuoy",
+      "en": "RunBuoy",
+      "sources": [
+        {
+          "file": "assets/marketing/scripts/render.swift",
+          "line": 85
+        }
+      ],
+      "intent": "现有品牌名。",
+      "concern": "",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "H06",
+      "section": "通用固定文字",
+      "label": "首屏平台眉题",
+      "zh": "MAC / LINUX → IPHONE",
+      "en": "MAC / LINUX → IPHONE",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeHero/index.tsx",
+          "line": null
+        }
+      ],
+      "intent": "说明平台与方向。",
+      "concern": "",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "G01",
+      "section": "Agent 安装提示词",
+      "label": "提示词段落 1",
+      "zh": "请帮我安装并验证 RunBuoy：",
+      "en": "Help me install and verify RunBuoy:",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/installPrompts.ts",
+          "line": 2
+        }
+      ],
+      "intent": "界定安装并验证的请求。",
+      "concern": "这是可执行安装指令，不是对外卖点；首页与快速开始复用同一份内容，并通过一致性检查。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "G02",
+      "section": "Agent 安装提示词",
+      "label": "提示词段落 2",
+      "zh": "1. 使用你原生支持的 Skill 安装机制，从\nhttps://github.com/Cabbyte/RunBuoy/tree/main/skills/runbuoy\n安装或更新 RunBuoy Skill，完整保留 SKILL.md、agents/openai.yaml、references/ 和 scripts/ 目录，不要猜测安装路径。",
+      "en": "1. Use your native Skill installation mechanism to install or update the RunBuoy Skill from\nhttps://github.com/Cabbyte/RunBuoy/tree/main/skills/runbuoy\nPreserve SKILL.md, agents/openai.yaml, references/, and scripts/ in full. Do not guess an installation path.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/installPrompts.ts",
+          "line": 4
+        }
+      ],
+      "intent": "安装或更新 Skill，完整保留脚本与参考。",
+      "concern": "这是可执行安装指令，不是对外卖点；首页与快速开始复用同一份内容，并通过一致性检查。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "G03",
+      "section": "Agent 安装提示词",
+      "label": "提示词段落 3",
+      "zh": "2. 读取该 Skill 的 references/installation.md，按其中的规则检测 CLI。先检查 command -v runbuoy；找不到命令且 uv 已可用时，用 uv tool dir --bin 检查实际目录中是否已有 runbuoy。已安装但不在 PATH 中时修复路径，不要重复安装；确实未安装且 uv 已可用时，执行：\nuv tool install --python 3.12 runbuoy",
+      "en": "2. Read references/installation.md from that Skill and follow its rules to detect the CLI. Start with command -v runbuoy. If it is not found and uv is available, use uv tool dir --bin to check for an existing runbuoy executable. Repair PATH for an installed CLI instead of reinstalling it. Only if it is absent and uv is available, run:\nuv tool install --python 3.12 runbuoy",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/installPrompts.ts",
+          "line": 8
+        }
+      ],
+      "intent": "区分 CLI 未安装与 PATH 缺失，避免重复安装。",
+      "concern": "这是可执行安装指令，不是对外卖点；首页与快速开始复用同一份内容，并通过一致性检查。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "G04",
+      "section": "Agent 安装提示词",
+      "label": "提示词段落 4",
+      "zh": "3. 如果缺少 uv、tmux，或者需要 sudo、系统包管理器或 curl 安装器，请先说明将执行的命令并等待我的确认。",
+      "en": "3. If uv or tmux is missing, or sudo, a system package manager, or a curl installer is required, explain the exact command and wait for my approval.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/installPrompts.ts",
+          "line": 11
+        }
+      ],
+      "intent": "处理缺失系统依赖与需要额外确认的命令。",
+      "concern": "这是可执行安装指令，不是对外卖点；首页与快速开始复用同一份内容，并通过一致性检查。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "G07",
+      "section": "Agent 安装提示词",
+      "label": "提示词段落 5",
+      "zh": "4. 对 uv 安装的 CLI，按安装文档运行 Skill 自带的 scripts/ensure_cli_path.py --repair，验证移除临时 PATH 后，新开的交互式终端和登录终端都能找到命令。再按输出在当前执行 Shell 中启用 PATH、刷新命令缓存。后续独立工具调用也需保留该 PATH。不要把绝对路径可运行或 uv run 成功当作安装完成；若验证失败，继续检查 Shell 配置并说明未通过的项目。",
+      "en": "4. For a uv-installed CLI, follow the installation reference to run the Skill's scripts/ensure_cli_path.py --repair. Verify that fresh interactive and login shells find the command without inheriting the temporary PATH entry. Apply the reported PATH activation in the current execution shell and refresh its command cache. Keep that PATH in subsequent independent tool calls too. An absolute executable path or a successful uv run is not proof of a complete installation. If verification fails, investigate shell configuration and report the incomplete checks.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/installPrompts.ts",
+          "line": 13
+        }
+      ],
+      "intent": "修复 PATH，分别验证当前会话与新终端。",
+      "concern": "这是可执行安装指令，不是对外卖点；首页与快速开始复用同一份内容，并通过一致性检查。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "G05",
+      "section": "Agent 安装提示词",
+      "label": "提示词段落 6",
+      "zh": "5. 在当前 Shell 直接运行：\ncommand -v runbuoy\nrunbuoy --version\nrunbuoy doctor --json\nrunbuoy capabilities --json",
+      "en": "5. Run these commands directly in the current shell:\ncommand -v runbuoy\nrunbuoy --version\nrunbuoy doctor --json\nrunbuoy capabilities --json",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/installPrompts.ts",
+          "line": 15
+        }
+      ],
+      "intent": "通过直接命令运行安装验证。",
+      "concern": "这是可执行安装指令，不是对外卖点；首页与快速开始复用同一份内容，并通过一致性检查。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "G06",
+      "section": "Agent 安装提示词",
+      "label": "提示词段落 7",
+      "zh": "汇报 Skill 是否能以 $runbuoy 被发现、CLI 路径与版本、当前及新终端的 PATH 验证结果、local_ready 和 delivery 状态。不要启动配对、Demo、被监控命令，也不要上传日志。",
+      "en": "Report whether the Skill is discoverable as $runbuoy, the CLI path and version, PATH verification in the current and fresh terminals, local_ready, and delivery status. Do not start pairing, a demo, or any monitored command, and do not upload logs.",
+      "sources": [
+        {
+          "file": "website/theme/components/HomeContent/installPrompts.ts",
+          "line": 21
+        }
+      ],
+      "intent": "汇报路径验证结果，并限定本次执行范围。",
+      "concern": "这是可执行安装指令，不是对外卖点；首页与快速开始复用同一份内容，并通过一致性检查。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D01",
+      "section": "下载页全文",
+      "label": "页面描述",
+      "zh": "在 App Store 免费下载 RunBuoy，用 iPhone 查看 Mac 与 Linux 长任务的状态、进度和结果。",
+      "en": "Get RunBuoy free on the App Store. Follow the status, progress, and results of long-running Mac and Linux tasks from your iPhone.",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 2
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 2
+        }
+      ],
+      "intent": "搜索与分享摘要。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D02",
+      "section": "下载页全文",
+      "label": "标题",
+      "zh": "# 下载 RunBuoy",
+      "en": "# Get RunBuoy",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 5
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 5
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D03",
+      "section": "下载页全文",
+      "label": "正文",
+      "zh": "离开电脑，也知道任务跑到哪了。",
+      "en": "Step away. Stay in the know.",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 7
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 7
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D04",
+      "section": "下载页全文",
+      "label": "正文",
+      "zh": "**[在 App Store 下载 RunBuoy](https://apps.apple.com/cn/app/runbuoy/id6795591930)**",
+      "en": "**[Download RunBuoy on the App Store](https://apps.apple.com/us/app/runbuoy/id6795591930)**",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 9
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 9
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D05",
+      "section": "下载页全文",
+      "label": "正文",
+      "zh": "RunBuoy 免费下载，需要 **iOS 18 或更新版本**。带有灵动岛的机型也可以在灵动岛查看任务；其他支持的 iPhone 可以使用 App 和锁屏实时活动。",
+      "en": "RunBuoy is free to download and requires **iOS 18 or later**. Dynamic Island is available on supported models. Other supported iPhones can use the app and Lock Screen Live Activities.",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 11
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 11
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D06",
+      "section": "下载页全文",
+      "label": "标题",
+      "zh": "## 下载后，连接你的电脑",
+      "en": "## Next, connect your computer",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 13
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 13
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D07",
+      "section": "下载页全文",
+      "label": "正文",
+      "zh": "RunBuoy 的任务从 **macOS 或 Linux** 启动。推荐把[安装提示词](/guide/#agent-install)交给 Codex 或其他支持 Skill 的 Agent，安装并验证 RunBuoy Skill 与 CLI。",
+      "en": "Tasks start on **macOS or Linux**. Use the [installation prompt](/en/guide/#agent-install) with Codex or another Skill-enabled agent to install and verify the RunBuoy Skill and CLI.",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 15
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 15
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D08",
+      "section": "下载页全文",
+      "label": "条目",
+      "zh": "1. [使用 Agent 安装 Skill 与 CLI](/guide/#agent-install)。",
+      "en": "1. [Install the Skill and CLI with an agent](/en/guide/#agent-install).",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 17
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 17
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D09",
+      "section": "下载页全文",
+      "label": "条目",
+      "zh": "2. 在电脑运行 `runbuoy device pair`，用 App 扫码并确认电脑身份。",
+      "en": "2. Run `runbuoy device pair` on your computer. Scan the QR code in the app and confirm the computer.",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 18
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 18
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D10",
+      "section": "下载页全文",
+      "label": "条目",
+      "zh": "3. 主动运行 `runbuoy demo live-activity`，确认手机能收到演示状态。",
+      "en": "3. Run `runbuoy demo live-activity` yourself to check that the demo reaches your phone.",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 19
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 19
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D11",
+      "section": "下载页全文",
+      "label": "条目",
+      "zh": "4. [接入自己的命令](/guide/run)；如果需要百分比或预计完成时间，再[接入显式进度](/guide/progress)。",
+      "en": "4. [Connect your own command](/en/guide/run). To show percentages or time estimates, [report explicit progress](/en/guide/progress).",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 20
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 20
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D12",
+      "section": "下载页全文",
+      "label": "正文",
+      "zh": "[查看完整配对指南](/guide/pairing)",
+      "en": "[Read the full pairing guide](/en/guide/pairing)",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 22
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 22
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D13",
+      "section": "下载页全文",
+      "label": "条目",
+      "zh": ":::info 服务区域",
+      "en": ":::info Service region",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 24
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 24
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D14",
+      "section": "下载页全文",
+      "label": "正文",
+      "zh": "当前官方端到端流程使用 `Global` 服务。iPhone 只展示状态，不远程启动、停止或重试任务。首次接入需要联网。",
+      "en": "The official end-to-end flow currently uses the `Global` service. Your iPhone displays status; it cannot remotely start, stop, or retry a task. Initial setup requires an internet connection.",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 25
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 25
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D15",
+      "section": "下载页全文",
+      "label": "折叠入口",
+      "zh": "手动安装 CLI",
+      "en": "Manual CLI installation",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 29
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 29
+        }
+      ],
+      "intent": "将手动方式作为备选入口。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D16",
+      "section": "下载页全文",
+      "label": "正文",
+      "zh": "不使用 Agent 时，可通过 `uv` 安装 CLI，并准备好 `tmux`。uv 会管理所需的 Python 3.12 环境。",
+      "en": "Without an agent, install the CLI with `uv` and make sure `tmux` is available. uv manages the required Python 3.12 environment.",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 31
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 31
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D17",
+      "section": "下载页全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nuv tool install --python 3.12 runbuoy\n```",
+      "en": "```bash\nuv tool install --python 3.12 runbuoy\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 33
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 33
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D18",
+      "section": "下载页全文",
+      "label": "正文",
+      "zh": "[依赖准备与完整安装说明](/guide/install)",
+      "en": "[Dependencies and full installation guide](/en/guide/install)",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 37
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 37
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D19",
+      "section": "下载页全文",
+      "label": "标题",
+      "zh": "## 源码与进阶使用",
+      "en": "## Source and advanced setup",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 41
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 41
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D20",
+      "section": "下载页全文",
+      "label": "条目",
+      "zh": "- [GitHub 源码](https://github.com/Cabbyte/RunBuoy)",
+      "en": "- [Source on GitHub](https://github.com/Cabbyte/RunBuoy)",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 43
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 43
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D21",
+      "section": "下载页全文",
+      "label": "条目",
+      "zh": "- [iOS 客户端源码](https://github.com/Cabbyte/RunBuoy/tree/main/apps/ios)",
+      "en": "- [iOS client source](https://github.com/Cabbyte/RunBuoy/tree/main/apps/ios)",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 44
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 44
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "D22",
+      "section": "下载页全文",
+      "label": "条目",
+      "zh": "- [自托管配置与客户端要求](/self-hosting)",
+      "en": "- [Self-hosting and client requirements](/en/self-hosting)",
+      "sources": [
+        {
+          "file": "website/docs/zh/download.md",
+          "line": 45
+        },
+        {
+          "file": "website/docs/en/download.md",
+          "line": 45
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q01",
+      "section": "快速开始全文",
+      "label": "页面描述",
+      "zh": "使用 Agent 提示词或手动流程，在 macOS 或 Linux 上安装并验证 RunBuoy Skill 与 CLI。",
+      "en": "Install and verify the RunBuoy Skill and CLI on macOS or Linux with an agent prompt or the manual flow.",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 2
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 2
+        }
+      ],
+      "intent": "搜索与分享摘要。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q02",
+      "section": "快速开始全文",
+      "label": "标题",
+      "zh": "# 快速开始",
+      "en": "# Quick Start",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 5
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 5
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q03",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "先在 iPhone [从 App Store 下载 RunBuoy](https://apps.apple.com/cn/app/runbuoy/id6795591930)（iOS 18+），再在 Mac 或 Linux 安装 CLI。推荐把下面的安装提示词交给支持 Skill 的 Agent；手动安装步骤在下方折叠区。",
+      "en": "First, [get RunBuoy on the App Store](https://apps.apple.com/us/app/runbuoy/id6795591930) for your iPhone (iOS 18+). Use the prompt below with a Skill-enabled agent to install on your Mac or Linux computer. Manual installation is collapsed below.",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 9
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 9
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q04",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "完整流程是：**下载 App → 安装 CLI → 配对电脑 → 运行任务**。安装与验证完成后，继续本文末尾的手机配对与演示。",
+      "en": "The complete flow is: **get the app → install the CLI → pair your computer → start a task**. After installation, continue to the phone pairing section below.",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 11
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 11
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q05",
+      "section": "快速开始全文",
+      "label": "标题",
+      "zh": "## 使用 Agent 安装（推荐）",
+      "en": "## Install with an Agent (recommended)",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 15
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 15
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q06",
+      "section": "快速开始全文",
+      "label": "条目",
+      "zh": ":::tip 一条提示词安装 Skill + CLI",
+      "en": ":::tip One prompt installs the Skill + CLI",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 17
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 17
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q07",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "Agent 会先安装 RunBuoy Skill，再读取 Skill 自带的安全规则安装和验证 CLI。涉及 `sudo`、系统包管理器或 curl 安装器时，它必须先说明命令并等待确认。",
+      "en": "Your agent installs the RunBuoy Skill first, then reads its built-in safety rules to install and verify the CLI. It must explain the command and wait for approval before using `sudo`, a system package manager, or a curl installer.",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 18
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 18
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q08",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "复制下面整段提示词并粘贴给支持 Skill 的 Agent：",
+      "en": "Copy the complete prompt and paste it into an agent that supports Skills:",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 21
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 21
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q09",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```text\n请帮我安装并验证 RunBuoy：\n\n1. 使用你原生支持的 Skill 安装机制，从\nhttps://github.com/Cabbyte/RunBuoy/tree/main/skills/runbuoy\n安装或更新 RunBuoy Skill，完整保留 SKILL.md、agents/openai.yaml、references/ 和 scripts/ 目录，不要猜测安装路径。\n\n2. 读取该 Skill 的 references/installation.md，按其中的规则检测 CLI。先检查 command -v runbuoy；找不到命令且 uv 已可用时，用 uv tool dir --bin 检查实际目录中是否已有 runbuoy。已安装但不在 PATH 中时修复路径，不要重复安装；确实未安装且 uv 已可用时，执行：\nuv tool install --python 3.12 runbuoy\n\n3. 如果缺少 uv、tmux，或者需要 sudo、系统包管理器或 curl 安装器，请先说明将执行的命令并等待我的确认。\n\n4. 对 uv 安装的 CLI，按安装文档运行 Skill 自带的 scripts/ensure_cli_path.py --repair，验证移除临时 PATH 后，新开的交互式终端和登录终端都能找到命令。再按输出在当前执行 Shell 中启用 PATH、刷新命令缓存。后续独立工具调用也需保留该 PATH。不要把绝对路径可运行或 uv run 成功当作安装完成；若验证失败，继续检查 Shell 配置并说明未通过的项目。\n\n5. 在当前 Shell 直接运行：\ncommand -v runbuoy\nrunbuoy --version\nrunbuoy doctor --json\nrunbuoy capabilities --json\n\n汇报 Skill 是否能以 $runbuoy 被发现、CLI 路径与版本、当前及新终端的 PATH 验证结果、local_ready 和 delivery 状态。不要启动配对、Demo、被监控命令，也不要上传日志。\n```",
+      "en": "```text\nHelp me install and verify RunBuoy:\n\n1. Use your native Skill installation mechanism to install or update the RunBuoy Skill from\nhttps://github.com/Cabbyte/RunBuoy/tree/main/skills/runbuoy\nPreserve SKILL.md, agents/openai.yaml, references/, and scripts/ in full. Do not guess an installation path.\n\n2. Read references/installation.md from that Skill and follow its rules to detect the CLI. Start with command -v runbuoy. If it is not found and uv is available, use uv tool dir --bin to check for an existing runbuoy executable. Repair PATH for an installed CLI instead of reinstalling it. Only if it is absent and uv is available, run:\nuv tool install --python 3.12 runbuoy\n\n3. If uv or tmux is missing, or sudo, a system package manager, or a curl installer is required, explain the exact command and wait for my approval.\n\n4. For a uv-installed CLI, follow the installation reference to run the Skill's scripts/ensure_cli_path.py --repair. Verify that fresh interactive and login shells find the command without inheriting the temporary PATH entry. Apply the reported PATH activation in the current execution shell and refresh its command cache. Keep that PATH in subsequent independent tool calls too. An absolute executable path or a successful uv run is not proof of a complete installation. If verification fails, investigate shell configuration and report the incomplete checks.\n\n5. Run these commands directly in the current shell:\ncommand -v runbuoy\nrunbuoy --version\nrunbuoy doctor --json\nrunbuoy capabilities --json\n\nReport whether the Skill is discoverable as $runbuoy, the CLI path and version, PATH verification in the current and fresh terminals, local_ready, and delivery status. Do not start pairing, a demo, or any monitored command, and do not upload logs.\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 23
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 23
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q10",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "这个流程只负责安装与验证，不会配对手机或启动任务。[了解 Agent 安装提示词的设计与使用方式](/guide/agent-skill)。",
+      "en": "This flow only installs and verifies RunBuoy. It does not pair a phone or start a run. [Learn how the agent installation prompt is designed and used](/en/guide/agent-skill).",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 46
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 46
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q11",
+      "section": "快速开始全文",
+      "label": "折叠入口",
+      "zh": "手动安装 CLI 与可选 Python API",
+      "en": "Manual CLI installation and optional Python API",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 49
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 49
+        }
+      ],
+      "intent": "将手动方式作为备选入口。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q12",
+      "section": "快速开始全文",
+      "label": "标题",
+      "zh": "## 手动安装 CLI",
+      "en": "## Install the CLI manually",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 51
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 51
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q13",
+      "section": "快速开始全文",
+      "label": "条目",
+      "zh": ":::tip 手动安装 · 当前可用",
+      "en": ":::tip Manual installation · Available now",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 53
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 53
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q14",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "下面的 uv 流程是公开、可执行的安装方式，支持 macOS 与 Linux。",
+      "en": "The uv flow below is a public, executable installation path for macOS and Linux.",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 54
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 54
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q15",
+      "section": "快速开始全文",
+      "label": "标题",
+      "zh": "### 1. 安装系统依赖与 uv",
+      "en": "### 1. Install system dependencies and uv",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 57
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 57
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q16",
+      "section": "快速开始全文",
+      "label": "选项标签",
+      "zh": "macOS",
+      "en": "macOS",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 60
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 60
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q17",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nbrew install tmux uv\nuv tool update-shell\n```",
+      "en": "```bash\nbrew install tmux uv\nuv tool update-shell\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 62
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 62
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q18",
+      "section": "快速开始全文",
+      "label": "选项标签",
+      "zh": "Debian / Ubuntu",
+      "en": "Debian / Ubuntu",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 68
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 68
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q19",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nsudo apt update\nsudo apt install tmux\ncurl -LsSf https://astral.sh/uv/install.sh | sh\nuv tool update-shell\n```",
+      "en": "```bash\nsudo apt update\nsudo apt install tmux\ncurl -LsSf https://astral.sh/uv/install.sh | sh\nuv tool update-shell\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 70
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 70
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q20",
+      "section": "快速开始全文",
+      "label": "选项标签",
+      "zh": "Fedora",
+      "en": "Fedora",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 78
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 78
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q21",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nsudo dnf install tmux\ncurl -LsSf https://astral.sh/uv/install.sh | sh\nuv tool update-shell\n```",
+      "en": "```bash\nsudo dnf install tmux\ncurl -LsSf https://astral.sh/uv/install.sh | sh\nuv tool update-shell\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 80
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 80
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q22",
+      "section": "快速开始全文",
+      "label": "选项标签",
+      "zh": "Arch Linux",
+      "en": "Arch Linux",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 87
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 87
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q23",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nsudo pacman -S tmux\ncurl -LsSf https://astral.sh/uv/install.sh | sh\nuv tool update-shell\n```",
+      "en": "```bash\nsudo pacman -S tmux\ncurl -LsSf https://astral.sh/uv/install.sh | sh\nuv tool update-shell\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 89
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 89
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q24",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "重启终端后继续。uv 会自动下载并管理所需的 Python 3.12；`tmux` 是必须通过系统包管理器安装的依赖。",
+      "en": "Restart the terminal before continuing. uv downloads and manages the required Python 3.12 runtime; `tmux` is a system dependency that must come from your operating system package manager.",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 98
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 98
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q25",
+      "section": "快速开始全文",
+      "label": "标题",
+      "zh": "### 2. 安装 CLI",
+      "en": "### 2. Install the CLI",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 100
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 100
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q26",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nuv tool install --python 3.12 runbuoy\nuv tool update-shell\nexport PATH=\"$(uv tool dir --bin):$PATH\"\nhash -r\ncommand -v runbuoy\n```",
+      "en": "```bash\nuv tool install --python 3.12 runbuoy\nuv tool update-shell\nexport PATH=\"$(uv tool dir --bin):$PATH\"\nhash -r\ncommand -v runbuoy\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 102
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 102
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q27",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "以上 PATH 命令适用于 Bash / Zsh；Fish 使用 `fish_add_path (uv tool dir --bin)`。安装后在新终端再次运行 `command -v runbuoy` 和 `runbuoy --version`，确认配置已保存。若仍找不到命令，请查看[PATH 排查](/guide/install#troubleshooting)。",
+      "en": "The PATH commands above are for Bash / Zsh; in Fish use `fish_add_path (uv tool dir --bin)`. In a new terminal, run `command -v runbuoy` and `runbuoy --version` again to verify persistence. If the command is still missing, see [PATH troubleshooting](/en/guide/install#troubleshooting).",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 110
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 110
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q28",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "根据实际使用的 Shell 选择一个补全命令：",
+      "en": "Choose the completion command for the shell you actually use:",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 112
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 112
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q29",
+      "section": "快速开始全文",
+      "label": "选项标签",
+      "zh": "Bash",
+      "en": "Bash",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 115
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 115
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q30",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nrunbuoy completion install bash\n```",
+      "en": "```bash\nrunbuoy completion install bash\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 117
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 117
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q31",
+      "section": "快速开始全文",
+      "label": "选项标签",
+      "zh": "Zsh",
+      "en": "Zsh",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 122
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 122
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q32",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nrunbuoy completion install zsh\n```",
+      "en": "```bash\nrunbuoy completion install zsh\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 124
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 124
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q33",
+      "section": "快速开始全文",
+      "label": "选项标签",
+      "zh": "Fish",
+      "en": "Fish",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 129
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 129
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q34",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nrunbuoy completion install fish\n```",
+      "en": "```bash\nrunbuoy completion install fish\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 131
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 131
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q35",
+      "section": "快速开始全文",
+      "label": "标题",
+      "zh": "### 3. 验证安装",
+      "en": "### 3. Verify the installation",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 138
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 138
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q36",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nrunbuoy --version\nrunbuoy doctor --json\nrunbuoy capabilities --json\n```",
+      "en": "```bash\nrunbuoy --version\nrunbuoy doctor --json\nrunbuoy capabilities --json\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 140
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 140
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q37",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "doctor schema v2 的 `local_ready=true` 表示平台、Python、tmux 与本地存储已满足执行条件。`delivery.ready` 是独立状态；尚未配对或 Server 不可达时，本地 Run 仍完整可用。",
+      "en": "`local_ready=true` from doctor schema v2 confirms that the platform, Python, tmux, and local storage meet execution requirements. `delivery.ready` is separate; local Runs remain available before pairing or while the Server is unreachable.",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 146
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 146
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q38",
+      "section": "快速开始全文",
+      "label": "标题",
+      "zh": "## 可选：在 Python 项目中使用 API",
+      "en": "## Optional: use the Python API in a project",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 148
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 148
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q39",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "`uv tool` 创建的 CLI 环境与项目 Python 环境相互隔离。如果代码需要 `from runbuoy import progress` 等 API，请在项目根目录另行声明依赖：",
+      "en": "The CLI environment created by `uv tool` is isolated from your project environment. If your code imports APIs such as `from runbuoy import progress`, declare the dependency in the project root as well:",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 150
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 150
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q40",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\ncd my-project\nuv add --optional runbuoy runbuoy\nuv sync --extra runbuoy\n```",
+      "en": "```bash\ncd my-project\nuv add --optional runbuoy runbuoy\nuv sync --extra runbuoy\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 152
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 152
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q41",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "这是正常的双环境安装，不是重复配置。SDK 调用必须发生在 RunBuoy 启动的目标进程树内；详见[进度模式](/guide/progress)。",
+      "en": "Installing into both environments is intentional. SDK calls must run inside the process tree started by RunBuoy; see [Progress modes](/en/guide/progress).",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 158
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 158
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q42",
+      "section": "快速开始全文",
+      "label": "标题",
+      "zh": "## 已经手动安装了 CLI？",
+      "en": "## Already installed the CLI manually?",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 160
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 160
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q43",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "仍然可以在任何时候使用上面的 Agent 提示词补装 Skill。Agent 会先运行 `command -v runbuoy`，检测到现有 CLI 后不会重复安装，只会继续验证环境。",
+      "en": "You can use the agent prompt above later to add the Skill. The agent checks `command -v runbuoy` first, so an existing CLI is not installed again; it simply continues with verification.",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 162
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 162
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q44",
+      "section": "快速开始全文",
+      "label": "标题",
+      "zh": "## 连接手机并验证第一条动态",
+      "en": "## Connect your phone and see the first update",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 166
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 166
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q45",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "打开已安装的 App，完成引导。在电脑运行：",
+      "en": "Open the app and finish its introduction. On your computer, run:",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 168
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 168
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q46",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nrunbuoy device pair\n```",
+      "en": "```bash\nrunbuoy device pair\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 170
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 170
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q47",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "用 App 扫描终端二维码，核对电脑身份并完成配对，然后主动运行一次演示：",
+      "en": "Scan the QR code in the app and confirm the computer. Then start a demo yourself:",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 174
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 174
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q48",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nrunbuoy demo live-activity\n```",
+      "en": "```bash\nrunbuoy demo live-activity\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 176
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 176
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q49",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "确认 iPhone 收到演示状态后，将自己的命令放在 `runbuoy run --` 后启动。下面的脚本名需要替换为你自己的脚本：",
+      "en": "Once the update reaches your iPhone, put your own command after `runbuoy run --`. Replace the script name below with your own:",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 180
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 180
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q50",
+      "section": "快速开始全文",
+      "label": "命令或提示词",
+      "zh": "```bash\nrunbuoy run -- python3 your_task.py\n```",
+      "en": "```bash\nrunbuoy run -- python3 your_task.py\n```",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 182
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 182
+        }
+      ],
+      "intent": "提供可执行的安装/配对/示例指令。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q51",
+      "section": "快速开始全文",
+      "label": "正文",
+      "zh": "任务仍在电脑上运行，iPhone 只展示状态。普通命令提供运行状态与结果；百分比、阶段和预计完成时间需要任务显式报告。演示与真实任务都由你主动启动，安装提示词不会代你执行。",
+      "en": "Tasks keep running on your computer. The phone only shows status. Ordinary commands report running status and results; percentages, phases, and time estimates require explicit reports from the task. You start demos and tasks yourself; the installation prompt does not do this for you.",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 186
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 186
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q52",
+      "section": "快速开始全文",
+      "label": "标题",
+      "zh": "## 下一步",
+      "en": "## Next steps",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 188
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 188
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q53",
+      "section": "快速开始全文",
+      "label": "条目",
+      "zh": "- [完整安装、升级与卸载说明](/guide/install)",
+      "en": "- [Complete installation, upgrade, and removal guide](/en/guide/install)",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 190
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 190
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q54",
+      "section": "快速开始全文",
+      "label": "条目",
+      "zh": "- [配对更多电脑](/guide/pairing)",
+      "en": "- [Pair more machines](/en/guide/pairing)",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 191
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 191
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q55",
+      "section": "快速开始全文",
+      "label": "条目",
+      "zh": "- [运行命令与发送通知](/guide/run)",
+      "en": "- [Run commands and send notifications](/en/guide/run)",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 192
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 192
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    },
+    {
+      "id": "Q56",
+      "section": "快速开始全文",
+      "label": "条目",
+      "zh": "- [配置真实进度](/guide/progress)",
+      "en": "- [Configure honest progress](/en/guide/progress)",
+      "sources": [
+        {
+          "file": "website/docs/zh/guide/index.mdx",
+          "line": 193
+        },
+        {
+          "file": "website/docs/en/guide/index.mdx",
+          "line": 193
+        }
+      ],
+      "intent": "说明获取、安装、验证或接入步骤。",
+      "concern": "操作性说明；不能据此将手动执行命令当成主要产品体验。",
+      "status": "待用户审阅"
+    }
+  ]
+}

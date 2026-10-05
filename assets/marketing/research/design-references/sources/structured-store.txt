@@ -1,0 +1,408 @@
+URL: https://apps.apple.com/us/app/structured-daily-planner-todo/id1499198946
+Captured: 2026-10-02
+
+- navigation:
+  - img "App Store":
+  - button "App Store":
+    - text: for iPhone
+  - generic: Search
+  - searchbox "Search"
+  - list:
+    - button "Today":
+      - generic: Today
+    - button "Games":
+      - generic: Games
+    - button "Apps":
+      - generic: Apps
+    - button "Arcade":
+      - generic: Arcade
+  - generic: Categories
+  - list "Categories":
+    - button "Categories":
+      - generic: Categories
+    - button "Photo & Video":
+      - generic: Photo & Video
+    - button "Health & Fitness":
+      - generic: Health & Fitness
+    - button "Productivity":
+      - generic: Productivity
+    - button "Entertainment":
+      - generic: Entertainment
+    - button "Action":
+      - generic: Action
+    - button "Adventure":
+      - generic: Adventure
+    - button "Puzzle":
+      - generic: Puzzle
+    - button "Indie":
+      - generic: Indie
+  - list
+- main:
+  - 'heading "Structured: Daily Planner Todo" [level=1]':
+    - generic: "Structured: Daily Planner Todo"
+  - paragraph: Visual Calendar & Organizer
+  - paragraph: Free · In‑App Purchases
+  - button "View in Mac App Store":
+    - generic: View in Mac App Store
+  - button "Share":
+  - button "Previous Page" [disabled]:
+  - list:
+    - link "167K Ratings 4.8 Stars":
+      - /url: "#productRatings"
+      - term:
+        - generic: 167K Ratings
+      - definition:
+        - generic: "4.8"
+        - list "4.8 Stars":
+    - link "Awards Editors’ Choice Apps":
+      - /url: "#productRatings"
+      - term:
+        - generic: Awards
+      - definition:
+        - generic: Editors’ Choice
+        - generic: Apps
+    - link "Age Rating 4+ Years":
+      - /url: "#information"
+      - term:
+        - generic: Age Rating
+      - definition:
+        - generic: 4+
+        - generic: Years
+    - 'link "Chart #91 Productivity"':
+      - /url: https://apps.apple.com/us/iphone/charts/6007?chart=top-free
+      - term:
+        - generic: Chart
+      - definition:
+        - generic: "#91"
+        - generic: Productivity
+    - link "Developer unorderly GmbH":
+      - /url: https://apps.apple.com/us/developer/unorderly-gmbh/id1120717165?platform=iphone
+      - term:
+        - generic: Developer
+      - definition:
+        - generic: unorderly GmbH
+    - link "Language EN + 27 More":
+      - /url: "#information"
+      - term:
+        - generic: Language
+      - definition:
+        - generic: EN
+        - generic: + 27 More
+    - link:
+      - /url: "#information"
+      - term:
+        - generic: Size
+      - definition:
+        - generic: "290.9"
+        - generic: MB
+  - button "Next Page":
+  - region "iPhone App Previews and Screenshots":
+    - button "Previous Page":
+    - list:
+      - button [disabled]:
+      - button [disabled]:
+      - button [disabled]:
+      - button [disabled]:
+      - generic "Screenshot"
+      - generic "Screenshot"
+      - generic "Screenshot"
+      - generic "Screenshot"
+    - button "Next Page" [active]:
+  - button "iPhone, iPad, Mac, Apple Watch":
+    - generic: iPhone, iPad, Mac, Apple Watch
+  - paragraph:
+    - generic: "A visual daily planner to organize tasks, routines, and habits. Stay focused, reduce overwhelm, and plan your day in one clear timeline. Plan your day visually. Stay focused. Get things done. 400,000+ five-star ratings · Trusted by 1.5 million active users The daily planner built for how your brain actually works. Map your tasks and calendar onto a visual timeline, block your time with intention, and finally build a routine that sticks — whether you have ADHD or just a lot on your plate. WHY STRUCTURED WORKS Most planners give you a blank page. Structured gives you a timeline. You see your whole day laid out, with every task, event, and routine in order. It's time blocking made simple. Built for ADHD minds, busy professionals, and students who need more than a to-do list. FREE FEATURES - Visual day planner with an intuitive drag-and-drop timeline - Inbox to capture ideas fast and sort them later - Syncs across iPhone, iPad, Apple Watch, and Mac - Break big projects into sub-tasks with notes - Pomodoro focus timer, Live Activities, and interactive widgets - Color-coding and hundreds of icons to personalize your schedule - Accessibility built in: VoiceOver, Voice Control, dyslexia-friendly font, and multiple languages STRUCTURED PRO - Connect your calendars and Reminders for a complete daily schedule organizer - Build recurring tasks and routines - AI-powered day planning: draft your schedule in seconds - Replan: automatically reschedules missed or forgotten tasks - Custom notifications to match your workflow PERFECT FOR - ADHD-friendly daily planning that actually sticks - Time blocking your work and study sessions - Morning routine and evening routine planning - Students managing class timetables and study tasks - Anyone who wants a simple to-do list app with a timeline view - Habit tracking alongside your daily task planner YOUR DAY, YOUR WAY Structured isn't just a task manager or a habit tracker. It's the daily planner that puts everything in one place — so you can plan your day, build better habits, and get things done without the overwhelm. Structured Pro is available monthly, annually, or as a lifetime purchase. Terms & Privacy: https://structured.app/legal"
+    - button "more"
+  - region "Events":
+    - heading "Events" [level=2]
+    - list:
+      - time: NOW AVAILABLE
+      - article:
+        - link "Plan intelligent with iOS 27":
+          - /url: https://apps.apple.com/us/app/structured-daily-planner-todo/id1499198946?eventid=6809439422
+          - generic: MAJOR UPDATE
+          - heading "Plan intelligent with iOS 27" [level=3]
+          - paragraph: Turn every day ideas into a plan with a more intelligent planning experience
+  - region "Ratings & Reviews":
+    - link "Ratings & Reviews":
+      - /url: https://apps.apple.com/us/app/1499198946?see-all=reviews&platform=iphone
+      - heading "Ratings & Reviews" [level=2]
+    - list:
+      - generic: "4.8"
+      - generic: out of 5
+      - generic: 167K Ratings
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.other.one**":
+  - button "Previous Page" [disabled]:
+  - list:
+    - heading "Editors’ Choice" [level=3]:
+      - text: Editors’ Choice
+    - paragraph: Trusting Structured with our schedules has done wonders for our mental health. Equal parts task manager and calendar, Structured has helped us take our busy days and build a schedule that’s as productive as it is practical. And with a gorgeous design and apps for Apple Watch and Mac, Structured can help keep you on track wherever you go.
+    - button "MORE"
+    - generic "Best planner by far for ADHD brains":
+      - heading "Best planner by far for ADHD brains" [level=3]
+      - list "5 Stars":
+      - time: Jan 21
+      - generic: skc7
+      - paragraph: "I love the features of this planner. It is the closest to how I set up my bullet journal. Being able to replan tasks (and decide whether they are valuable anymore) or pop them to an inbox so I can clear them out of my metal clutter but not lose them entirely are excellent features. I love the idea of “energy expenditure” as it forces me to really consider whether I will have the energy for something, not just the time. If I run out of steam before finishing all my duties in a day, I can make a more realistic plan in the future, given energy constraints, rather than kicking myself for being “lazy.” So important for mental health AND for getting the work done. The UI is excellent.I enter things into my Apple Calendar and then use Structured to check things off through the day, so I have noticed two items which might improve this further: I wish it could pull travel time from my Calendar, so that I don’t add tasks into space where I need to be driving; and it would be nice to be able to add an unexpected event or task (let’s say run to the grocery store for 30 mins) and have everything bump forward accordingly, rather than having to hand slide it to eliminate overlaps. If this were added, having some events able to be toggled as “locked” and un-bumpable would be important (for example, a class that happens at a certain time).Otherwise, really outstanding planner. Thoughtful updates and amazing attention to details that work well for ADHD brains!"
+      - button "MORE"
+      - text: Developer Response
+      - paragraph: "Thank you for your review and your valuable feedback. We are constantly working on improving Structured every day.Do you already know our Roadmap? On our Roadmap, you can see all requested and upcoming features, or suggest a feature yourself. You can find our Roadmap here: strct.app/roadmap"
+      - button "MORE"
+    - heading [level=3]: Amazing!
+    - list:
+    - time: 03/24/2022
+    - generic: Brianna Srader
+    - paragraph: I have ADHD and have probably spend hundreds of $$ on planners just to use them for a few weeks and then forget they exist. I started a new job in September after graduating college in May and I am on my Mac for my job all the time. This app is finally a Planner I won't forget about. I can leave it open on my screen and it follows me along through my work tasks for the day. Plus I get to check tasks off as I complete them, which I LOVE because dopamine is the ruler of my ADHD brain. I love all the color options because I can color coordinate to my hearts content. One of my favorite features of this app is the Inbox. I have so many fleeting thoughts thoughout the day and sometimes those thoughts have nothing to do with what I am currently working on. When I get the random thought about needing to order groceries some time in the next week or pay a bill before the end of the month, I can quickly create a task in the app and leave it in the "Inbox" space. Then when I am ready and decide what day and time I want to schedule that task for I can go back in and edit that task and schedule it where I want it. Its the perfect idea for having a pending to-do list right next to my daily tasks. Then on days when I finish my daily tasks for the day quicker then planned I can check my Inbox and see if there is anything I need to do that i can schedule into my day. I also love the one time purchase option instead of subscription. I HATE subscrition based apps. I'd rather pay once and have it forever. Please keep your one-time payment option!
+    - button [disabled]: MORE
+    - heading [level=3]: The App That Helped Me to Become Who I Want To Be
+    - list:
+    - time: 02/13/2025
+    - generic: kayflowerz
+    - paragraph: I’ve been using this app as a tool for about a month and a half now. I have ADHD, as many people who use this do. I’ve struggled with executive dysfunction and periods of depression for years. I am a person with loads of ideas, but time management has been a problem area for me for as long as I can remember and I’ve had an extremely difficult time following through on those ideas. Your habits determine your destiny, I’ve known this to be true. I’ve tried calendar apps, paper planners, set alarms on my phone- you name it, I’ve tried it. Nothing has ever worked for me the way this app has. Everything about the simple and attractive layout, the option to choose colors for different time blocks in which you set your tasks, the cute little sound it makes when you check something off— it was designed for a low-dopamine brain. I feel motivated, I feel empowered, I feel productive. I even block out time to rest and take care of myself. I have things to look forward to every day because I spend about 15 minutes the night before planning out the next one. The structure gives me a reason to get out of bed in the morning. And because of this, I’m happier than I’ve ever been. I never knew a simple app on your phone could transform your life the way this has. To the creators of Structured, thank you.
+    - button [disabled]: MORE
+  - button "Next Page":
+  - region "What’s New":
+    - button "What’s New":
+      - heading "What’s New" [level=2]
+    - generic "What’s New":
+      - paragraph:
+        - generic: This update introduces new ways to plan with Structured and a fresh look for iOS 27. What’s new - Ask Siri AI to create and update tasks in Structured. - Color Prediction learns from your choices and suggests a color when you create a task. - Suggested Subtasks now provide more useful ideas for breaking tasks into clear, manageable steps. - Swipe on tasks in your Inbox to act on them more quickly. - Enjoy an updated design that feels right at home on iOS 27. - Improved performance and fixed bugs throughout Structured. These features require iOS 27. Siri AI is available only in supported regions. Color Prediction is currently in beta and can be enabled from Settings > Advanced. Thanks for using Structured. Let us know what you think at feedback.structured.app.
+        - button "more"
+      - generic: Version 4.6.4
+      - time: 2d ago
+  - region "App Privacy":
+    - button "App Privacy":
+      - link "App Privacy":
+        - /url: "#"
+        - heading "App Privacy" [level=2]
+    - paragraph:
+      - text: The developer, unorderly GmbH, indicated that the app’s privacy practices may include handling of data as described below. For more information, see the
+      - link "Developer’s Privacy Policy":
+        - /url: https://strct.app/privacy_policy
+        - generic: developer’s privacy policy
+      - text: .
+  - list:
+    - generic "Data Linked to You":
+      - heading "Data Linked to You" [level=3]
+      - paragraph: "The following data may be collected and linked to your identity:"
+      - list:
+        - text: Contact Info
+        - text: User Content
+    - generic "Data Not Linked to You":
+      - heading "Data Not Linked to You" [level=3]
+      - paragraph: "The following data may be collected but it is not linked to your identity:"
+      - list:
+        - text: Purchases
+        - text: User Content
+        - text: Identifiers
+        - text: Usage Data
+        - text: Diagnostics
+  - paragraph:
+    - text: Privacy practices may vary, for example, based on the features you use or your age.
+    - link "Learn More":
+      - /url: https://apps.apple.com/us/iphone/story/id1538632801
+  - region "Accessibility":
+    - button "Accessibility":
+      - link "Accessibility":
+        - /url: "#"
+        - heading "Accessibility" [level=2]
+    - paragraph:
+      - text: The developer indicated that this app supports the following accessibility features.
+      - link "Learn More":
+        - /url: https://apps.apple.com/story/id1814164299
+  - list:
+    - article:
+      - heading "Supported Features" [level=2]
+      - list:
+        - heading "VoiceOver" [level=3]
+        - heading "Voice Control" [level=3]
+        - heading "Larger Text" [level=3]
+        - heading "Dark Interface" [level=3]
+        - heading "Differentiate Without Color Alone" [level=3]
+        - heading "Sufficient Contrast" [level=3]
+        - heading "Reduced Motion" [level=3]
+  - paragraph:
+    - text: For more information, visit the developer’s
+    - link "Developer Website":
+      - /url: https://strct.app/accessibility
+      - generic: accessibility website
+    - text: .
+  - region "Information":
+    - heading "Information" [level=2]
+    - term: Seller
+    - definition: unorderly GmbH
+    - term: Size
+    - definition: 290.9 MB
+    - term: Category
+    - definition: Productivity
+    - term: Compatibility
+    - definition:
+      - generic "Requires iOS 18.0 or later.":
+        - text: Requires iOS 18.0 or later.
+    - term: Languages
+    - definition:
+      - generic "English and 27 more":
+        - text: English and 27 more
+    - term: Age Rating
+    - definition:
+      - generic "4+":
+        - text: 4+
+    - term: In-App Purchases
+    - definition:
+      - generic "Yes":
+        - text: "Yes"
+    - term: Copyright
+    - definition: © unorderly GmbH 2026
+  - link "Developer Website ↗":
+    - /url: https://structured.app
+    - generic: Developer Website
+    - text: ↗
+  - link "Privacy Policy ↗":
+    - /url: https://strct.app/privacy_policy
+    - generic: Privacy Policy
+    - text: ↗
+  - region "Supports":
+    - heading "Supports" [level=2]
+    - list:
+      - heading "Family Sharing" [level=3]
+      - paragraph:
+        - text: Some in-app purchases and subscriptions may be shareable with your family group when Family Sharing is enabled.
+        - link "Learn More":
+          - /url: https://apps.apple.com/us/iphone/story/id1563279606
+  - region "Featured In":
+    - heading "Featured In" [level=2]
+    - list:
+      - link "Visually Structure Your Day":
+        - /url: https://apps.apple.com/us/iphone/story/id1596158592
+        - heading "APPS WE LOVE" [level=4]
+        - heading "Visually Structure Your Day" [level=3]
+        - paragraph: Calendars and tasks on a satisfying timeline.
+      - link "Manage ADHD With These Helpful Apps":
+        - /url: https://apps.apple.com/us/iphone/story/id1679598336
+        - generic: GET ORGANIZED
+        - heading "Manage ADHD With These Helpful Apps" [level=3]
+        - paragraph: Get a hand staying on track of your routines, schedule, and pressing responsibilities.
+  - region "More by unorderly GmbH":
+    - link "More by unorderly GmbH":
+      - /url: https://apps.apple.com/us/developer/unorderly-gmbh/id1120717165
+      - heading "More by unorderly GmbH" [level=2]
+    - list:
+      - 'link "View Awake: Smart Alarm Clock Wakeup for heavy sleepers"':
+        - /url: https://apps.apple.com/us/app/awake-smart-alarm-clock/id6747604910
+        - generic: View
+        - generic: "Awake: Smart Alarm Clock"
+        - generic: Wakeup for heavy sleepers
+      - link "View Klang - Sound Board Widget Play from Home & Lock Screen":
+        - /url: https://apps.apple.com/us/app/klang-sound-board-widget/id6450279059
+        - generic: View
+        - generic: Klang - Sound Board Widget
+        - generic: Play from Home & Lock Screen
+      - link "View Daily Wallpaper - Automation Image of the Day, APOD & Bing":
+        - /url: https://apps.apple.com/us/app/daily-wallpaper-automation/id6741706068
+        - generic: View
+        - generic: Daily Wallpaper - Automation
+        - generic: Image of the Day, APOD & Bing
+  - region "You Might Also Like":
+    - link "You Might Also Like":
+      - /url: https://apps.apple.com/us/app/1499198946?see-all=customers-also-bought-apps&platform=iphone
+      - heading "You Might Also Like" [level=2]
+    - button "Previous Page" [disabled]:
+    - list:
+      - link "View 2026 Planner & Agenda - Floret Yearly Digital Cute Calendar":
+        - /url: https://apps.apple.com/us/app/2026-planner-agenda-floret/id1540983473
+        - generic: View
+        - generic: 2026 Planner & Agenda - Floret
+        - generic: Yearly Digital Cute Calendar
+      - link "View Digital Planner – Task Journal Routine List & Notes Tracker":
+        - /url: https://apps.apple.com/us/app/digital-planner-task-journal/id1632352471
+        - generic: View
+        - generic: Digital Planner – Task Journal
+        - generic: Routine List & Notes Tracker
+      - 'link "View Planmore: Schedule Planner App Daily Calendar, Time Organizer"':
+        - /url: https://apps.apple.com/us/app/planmore-schedule-planner-app/id1613129298
+        - generic: View
+        - generic: "Planmore: Schedule Planner App"
+        - generic: Daily Calendar, Time Organizer
+      - link "View To Do List MinimaList & Widget Planner, Reminder & Tasks":
+        - /url: https://apps.apple.com/us/app/to-do-list-minimalist-widget/id993066159
+        - generic: View
+        - generic: To Do List MinimaList & Widget
+        - generic: Planner, Reminder & Tasks
+      - 'link "View Pencil Calendar: Daily Planner Good structured notes & tasks"':
+        - /url: https://apps.apple.com/us/app/pencil-calendar-daily-planner/id6444716760
+        - generic: View
+        - generic: "Pencil Calendar: Daily Planner"
+        - generic: Good structured notes & tasks
+      - 'link "View Tiimo: To-Do List Planner Schedule Structured Daily Task"':
+        - /url: https://apps.apple.com/us/app/tiimo-to-do-list-planner/id1480220328
+        - generic: View
+        - generic: "Tiimo: To-Do List Planner"
+        - generic: Schedule Structured Daily Task
+      - link "View Todo List & Reminder - Todoery Todo list widget, Tasks remind":
+        - /url: https://apps.apple.com/us/app/todo-list-reminder-todoery/id1640609657
+        - generic: View
+        - generic: Todo List & Reminder - Todoery
+        - generic: Todo list widget, Tasks remind
+      - link "View Routine Planner, Habit Tracker Daily Time Management for ADHD":
+        - /url: https://apps.apple.com/us/app/routine-planner-habit-tracker/id1450486923
+        - generic: View
+        - generic: Routine Planner, Habit Tracker
+        - generic: Daily Time Management for ADHD
+      - 'link "View Daily Planner, To-Do List Planwiz: Your Daily To Do List"':
+        - /url: https://apps.apple.com/us/app/daily-planner-to-do-list/id6472804752
+        - generic: View
+        - generic: Daily Planner, To-Do List
+        - generic: "Planwiz: Your Daily To Do List"
+      - link:
+        - /url: https://apps.apple.com/us/app/ticktick-to-do-list-calendar/id626144601
+        - generic: View
+        - generic: TickTick:To-Do List & Calendar
+        - generic: Task remind, planner,countdown
+    - button "Next Page":
+- button "United States"
+- list:
+  - link "This page is available in Español (México)":
+    - /url: "?l=es-MX"
+    - text: Español (México)
+  - link "This page is available in العربية":
+    - /url: "?l=ar"
+    - text: العربية
+  - link "This page is available in Русский":
+    - /url: "?l=ru"
+    - text: Русский
+  - link "This page is available in 简体中文":
+    - /url: "?l=zh-Hans-CN"
+    - text: 简体中文
+  - link "This page is available in Français (France)":
+    - /url: "?l=fr-FR"
+    - text: Français (France)
+  - link "This page is available in 한국어":
+    - /url: "?l=ko"
+    - text: 한국어
+  - link "This page is available in Português (Brazil)":
+    - /url: "?l=pt-BR"
+    - text: Português (Brazil)
+  - link "This page is available in Tiếng Việt":
+    - /url: "?l=vi"
+    - text: Tiếng Việt
+  - link "This page is available in 繁體中文 (台灣)":
+    - /url: "?l=zh-Hant-TW"
+    - text: 繁體中文 (台灣)
+- paragraph:
+  - text: Copyright © 2026
+  - link "Apple Inc.":
+    - /url: https://www.apple.com
+  - text: All rights reserved.
+- list:
+  - link "Internet Service Terms":
+    - /url: https://www.apple.com/legal/internet-services/
+  - link "App Store & Privacy":
+    - /url: https://www.apple.com/legal/privacy/data/en/app-store/
+  - link "Cookie Warning":
+    - /url: https://www.apple.com/privacy/use-of-cookies/
+  - link "Support":
+    - /url: https://support.apple.com/billing

@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-05",
+  "viewport_widths": [
+    1066,
+    325
+  ],
+  "horizontal_overflow": false,
+  "agent_prompt_visible": true,
+  "manual_default_open": false,
+  "manual_expand_collapse": true,
+  "copy_feedback": "已复制",
+  "system_clipboard_readback_verified": false,
+  "root_language": "zh",
+  "app_store": {
+    "version": "1.0.4",
+    "minimumOsVersion": "18.0",
+    "price": 0,
+    "source": "https://itunes.apple.com/lookup?id=6795591930&country=cn"
+  },
+  "english_visible_pages_unchanged": 14
+}

@@ -1,0 +1,16 @@
+﻿产品,页面,官方来源,截图绝对路径,采集日期,用途
+Chirp,官网首屏,https://www.chirpapp.dev/,./screenshots/chirp-website-hero.jpg,2026-10-02,定位与场景入口
+Chirp,来源与手机关系图,https://www.chirpapp.dev/,./screenshots/chirp-website-flow.jpg,2026-10-02,跨设备状态表达
+Flighty,官网首屏,https://flighty.com/,./screenshots/flighty-website-hero.jpg,2026-10-02,收益和事件通知
+Flighty,App Store 前段,https://apps.apple.com/us/app/flighty-live-flight-tracker/id1358823008,./screenshots/flighty-appstore-first.jpg,2026-10-02,状态卡与灵动岛放大
+Flighty,App Store 后段,https://apps.apple.com/us/app/flighty-live-flight-tracker/id1358823008,./screenshots/flighty-appstore-next.jpg,2026-10-02,功能与结果叙事
+Structured,官网视频首屏,https://structured.app/,./screenshots/structured-website-hero.jpg,2026-10-02,生活场景广告，仅作制作形式参考
+Structured,官网产品介绍,https://structured.app/,./screenshots/structured-website-product.jpg,2026-10-02,产品定位与行动入口
+Structured,App Store 前段,https://apps.apple.com/us/app/structured-daily-planner-todo/id1499198946,./screenshots/structured-appstore-first.jpg,2026-10-02,含预览视频和跨图构图
+Structured,App Store 后段,https://apps.apple.com/us/app/structured-daily-planner-todo/id1499198946,./screenshots/structured-appstore-next.jpg,2026-10-02,单主题、短标题和局部界面
+Structured,官方链接的媒体包,https://impresskit.net/a94850d4-7d78-4ce2-ad8c-40841ebe2888/images,./screenshots/structured-presskit-images.jpg,2026-10-02,素材分类与分辨率下载
+Pushcut,官网首屏,https://www.pushcut.io/,./screenshots/pushcut-website-hero.jpg,2026-10-02,技术服务与手机能力关系
+Pushcut,分步场景教程,https://www.pushcut.io/guides/homekit-api-schedule-cancel,./screenshots/pushcut-step-guide.jpg,2026-10-02,编号步骤与结果解释
+Pushcut,App Store 前段,https://apps.apple.com/us/app/pushcut-shortcuts-automation/id1450936447,./screenshots/pushcut-appstore-first.jpg,2026-10-02,功能标题与真实界面
+Working Copy,官网演示首屏,https://workingcopy.app/,./screenshots/workingcopy-website-hero.jpg,2026-10-02,实际开发工作流演示
+Working Copy,App Store 前段,https://apps.apple.com/us/app/git-client-working-copy/id896694807,./screenshots/workingcopy-appstore-first.jpg,2026-10-02,开发者词汇和具体动作

@@ -1,0 +1,327 @@
+URL: https://apps.apple.com/us/app/pushcut-shortcuts-automation/id1450936447
+Captured: 2026-10-02
+
+- navigation:
+  - img "App Store":
+  - button "App Store":
+    - text: for iPhone
+  - generic: Search
+  - searchbox "Search"
+  - list:
+    - button "Today":
+      - generic: Today
+    - button "Games":
+      - generic: Games
+    - button "Apps":
+      - generic: Apps
+    - button "Arcade":
+      - generic: Arcade
+  - generic: Categories
+  - list "Categories":
+    - button "Categories":
+      - generic: Categories
+    - button "Photo & Video":
+      - generic: Photo & Video
+    - button "Health & Fitness":
+      - generic: Health & Fitness
+    - button "Productivity":
+      - generic: Productivity
+    - button "Entertainment":
+      - generic: Entertainment
+    - button "Action":
+      - generic: Action
+    - button "Adventure":
+      - generic: Adventure
+    - button "Puzzle":
+      - generic: Puzzle
+    - button "Indie":
+      - generic: Indie
+  - list
+- main:
+  - 'heading "Pushcut: Shortcuts Automation" [level=1]':
+    - generic: "Pushcut: Shortcuts Automation"
+  - paragraph: Notifications and Widgets
+  - paragraph: Free · In‑App Purchases
+  - button "Share":
+    - text: Share
+  - list:
+    - link "541 Ratings 4.4 Stars":
+      - /url: "#productRatings"
+      - term:
+        - generic: 541 Ratings
+      - definition:
+        - generic: "4.4"
+        - list "4.4 Stars":
+    - link "Age Rating 4+ Years":
+      - /url: "#information"
+      - term:
+        - generic: Age Rating
+      - definition:
+        - generic: 4+
+        - generic: Years
+    - link "Category Utilities":
+      - /url: "#information"
+      - term:
+        - generic: Category
+      - definition:
+        - generic: Utilities
+    - link "Developer Simon Peter Leeb":
+      - /url: https://apps.apple.com/us/developer/simon-peter-leeb/id664001386?platform=iphone
+      - term:
+        - generic: Developer
+      - definition:
+        - generic: Simon Peter Leeb
+    - link "Language EN + 2 More":
+      - /url: "#information"
+      - term:
+        - generic: Language
+      - definition:
+        - generic: EN
+        - generic: + 2 More
+    - link "Size 194.3 MB":
+      - /url: "#information"
+      - term:
+        - generic: Size
+      - definition:
+        - generic: "194.3"
+        - generic: MB
+  - region "iPhone App Previews and Screenshots":
+    - button "Previous Page" [disabled]:
+    - list:
+      - generic "Screenshot"
+      - generic "Screenshot"
+      - generic "Screenshot"
+      - generic "Screenshot"
+    - button "Next Page":
+  - button "iPhone, iPad, Apple Watch":
+    - generic: iPhone, iPad, Apple Watch
+  - paragraph:
+    - generic: "Smart Shortcuts, Widgets, and Notifications Pushcut helps you kick off your automation when it matters. Create fine-tuned interactions for HomeKit, Shortcuts, and custom workflows through smart notifications and widgets combined with powerful automation actions. Use HomeKit scenes, shortcuts, online integrations, and web services as notification actions that pop up exactly when they matter to you. Trigger these smart notifications from Shortcuts, HomeKit, schedules, locations, iBeacons, online services (like IFTTT, Zapier, Flow, Integromat, ...), home servers, or anywhere that knows what HTTP is. Design beautiful custom widgets and display dynamic information that you can provide using Shortcuts actions, online services or our own API. \"The premiere companion utility for Shortcuts and Home on iOS\" - Federico Viticci (MacStories) \"An essential tool for HomeKit power users\" - Christopher Close (HomeKit Hero) \"Very powerful\" - Rosemary Orchard (Take Control of Shortcuts) Features + Set up alerts & reminders to trigger scheduled & location-based smart notifications + Combine time and location triggers (eg: \"weekdays at 6 PM when I am at work\") + Schedule notifications from Shortcuts + Schedule a shortcut from Shortcuts + Design custom home-screen widgets + Trigger notifications and widget updates through a secure webhook or Pushcut API + Trigger notifications and widget updates from third-party integrations and online services like Zapier, Integromat, IFTTT, etc. + Define notifications with custom titles and messages + Add action buttons to the notifications for quicker access + Run shortcuts directly from notification actions + Activate HomeKit scenes directly from notification actions + Add URLs to the push notifications and open them directly from the notifications + Run online actions (webhooks, HTTP requests) directly from notifications without opening any app or website + Execute online actions in the background based on location or iBeacon events + Customize notification sounds and images + Deliver push notifications to specific devices individually + Use a powerful JSON API to deliver dynamic texts, shortcut inputs, and URLs + Turn a dedicated iOS device into your personal Shortcuts and HomeKit server Apple Watch + Interactive notifications (requires watchOS 6) + Run HomeKit scenes, online actions, and HTTP requests (like IFTTT webhooks) directly from your wrist + Execute multiple actions from one notification (with \"Keep Open\" flag) (Note: Opening Shortcuts, Safari, or other apps is not supported on Apple Watch) Free version limits: + define up to 3 notifications + define up to 2 background actions + define up to 1 action per notification + use with local triggers or basic webhooks (no dynamic content or online actions) — Pro — + custom dynamic widgets + unlimited notification definitions + unlimited actions per notification + activate HomeKit scenes + unlimited background actions + dynamic notifications from service integrations + fully customizable actions using the powerful JSON API + execute online actions and web requests directly + input parameters for shortcuts and online actions + run and monitor an Automation Server (limits apply) — Automation Server Extended — + schedule server actions periodically + trigger delayed server actions + up to 5000 server requests per day Payments You can subscribe to a monthly or annual subscription plan. Payment will be charged to your Apple ID account at the time of purchase. A subscription automatically renews unless it is canceled at least 24 hours before the end of the current period. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions by going to your account settings on the App Store after making the purchase. Terms of Use: https://www.pushcut.io/terms Privacy Policy: https://www.pushcut.io/privacy"
+    - button "more"
+  - region "Ratings & Reviews":
+    - link "Ratings & Reviews":
+      - /url: https://apps.apple.com/us/app/1450936447?see-all=reviews&platform=iphone
+      - heading "Ratings & Reviews" [level=2]
+    - list:
+      - generic: "4.4"
+      - generic: out of 5
+      - generic: 541 Ratings
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.one.other**":
+      - generic "**ASE.Web.Platform.Shared.Ratings.Review.StarsAria.other.one**":
+  - button "Previous Page" [disabled]:
+  - list:
+    - generic "Great for only single actions!":
+      - heading "Great for only single actions!" [level=3]
+      - list "4 Stars":
+      - time: 04/20/2019
+      - generic: 99brendanallen
+      - paragraph: I know a developer should have limitations when it comes to needing money, but it does everything that I need when it comes to making basic notifications. Only suggestion that I have is that there should be in is a help section. At first, I didn’t know how to push the notification out, but I know how to now from using your site. Please be sure to include a help section for those who don’t know how to instead of either writing a bad review or doing one extra step and have to go to your site to do so. Great app though! Very convenient now so I can automatically backup shortcuts everyday :)
+      - button "MORE"
+      - text: Developer Response
+      - paragraph: thanks for the feedback! I will be sure to include something in the app directly to make this bit clearer. I also plan to add direct IFTTT and Zapier integrations which should make this part even more streamlined.
+      - button "MORE"
+    - generic "Excellent notification service with many use-cases":
+      - heading "Excellent notification service with many use-cases" [level=3]
+      - list "5 Stars":
+      - time: 11/25/2021
+      - generic: scottaw66
+      - paragraph: "Pushcut is my favorite of the many available notification apps/services. I use it to improve upon HomeKit’s limited notification granularity. I also use it for notifying me of events on my Linux server, like a site update deployment. There are myriad possibilities.Also: ignore the one-star reviews from people mad about the pricing model. I think by now any intelligent person who’s paid attention to the ios app economy knows it’s hard for indie developers to make enough money to sustain a project, and personally I’d rather the developers of the apps I use and love not decide they can’t afford to keep putting time into something that’s not sustainable for them.It’s a great app, I use its functionality multiple times per day, and I hope it continues to be viable for the developer."
+      - button "MORE"
+    - heading [level=3]: Features hidden behind IAP even after $38 Lifetime license purchase
+    - list:
+    - time: 05/19/2022
+    - generic: PMDColeslaw
+    - paragraph: This app has the ability to solve major issues with Siri Shortcuts and automations which is why I was willing to pay almost $40 for a lifetime license. However the main feature that most people would want/need requires an additional monthly/annual subscription on top of the lifetime license. Scheduling a one-time server execution/action for a specific date and time should not be behind an additional pay wall for people who already purchased lifetime licenses. Nearly every other “pro” feature of the lifetime license in this app is able to be accomplished by other workarounds or natively in iOS. The one problem it could actually solve, is deceptively locked behind an expensive monthly IAP. 🙄
+    - button [disabled]: MORE
+    - heading [level=3]: I love it! Please make Siri Shortcuts available on Mac!!!
+    - list:
+    - time: 09/27/2020
+    - generic: elline97
+    - paragraph: Excellent! I have had so much fun with Siri Shortcuts the last couple of days. I’m still learning more about it everyday. There are a few issues with Siri- she is stuttering a bit sometimes and automations occasionally doesn’t work. Besides that, the app is great. I have scheduled Siri to announce tomorrow’s meetings before bedtime and Siri wakes me up with my music playlist. I just love that I have more control now!! Please make the app available on Mac!! I would love to be able to do what I do on my iPhone to my laptop
+    - button [disabled]: MORE
+  - button "Next Page":
+  - region "What’s New":
+    - button "What’s New":
+      - heading "What’s New" [level=2]
+    - generic "What’s New":
+      - paragraph:
+        - generic: "- Widget AI now suggests alternative options when it can't create a widget from initial prompt - Find Logged Notifications can now be sorted by date or name - Logged Notifications now also tracks local and scheduled notifications, not just push notifications"
+      - generic: Version 2026.8
+      - time: Sep 1
+  - region "App Privacy":
+    - button "App Privacy":
+      - link "App Privacy":
+        - /url: "#"
+        - heading "App Privacy" [level=2]
+    - paragraph:
+      - text: The developer, Simon Peter Leeb, indicated that the app’s privacy practices may include handling of data as described below. For more information, see the
+      - link "Developer’s Privacy Policy":
+        - /url: https://www.pushcut.io/privacy
+        - generic: developer’s privacy policy
+      - text: .
+  - list:
+    - generic "Data Not Linked to You":
+      - heading "Data Not Linked to You" [level=3]
+      - paragraph: "The following data may be collected but it is not linked to your identity:"
+      - list:
+        - text: Purchases
+        - text: User Content
+        - text: Identifiers
+        - text: Usage Data
+  - paragraph:
+    - text: Privacy practices may vary, for example, based on the features you use or your age.
+    - link "Learn More":
+      - /url: https://apps.apple.com/us/iphone/story/id1538632801
+  - region "Accessibility":
+    - heading "Accessibility" [level=2]
+    - paragraph:
+      - text: The developer has not yet indicated which accessibility features this app supports.
+      - link "Learn More":
+        - /url: https://apps.apple.com/story/id1814164299
+  - region "Information":
+    - heading "Information" [level=2]
+    - term: Seller
+    - definition: Simon Peter Leeb
+    - term: Size
+    - definition: 194.3 MB
+    - term: Category
+    - definition: Utilities
+    - term: Compatibility
+    - definition:
+      - generic "Requires iOS 15.6 or later.":
+        - text: Requires iOS 15.6 or later.
+    - term: Location
+    - definition: This app may use your location even when it isn’t open, which can decrease device battery life.
+    - term: Languages
+    - definition:
+      - generic "English and 2 more":
+        - text: English and 2 more
+    - term: Age Rating
+    - definition:
+      - generic "4+":
+        - text: 4+
+    - term: In-App Purchases
+    - definition:
+      - generic "Yes":
+        - text: "Yes"
+    - term: Copyright
+    - definition: © 2021 Simon Leeb
+  - link "Developer Website ↗":
+    - /url: https://www.pushcut.io
+    - generic: Developer Website
+    - text: ↗
+  - link "Privacy Policy ↗":
+    - /url: https://www.pushcut.io/privacy
+    - generic: Privacy Policy
+    - text: ↗
+  - region "Supports":
+    - heading "Supports" [level=2]
+    - list:
+      - heading "Family Sharing" [level=3]
+      - paragraph:
+        - text: Some in-app purchases and subscriptions may be shareable with your family group when Family Sharing is enabled.
+        - link "Learn More":
+          - /url: https://apps.apple.com/us/iphone/story/id1563279606
+  - region "You Might Also Like":
+    - link "You Might Also Like":
+      - /url: https://apps.apple.com/us/app/1450936447?see-all=customers-also-bought-apps&platform=iphone
+      - heading "You Might Also Like" [level=2]
+    - button "Previous Page" [disabled]:
+    - list:
+      - link "View Pushover Notifications Simple Push Notifications":
+        - /url: https://apps.apple.com/us/app/pushover-notifications/id506088175
+        - generic: View
+        - generic: Pushover Notifications
+        - generic: Simple Push Notifications
+      - link "View Shortcut Archive Your Ultimate Shortcut Hub":
+        - /url: https://apps.apple.com/us/app/shortcut-archive/id6474897235
+        - generic: View
+        - generic: Shortcut Archive
+        - generic: Your Ultimate Shortcut Hub
+      - link "View ntfy Push notifications via REST":
+        - /url: https://apps.apple.com/us/app/ntfy/id1625396347
+        - generic: View
+        - generic: ntfy
+        - generic: Push notifications via REST
+      - 'link "View UptimeRobot: Monitor anything! Web & SSL, Ports, Cron-jobs"':
+        - /url: https://apps.apple.com/us/app/uptimerobot-monitor-anything/id1104878581
+        - generic: View
+        - generic: "UptimeRobot: Monitor anything!"
+        - generic: Web & SSL, Ports, Cron-jobs
+      - 'link "View Homer: The Home Management App Smart Home maintenance with AI"':
+        - /url: https://apps.apple.com/us/app/homer-the-home-management-app/id1250049341
+        - generic: View
+        - generic: "Homer: The Home Management App"
+        - generic: Smart Home maintenance with AI
+      - link "View Home Widget for HomeKit · HW Widgets from the Home app":
+        - /url: https://apps.apple.com/us/app/home-widget-for-homekit-hw/id1579036143
+        - generic: View
+        - generic: Home Widget for HomeKit · HW
+        - generic: Widgets from the Home app
+      - link "View Super Agent for Safari Block cookie pop-ups":
+        - /url: https://apps.apple.com/us/app/super-agent-for-safari/id1568262835
+        - generic: View
+        - generic: Super Agent for Safari
+        - generic: Block cookie pop-ups
+      - 'link "View Deliveries: a package tracker Track your packages"':
+        - /url: https://apps.apple.com/us/app/deliveries-a-package-tracker/id290986013
+        - generic: View
+        - generic: "Deliveries: a package tracker"
+        - generic: Track your packages
+      - link "View Nomorobo - Robocall Blocker Call Filter & Scam Shield":
+        - /url: https://apps.apple.com/us/app/nomorobo-robocall-blocker/id1134727588
+        - generic: View
+        - generic: Nomorobo - Robocall Blocker
+        - generic: Call Filter & Scam Shield
+      - link:
+        - /url: https://apps.apple.com/us/app/tribopay/id6477870533
+        - generic: View
+        - generic: TriboPay
+        - generic: Utilities
+    - button "Next Page":
+- button "United States"
+- list:
+  - link "This page is available in Español (México)":
+    - /url: "?l=es-MX"
+    - text: Español (México)
+  - link "This page is available in العربية":
+    - /url: "?l=ar"
+    - text: العربية
+  - link "This page is available in Русский":
+    - /url: "?l=ru"
+    - text: Русский
+  - link "This page is available in 简体中文":
+    - /url: "?l=zh-Hans-CN"
+    - text: 简体中文
+  - link "This page is available in Français (France)":
+    - /url: "?l=fr-FR"
+    - text: Français (France)
+  - link "This page is available in 한국어":
+    - /url: "?l=ko"
+    - text: 한국어
+  - link "This page is available in Português (Brazil)":
+    - /url: "?l=pt-BR"
+    - text: Português (Brazil)
+  - link "This page is available in Tiếng Việt":
+    - /url: "?l=vi"
+    - text: Tiếng Việt
+  - link "This page is available in 繁體中文 (台灣)":
+    - /url: "?l=zh-Hant-TW"
+    - text: 繁體中文 (台灣)
+- paragraph:
+  - text: Copyright © 2026
+  - link "Apple Inc.":
+    - /url: https://www.apple.com
+  - text: All rights reserved.
+- list:
+  - link "Internet Service Terms":
+    - /url: https://www.apple.com/legal/internet-services/
+  - link "App Store & Privacy":
+    - /url: https://www.apple.com/legal/privacy/data/en/app-store/
+  - link "Cookie Warning":
+    - /url: https://www.apple.com/privacy/use-of-cookies/
+  - link "Support":
+    - /url: https://support.apple.com/billing

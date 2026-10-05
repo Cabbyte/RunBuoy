@@ -1,0 +1,58 @@
+[
+  {
+    "page": "status.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "index.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "support.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "security.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "self-hosting.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "download.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "privacy.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "guide/install.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "guide/run.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "guide/index.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "guide/agent-skill.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "guide/progress.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "guide/pairing.html",
+    "same_visible_text": true
+  },
+  {
+    "page": "docs/index.html",
+    "same_visible_text": true
+  }
+]

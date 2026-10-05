@@ -43,7 +43,10 @@ confirmation.
 
 ## Preflight
 
-If `command -v runbuoy` fails, follow the global CLI installation route. Then run:
+If `command -v runbuoy` fails, follow the [global CLI installation route](references/installation.md)
+to distinguish a missing package from an installed executable hidden from PATH. A uv install
+must pass the bundled PATH helper's fresh-shell checks and a direct current-shell invocation;
+an absolute-path invocation alone does not prove installation complete. Then run:
 
 ```sh
 runbuoy --version

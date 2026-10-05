@@ -12,7 +12,7 @@
   {
     "type": "file",
     "name": "agent-skill",
-    "label": "使用 Agent 安装"
+    "label": "Agent 集成与安装"
   },
   {
     "type": "file",

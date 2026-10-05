@@ -1,0 +1,52 @@
+{
+  "copy_entries": 190,
+  "pages": [
+    {
+      "page": "index.html",
+      "manual_default_closed": true,
+      "details_count": 1
+    },
+    {
+      "page": "download.html",
+      "manual_default_closed": true,
+      "details_count": 1
+    },
+    {
+      "page": "guide/index.html",
+      "manual_default_closed": true,
+      "details_count": 1
+    },
+    {
+      "page": "en/index.html",
+      "manual_default_closed": true,
+      "details_count": 1
+    },
+    {
+      "page": "en/download.html",
+      "manual_default_closed": true,
+      "details_count": 1
+    },
+    {
+      "page": "en/guide/index.html",
+      "manual_default_closed": true,
+      "details_count": 1
+    }
+  ],
+  "browser_checks": {
+    "desktop": [
+      1280,
+      900
+    ],
+    "mobile": [
+      390,
+      844
+    ],
+    "manual_expand_and_collapse": true,
+    "copy_feedback": "已复制",
+    "mobile_page_overflow": false,
+    "quickstart_manual_expand": true,
+    "quickstart_agent_outside_details": true,
+    "english_home_agent_visible_and_manual_closed": true,
+    "viewport_override_reset": true
+  }
+}

@@ -1,0 +1,227 @@
+URL: https://impresskit.net/a94850d4-7d78-4ce2-ad8c-40841ebe2888/images
+Captured: 2026-10-02
+
+- main:
+  - complementary:
+    - img "Structured - Daily Planner icon"
+    - generic: PRESS KIT
+    - heading "Structured - Daily Planner" [level=2]
+    - heading "Visual Calendar & To-Do Lists" [level=5]
+    - heading "Links" [level=6]
+    - list:
+      - link "App Store":
+        - /url: https://apps.apple.com/us/app/structured-day-planner/id1499198946
+      - link "TestFlight (Beta)":
+        - /url: https://testflight.apple.com/join/k3x7jn8B
+      - link "Instagram":
+        - /url: https://www.instagram.com/structured.app/
+      - link "Twitter":
+        - /url: https://twitter.com/structured_app
+      - link "TikTok":
+        - /url: https://www.tiktok.com/@structured.app
+      - link "Help Center":
+        - /url: https://help.structured.app/
+      - link "Website":
+        - /url: https://structured.app
+    - heading "Contact email" [level=6]
+    - link "press@structured.app":
+      - /url: mailto:press@structured.app
+    - heading "Download" [level=6]
+    - link "App Store Badge":
+      - /url: https://apps.apple.com/us/app/structured-day-planner/id1499198946?uo=4
+      - img "App Store Badge"
+    - button "Show QR code"
+    - link:
+      - /url: https://apps.apple.com/us/app/structured-day-planner/id1499198946?uo=4
+    - heading "Latest press releases" [level=6]
+    - list:
+      - text: Sept. 15, 2025
+      - link "Structured for iOS26":
+        - /url: /press-release/85252f14-0a91-4d5b-a8eb-63436ef11132
+      - text: Jan. 27, 2025
+      - 'link "Structured 4.0: New Perspectives"':
+        - /url: /press-release/28190b99-ddf6-4861-82fc-94b045a5b428
+      - text: Oct. 10, 2024
+      - link "Cycle Seasons, the first Menstrual Monitor integrated in a Day Planner":
+        - /url: /press-release/5f917256-84d5-426f-bbce-9e682bdb9bc3
+      - text: June 11, 2024
+      - link "The New Structured AI":
+        - /url: /press-release/2a9a99bd-8c8b-4995-ab23-3f34b841e3af
+      - text: Feb. 2, 2024
+      - link "Structured is coming to Apple Vision Pro":
+        - /url: /press-release/4563abb9-6e07-4d57-ae58-7009ce316fe2
+    - link "All press releases":
+      - /url: /a94850d4-7d78-4ce2-ad8c-40841ebe2888/press-releases
+  - link "Text":
+    - /url: /a94850d4-7d78-4ce2-ad8c-40841ebe2888
+  - generic: Images
+  - link "Videos":
+    - /url: /a94850d4-7d78-4ce2-ad8c-40841ebe2888/videos
+  - link "Files":
+    - /url: /a94850d4-7d78-4ce2-ad8c-40841ebe2888/files
+  - heading "Filter by tags" [level=6]
+  - text: Icon
+  - generic: "2"
+  - text: Logos
+  - generic: "1"
+  - text: Web
+  - generic: "2"
+  - text: iPhone
+  - generic: "5"
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (70.6 kB, 644×1400px)":
+    - /url: /image-download/3c40d760-8430-41e4-ab6e-17b8f63ddec1/standard
+  - link "Full-res (1.1 MB, 1320×2868px)":
+    - /url: /image-download/3c40d760-8430-41e4-ab6e-17b8f63ddec1
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Full-res (164.2 kB, 512×512px)":
+    - /url: /image-download/82fa8b77-cf05-4549-aac5-fd5df06c3782
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Full-res (174.0 kB, 544×544px)":
+    - /url: /image-download/8ffae72a-71a3-4352-9edf-696511c32679
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (203.3 kB, 644×1400px)":
+    - /url: /image-download/ccf98ccb-0895-4759-a845-b39acf4377a9/standard
+  - link "Full-res (539.8 kB, 1320×2868px)":
+    - /url: /image-download/ccf98ccb-0895-4759-a845-b39acf4377a9
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (277.9 kB, 644×1400px)":
+    - /url: /image-download/5ae7a24f-606f-4131-bbb4-e78694f0718d/standard
+  - link "Full-res (1.2 MB, 1320×2868px)":
+    - /url: /image-download/5ae7a24f-606f-4131-bbb4-e78694f0718d
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (135.5 kB, 644×1400px)":
+    - /url: /image-download/48e5563a-457a-4194-a842-4a2dfbae4d08/standard
+  - link "Full-res (462.7 kB, 1320×2868px)":
+    - /url: /image-download/48e5563a-457a-4194-a842-4a2dfbae4d08
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (236.4 kB, 644×1400px)":
+    - /url: /image-download/36b214a6-deb4-4230-8f08-0bf25f688ee2/standard
+  - link "Full-res (1.0 MB, 1320×2868px)":
+    - /url: /image-download/36b214a6-deb4-4230-8f08-0bf25f688ee2
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (161.8 kB, 1400×875px)":
+    - /url: /image-download/35865a9f-c0a1-4a9c-8366-7ffdd2a5dcb2/standard
+  - link "Full-res (336.3 kB, 2880×1800px)":
+    - /url: /image-download/35865a9f-c0a1-4a9c-8366-7ffdd2a5dcb2
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (155.0 kB, 1400×875px)":
+    - /url: /image-download/29fc0917-c979-433e-9bd1-9a5fdadc0197/standard
+  - link "Full-res (371.7 kB, 2880×1800px)":
+    - /url: /image-download/29fc0917-c979-433e-9bd1-9a5fdadc0197
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (218.7 kB, 1400×978px)":
+    - /url: /image-download/1f681502-120d-42ca-8857-197dc6c26974/standard
+  - link "Full-res (362.4 kB, 2388×1668px)":
+    - /url: /image-download/1f681502-120d-42ca-8857-197dc6c26974
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (179.6 kB, 1400×978px)":
+    - /url: /image-download/6500d386-f192-4efd-8a9e-a54e61c05c07/standard
+  - link "Full-res (243.9 kB, 2388×1668px)":
+    - /url: /image-download/6500d386-f192-4efd-8a9e-a54e61c05c07
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (404.0 kB, 1400×1049px)":
+    - /url: /image-download/c8794159-a68e-48b7-a8ca-f919823fdbe7/standard
+  - link "Full-res (1.3 MB, 2732×2048px)":
+    - /url: /image-download/c8794159-a68e-48b7-a8ca-f919823fdbe7
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (409.2 kB, 1400×1049px)":
+    - /url: /image-download/09efe0b9-9560-45fd-9c20-f8bf2f6cad4e/standard
+  - link "Full-res (1.3 MB, 2732×2048px)":
+    - /url: /image-download/09efe0b9-9560-45fd-9c20-f8bf2f6cad4e
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (420.5 kB, 1400×1049px)":
+    - /url: /image-download/2c796b5a-a8d3-4ac4-a7c3-fe009e32e38c/standard
+  - link "Full-res (1.3 MB, 2732×2048px)":
+    - /url: /image-download/2c796b5a-a8d3-4ac4-a7c3-fe009e32e38c
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (386.0 kB, 1400×1049px)":
+    - /url: /image-download/89133ce4-db07-4970-b3a2-b50023e08c91/standard
+  - link "Full-res (1.2 MB, 2732×2048px)":
+    - /url: /image-download/89133ce4-db07-4970-b3a2-b50023e08c91
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (409.2 kB, 1400×1049px)":
+    - /url: /image-download/f892458e-2fb9-4090-9928-dbc4b9e899b5/standard
+  - link "Full-res (1.3 MB, 2732×2048px)":
+    - /url: /image-download/f892458e-2fb9-4090-9928-dbc4b9e899b5
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (412.8 kB, 1400×1049px)":
+    - /url: /image-download/a01e7bc0-bb27-4e5f-8226-35585b3412dd/standard
+  - link "Full-res (1.3 MB, 2732×2048px)":
+    - /url: /image-download/a01e7bc0-bb27-4e5f-8226-35585b3412dd
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (167.1 kB, 1400×646px)":
+    - /url: /image-download/f0bac476-4dc2-4d4b-bf78-cb624ee709d9/standard
+  - link "Full-res (223.7 kB, 2556×1179px)":
+    - /url: /image-download/f0bac476-4dc2-4d4b-bf78-cb624ee709d9
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (268.5 kB, 1400×645px)":
+    - /url: /image-download/3cf0ec28-f80f-44ff-a333-b5871b2e7ea0/standard
+  - link "Full-res (646.9 kB, 2556×1178px)":
+    - /url: /image-download/3cf0ec28-f80f-44ff-a333-b5871b2e7ea0
+  - button "Minimize":
+  - img "No description"
+  - button:
+  - text: Download
+  - link "Medium (70.0 kB, 1400×280px)":
+    - /url: /image-download/ccc4bccc-3881-4479-8112-20099104d03d/standard
+  - link "Full-res (1.4 MB, 11990×2398px)":
+    - /url: /image-download/ccc4bccc-3881-4479-8112-20099104d03d
+  - button "Minimize":
+- button "Back to top":
