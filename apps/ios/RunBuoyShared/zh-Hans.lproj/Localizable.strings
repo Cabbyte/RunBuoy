@@ -412,8 +412,8 @@
 "runs.confirmation_hint" = "电脑最后确认时间见各任务。";
 
 // ChatGPT connections
-"plugin.title" = "已连接应用";
-"plugin.new" = "连接 ChatGPT";
+"plugin.title" = "智能体连接";
+"plugin.new" = "连接智能体";
 "plugin.scan" = "扫描连接二维码";
 "plugin.paste" = "粘贴 RunBuoy 连接链接";
 "plugin.review" = "查看连接请求";
@@ -430,12 +430,32 @@
 "plugin.source" = "RunBuoy 服务";
 "plugin.workspace" = "工作区";
 "plugin.permissions" = "读取 Runs、机器和消息，包括明确共享的日志片段。不授予远程执行权限。";
-"plugin.expired" = "请求已过期或已处理，请从 ChatGPT 重新发起连接。";
+"plugin.expired" = "请求已过期或已处理，请从智能体重新发起连接。";
 "plugin.allow" = "允许只读访问";
 "plugin.deny" = "拒绝";
-"plugin.confirm" = "确认 ChatGPT 连接";
-"plugin.confirm_footer" = "请仅确认你刚在 ChatGPT 中发起的连接。授权将共享上述工作区。";
-"plugin.allowed" = "已确认，请返回 ChatGPT 完成连接。";
+"plugin.confirm" = "确认智能体连接";
+"plugin.confirm_footer" = "请仅确认你刚在智能体中发起的连接。授权将共享上述工作区。";
+"plugin.allowed" = "已确认，请返回智能体完成连接。";
 "plugin.denied" = "已拒绝连接。";
 "plugin.unavailable" = "此连接不可用。请检查链接，并确认工作区已加入私有测试。";
 "plugin.share_workspace" = "分享或复制工作区 ID";
+
+"plugin.connected_agents" = "已连接的智能体";
+
+"plugin.paste_action" = "粘贴连接链接";
+
+"plugin.review_hint" = "连接前请核对访问权限。";
+
+"plugin.workspace_id" = "工作区 ID";
+
+"plugin.access_expiry" = "只读 · 有效期至 %@";
+
+"plugin.connected_date" = "连接于 %@";
+
+"plugin.connected" = "已连接";
+
+"plugin.connection_expired" = "已过期";
+
+"plugin.details_hint" = "查看访问权限、连接日期及撤销选项。";
+
+"plugin.details" = "连接详情";
