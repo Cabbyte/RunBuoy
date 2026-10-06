@@ -59,9 +59,15 @@ if (existsSync(outputRoot)) {
   const zhHome = html('index.html').replaceAll('runbuoy-zh-', 'runbuoy-');
   const enHome = html('en/index.html');
   expect(textContent(zhHome).includes('扫一眼，掌握任务的进展。'), 'Chinese hero must match approved copy.');
-  expect(zhHome.includes('Agent 报状态，ChatGPT 看全貌。') && zhHome.includes('私人预览'), 'Chinese Agent integration must include Skill and private-preview ChatGPT UI.');
+  expect(textContent(zhHome).includes('Agent 报状态，ChatGPT 看全貌。') && zhHome.includes('私人预览'), 'Chinese Agent integration must include Skill and private-preview ChatGPT UI.');
   expect(/<details[^>]*id="manual-install"[^>]*>/.test(zhHome) && !/<details[^>]*id="manual-install"[^>]*\bopen\b/.test(zhHome), 'Chinese manual installation must remain collapsed.');
   expect(!enHome.includes('runbuoy-zh-'), 'Chinese homepage must not render on English routes.');
+
+  expect(textContent(zhHome).includes('只读查看，连接由 iPhone 确认。'), 'Chinese plugin must retain its read-only connection boundary.');
+  expect(zhHome.includes('href="/guide/progress"') && zhHome.includes('href="/guide/agent-skill"') && zhHome.includes('href="/privacy"'), 'Chinese homepage must link to progress, integration and privacy details.');
+  expect(!textContent(zhHome).includes('示例数据') && !textContent(zhHome).includes('新版预览'), 'Chinese homepage must omit retired marketing footnotes.');
+  expect(zhHome.includes('role="progressbar"') && zhHome.includes('aria-valuenow="78"'), 'Featured task progress must be accessible native content.');
+  expect(/<details[^>]*class="runbuoy-disclosure"[^>]*>/.test(zhHome), 'Chinese install prompt must be expandable.');
 
   const zhQuickStart = html('guide/index.html');
   const enQuickStart = html('en/guide/index.html');
@@ -96,8 +102,11 @@ if (existsSync(outputRoot)) {
     expect(source.includes('id="manual-install"'), `${name} is missing the manual installation fallback.`);
     expect(source.includes('runbuoy-agent-prompt'), `${name} is missing the copyable agent prompt.`);
     expect(source.includes('runbuoy-flow'), `${name} is missing the three-step content.`);
-    expect(source.includes('runbuoy-boundary__flow'), `${name} is missing the read-only architecture.`);
-    expect(source.includes('runbuoy-home-feature-link'), `${name} feature cards are not real links.`);
+    if (name === 'English home') {
+      expect(source.includes('runbuoy-boundary__flow'), `${name} is missing the read-only architecture.`);
+      expect(source.includes('runbuoy-home-feature-link'), `${name} feature cards are not real links.`);
+    }
+
   }
 
   expect(zhHome.includes('href="#agent-install"'), 'Chinese home does not prioritize the agent installation prompt.');

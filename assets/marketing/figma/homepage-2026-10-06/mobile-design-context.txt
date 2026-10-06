@@ -1,0 +1,389 @@
+const imgBrandMascot = "https://www.figma.com/api/mcp/asset/8244caa6-4298-4459-afbb-0b904ac6c272.png";
+const imgWaterDecorative = "https://www.figma.com/api/mcp/asset/f4b4bcd6-af14-4c1d-b963-5a4a3e84c7d6.png";
+const imgActualIOsRunningTasks = "https://www.figma.com/api/mcp/asset/50fc98ee-f877-422f-9bf4-ae6968f9a89f.png";
+
+type RunBuoyManualMobileProps = {
+  className?: string;
+  state?: boolean;
+};
+
+function RunBuoyManualMobile({ className, state = false }: RunBuoyManualMobileProps) {
+  return (
+    <div className={className || "bg-[var(----runbuoy-surface,white)] content-stretch flex flex-col items-start relative rounded-[12px] w-[342px]"} data-node-id="6:49">
+      <button className="[word-break:break-word] content-stretch cursor-pointer flex font-['Noto_Sans_SC:Bold'] font-bold items-start justify-between leading-[1.45] px-[16px] py-[20px] relative shrink-0 text-left w-[342px] whitespace-nowrap" data-node-id="6:50" data-name="Toggle">
+        <p className="relative shrink-0 text-[18px] text-[color:var(----runbuoy-ink,#101a2d)]" data-node-id="6:51">
+          手动安装与配对
+        </p>
+        <p className="relative shrink-0 text-[20px] text-[color:var(----runbuoy-blue,#0985eb)]" data-node-id="6:52">
+          +
+        </p>
+      </button>
+    </div>
+  );
+}
+
+type RunBuoyPromptMobileProps = {
+  className?: string;
+  state?: boolean;
+};
+
+function RunBuoyPromptMobile({ className, state = false }: RunBuoyPromptMobileProps) {
+  return (
+    <div className={className || "bg-[var(----runbuoy-surface,white)] content-stretch flex flex-col items-start relative rounded-[12px] w-[342px]"} data-node-id="6:36">
+      <button className="[word-break:break-word] content-stretch cursor-pointer flex font-['Noto_Sans_SC:Bold'] font-bold items-start justify-between leading-[1.45] px-[16px] py-[20px] relative shrink-0 text-left w-[342px] whitespace-nowrap" data-node-id="6:37" data-name="Toggle">
+        <p className="relative shrink-0 text-[18px] text-[color:var(----runbuoy-ink,#101a2d)]" data-node-id="6:38">
+          查看完整提示词
+        </p>
+        <p className="relative shrink-0 text-[20px] text-[color:var(----runbuoy-blue,#0985eb)]" data-node-id="6:39">
+          +
+        </p>
+      </button>
+    </div>
+  );
+}
+
+type RunBuoyButtonProps = {
+  className?: string;
+  kind?: "Primary" | "Secondary" | "Copy";
+  label?: string;
+};
+
+function RunBuoyButton({ className, kind = "Primary", label = "App Store 下载" }: RunBuoyButtonProps) {
+  if (kind === "Secondary") {
+    return (
+      <div className={className || "bg-[var(----runbuoy-surface,white)] border-[1.5px] border-[var(----runbuoy-line,#d9e5f3)] border-solid content-stretch flex h-[56px] items-center justify-center px-[16px] relative rounded-[var(--layout\\/buttonradius,14px)] w-[220px]"} data-node-id="4:30" data-name="Kind=Secondary">
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[20px] text-[color:var(----runbuoy-ink,#101a2d)] whitespace-nowrap" data-node-id="4:31">
+          {label}
+        </p>
+      </div>
+    );
+  }
+  if (kind === "Copy") {
+    return (
+      <button className={className || "bg-gradient-to-r content-stretch cursor-pointer flex from-[#0985eb] h-[56px] items-center justify-center px-[16px] relative rounded-[var(--layout\\/buttonradius,14px)] to-[#9956fa] w-[260px]"} data-node-id="4:32" data-name="Kind=Copy">
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[20px] text-[color:var(----runbuoy-surface,white)] text-left whitespace-nowrap" data-node-id="4:33">
+          复制安装提示词
+        </p>
+      </button>
+    );
+  }
+  return (
+    <div className={className || "bg-gradient-to-r content-stretch flex from-[#0985eb] h-[56px] items-center justify-center px-[16px] relative rounded-[var(--layout\\/buttonradius,14px)] to-[#9956fa] w-[220px]"} data-node-id="4:28" data-name="Kind=Primary">
+      <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[20px] text-[color:var(----runbuoy-surface,white)] whitespace-nowrap" data-node-id="4:29">
+        {label}
+      </p>
+    </div>
+  );
+}
+
+type RunBuoyFeaturedTaskProps = {
+  className?: string;
+  size?: "Mobile";
+};
+
+function RunBuoyFeaturedTask({ className, size = "Mobile" }: RunBuoyFeaturedTaskProps) {
+  return (
+    <div className={className || "bg-[var(----runbuoy-surface,white)] border border-[var(----runbuoy-line,#d9e5f3)] border-solid content-stretch drop-shadow-[0px_14px_18px_rgba(31,89,166,0.14)] flex flex-col gap-[10px] items-start p-[18px] relative rounded-[var(--layout\\/radius,20px)] w-[342px]"} data-node-id="4:53">
+      <div className="[word-break:break-word] content-stretch flex gap-[10px] items-start leading-[1.45] relative shrink-0 text-[16px] w-[306px] whitespace-nowrap" data-node-id="4:54" data-name="状态与任务">
+        <p className="font-['Noto_Sans_SC:Regular'] font-normal relative shrink-0 text-[color:var(----runbuoy-blue,#0985eb)]" data-node-id="4:55">
+          运行中
+        </p>
+        <p className="font-['Noto_Sans_SC:Bold'] font-bold relative shrink-0 text-[color:var(----runbuoy-ink,#101a2d)]" data-node-id="4:56">
+          大模型微调 · 第 8 轮
+        </p>
+      </div>
+      <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.45] relative shrink-0 text-[16px] text-[color:var(----runbuoy-muted,#536079)] w-[306px]" data-node-id="4:57">
+        工作室 Mac Studio
+      </p>
+      <div className="[word-break:break-word] content-stretch flex items-start justify-between leading-[1.45] relative shrink-0 text-[color:var(----runbuoy-ink,#101a2d)] w-[306px] whitespace-nowrap" data-node-id="4:58" data-name="阶段与百分比">
+        <p className="font-['Noto_Sans_SC:Regular'] font-normal relative shrink-0 text-[16px]" data-node-id="4:59">
+          训练第 8 / 10 个 Epoch
+        </p>
+        <p className="font-['Noto_Sans_SC:Bold'] font-bold relative shrink-0 text-[28px]" data-node-id="4:60">
+          78%
+        </p>
+      </div>
+      <div className="bg-[var(----runbuoy-track,#dce8ff)] h-[10px] overflow-clip relative rounded-[20px] shrink-0 w-[306px]" data-node-id="4:61" data-name="进度 78%">
+        <div className="absolute bg-gradient-to-r from-[#1677ff] h-[10px] left-0 rounded-[20px] to-[#28c9e6] top-0 w-[238.68px]" data-node-id="4:62" data-name="进度值" />
+      </div>
+      <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.45] relative shrink-0 text-[16px] text-[color:var(----runbuoy-muted,#536079)] w-[306px]" data-node-id="4:63">
+        7,800 / 10,000 steps
+      </p>
+      <div className="[word-break:break-word] content-stretch flex font-['Noto_Sans_SC:Regular'] font-normal items-start justify-between leading-[1.45] relative shrink-0 text-[16px] text-[color:var(----runbuoy-muted,#536079)] w-[306px] whitespace-nowrap" data-node-id="4:64" data-name="时间与最近确认">
+        <p className="relative shrink-0" data-node-id="4:65">
+          已用时间 47:00
+        </p>
+        <p className="relative shrink-0" data-node-id="4:66">
+          最后确认 5 秒前
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function Component390() {
+  return (
+    <div className="bg-[var(----runbuoy-surface,white)] content-stretch flex flex-col items-start relative size-full" data-node-id="6:198" data-name="首页 · 手机 390">
+      <div className="content-stretch flex items-center justify-between px-[24px] py-[18px] relative shrink-0 w-[390px]" data-node-id="6:199" data-name="Navigation">
+        <div className="content-stretch flex gap-[10px] items-center relative shrink-0 w-[168px]" data-node-id="6:200" data-name="Brand">
+          <div className="relative shrink-0 size-[36px]" data-node-id="6:201" data-name="Brand mascot">
+            <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={imgBrandMascot} />
+          </div>
+          <p className="[word-break:break-word] font-['SF_Pro:Bold'] font-bold leading-[1.45] relative shrink-0 text-[22px] text-[color:var(----runbuoy-ink,#101a2d)] whitespace-nowrap" data-node-id="6:202" style={{ fontVariationSettings: '"wdth" 100' }}>
+            RunBuoy
+          </p>
+        </div>
+        <button className="[word-break:break-word] block cursor-pointer font-['Noto_Sans_SC:Bold'] font-bold leading-[0] relative shrink-0 text-[18px] text-[color:var(----runbuoy-blue,#0985eb)] text-left whitespace-nowrap" data-node-id="6:203">
+          <p className="leading-[1.45]">快速开始</p>
+        </button>
+      </div>
+      <div className="content-stretch flex flex-col gap-[20px] items-center overflow-clip pt-[34px] relative shrink-0 w-[390px]" data-node-id="6:204" data-name="Hero">
+        <div className="[word-break:break-word] content-stretch flex flex-col font-['Noto_Sans_SC:Bold'] font-bold items-start leading-[1.45] overflow-clip relative shrink-0 text-center w-[342px]" data-node-id="6:205" data-name="Hero title">
+          <p className="relative shrink-0 text-[40px] text-[color:var(----runbuoy-ink,#101a2d)] w-[342px]" data-node-id="6:206">
+            扫一眼，
+          </p>
+          <p className="relative shrink-0 text-[32px] text-[color:var(----runbuoy-blue,#0985eb)] w-[342px]" data-node-id="6:207">
+            掌握任务的进展。
+          </p>
+        </div>
+        <div className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[0] relative shrink-0 text-[18px] text-[color:var(----runbuoy-muted,#536079)] text-center w-[342px]" data-node-id="6:208">
+          <p className="leading-[1.45] mb-0">安装交给 Agent，状态带到 iPhone。</p>
+          <p className="leading-[1.45]">阶段、结果随手看，重要消息随身收。</p>
+        </div>
+        <div className="content-stretch cursor-pointer flex flex-col gap-[12px] items-start overflow-clip relative shrink-0 w-[342px]" data-node-id="6:209" data-name="Hero actions">
+          <RunBuoyButton className="bg-gradient-to-r content-stretch flex from-[#0985eb] h-[56px] items-center justify-center px-[16px] relative rounded-[var(--layout\/buttonradius,14px)] shrink-0 to-[#9956fa] w-[342px]" />
+          <RunBuoyButton className="bg-[var(----runbuoy-surface,white)] border-[1.5px] border-[var(----runbuoy-line,#d9e5f3)] border-solid content-stretch flex h-[56px] items-center justify-center px-[16px] relative rounded-[var(--layout\/buttonradius,14px)] shrink-0 w-[342px]" kind="Secondary" label="连接我的电脑" />
+        </div>
+        <div className="h-[550px] relative shrink-0 w-[390px]" data-node-id="6:214" data-name="Hero artwork">
+          <div className="absolute h-[360px] left-0 top-[110px] w-[390px]" data-node-id="6:215" data-name="Water · decorative">
+            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgWaterDecorative} />
+          </div>
+          <div className="absolute bg-[var(----runbuoy-ink,#101a2d)] h-[367px] left-[167px] overflow-clip rounded-[28px] top-[15px] w-[190px]" data-node-id="6:216" data-name="iPhone / actual product screenshot">
+            <div className="absolute h-[355px] left-[6px] rounded-[23px] top-[6px] w-[178px]" data-node-id="6:217" data-name="Actual iOS running tasks">
+              <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[23px] size-full" src={imgActualIOsRunningTasks} />
+            </div>
+          </div>
+          <div className="absolute left-[6px] size-[190px] top-[310px]" data-node-id="6:218" data-name="Mascot · independent asset">
+            <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={imgBrandMascot} />
+          </div>
+          <RunBuoyFeaturedTask className="absolute bg-[var(----runbuoy-surface,white)] border border-[var(----runbuoy-line,#d9e5f3)] border-solid content-stretch drop-shadow-[0px_14px_18px_rgba(31,89,166,0.14)] flex flex-col gap-[10px] items-start left-[24px] p-[18px] rounded-[var(--layout\/radius,20px)] top-[54px] w-[342px]" />
+        </div>
+      </div>
+      <div className="content-stretch flex flex-col gap-[24px] items-center overflow-clip px-[24px] py-[56px] relative shrink-0 w-[390px]" data-node-id="6:233" data-name="Progress and messages">
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[32px] text-[color:var(----runbuoy-ink,#101a2d)] text-center w-[342px]" data-node-id="6:234">
+          任务分头跑，
+        </p>
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[32px] text-[color:var(----runbuoy-blue,#0985eb)] text-center w-[342px]" data-node-id="6:235">
+          进展一处看。
+        </p>
+        <div className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[0] relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] text-center w-[342px]" data-node-id="6:236">
+          <p className="leading-[1.45] mb-0">几台电脑，各自工作。</p>
+          <p className="leading-[1.45]">阶段、结果，一处掌握。</p>
+        </div>
+        <div className="content-stretch flex flex-col gap-[28px] items-start overflow-clip relative shrink-0 w-[342px]" data-node-id="6:237" data-name="Task and message story">
+          <div className="content-stretch flex flex-col gap-[20px] items-start overflow-clip relative shrink-0 w-[342px]" data-node-id="6:238" data-name="Native task evidence">
+            <RunBuoyFeaturedTask className="bg-[var(----runbuoy-surface,white)] border border-[var(----runbuoy-line,#d9e5f3)] border-solid content-stretch drop-shadow-[0px_14px_18px_rgba(31,89,166,0.14)] flex flex-col gap-[10px] items-start p-[18px] relative rounded-[var(--layout\/radius,20px)] shrink-0 w-[342px]" />
+            <div className="[word-break:break-word] bg-[var(----runbuoy-wash,#f4f8ff)] content-stretch flex flex-col gap-[12px] items-start leading-[1.45] overflow-clip p-[24px] relative rounded-[20px] shrink-0 w-[342px]" data-node-id="6:253" data-name="Task message">
+              <p className="font-['Noto_Sans_SC:Bold'] font-bold relative shrink-0 text-[18px] text-[color:var(----runbuoy-blue,#0985eb)] w-[294px]" data-node-id="6:254">
+                任务发来的重要消息
+              </p>
+              <p className="font-['Noto_Sans_SC:Bold'] font-bold relative shrink-0 text-[20px] text-[color:var(----runbuoy-ink,#101a2d)] w-[294px]" data-node-id="6:255">
+                训练第 8 / 10 个 Epoch
+              </p>
+              <p className="font-['Noto_Sans_SC:Regular'] font-normal relative shrink-0 text-[18px] text-[color:var(----runbuoy-muted,#536079)] w-[294px]" data-node-id="6:256">
+                验证集损失持续下降，预计约 7 分钟后完成。
+              </p>
+            </div>
+          </div>
+          <div className="[word-break:break-word] content-stretch flex flex-col gap-[24px] items-start overflow-clip relative shrink-0 w-[342px]" data-node-id="6:257" data-name="Progress benefits">
+            <div className="font-['Noto_Sans_SC:Bold'] font-bold leading-[0] relative shrink-0 text-[28px] text-[color:var(----runbuoy-ink,#101a2d)] w-[342px]" data-node-id="6:258">
+              <p className="leading-[1.45] mb-0">进展随手看，</p>
+              <p className="leading-[1.45]">消息随身收。</p>
+            </div>
+            <p className="font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[22px] text-[color:var(----runbuoy-blue,#0985eb)] w-[342px]" data-node-id="6:259">
+              看阶段，也看结果
+            </p>
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal leading-[1.45] relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] w-[342px]" data-node-id="6:260">
+              训练、构建、脚本，进展随时可查。
+            </p>
+            <p className="font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[22px] text-[color:var(----runbuoy-blue,#0985eb)] w-[342px]" data-node-id="6:261">
+              有消息，及时知晓
+            </p>
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal leading-[1.45] relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] w-[342px]" data-node-id="6:262">
+              任务需要关注时，接收它发来的消息。
+            </p>
+            <a className="block cursor-pointer font-['Noto_Sans_SC:Bold'] font-bold leading-[0] relative shrink-0 text-[18px] text-[color:var(----runbuoy-blue,#0985eb)] whitespace-nowrap" href="https://www.runbuoy.cloud/guide/progress" data-node-id="6:263" target="_blank">
+              <p className="leading-[1.45]">了解任务与进度 →</p>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div className="bg-[var(----runbuoy-wash,#f4f8ff)] content-stretch flex flex-col gap-[24px] items-center overflow-clip px-[24px] py-[56px] relative shrink-0 w-[390px]" data-node-id="6:264" data-name="Agent and ChatGPT">
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[32px] text-[color:var(----runbuoy-ink,#101a2d)] text-center w-[342px]" data-node-id="6:265">
+          Agent 报状态，
+        </p>
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[32px] text-[color:var(----runbuoy-blue,#0985eb)] text-center w-[342px]" data-node-id="6:266">
+          ChatGPT 看全貌。
+        </p>
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.45] relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] text-center w-[342px]" data-node-id="6:267">
+          问一句，查进展；点一下，看全貌。
+        </p>
+        <div className="[word-break:break-word] content-stretch flex flex-col gap-[28px] items-start leading-[1.45] overflow-clip relative shrink-0 w-[342px]" data-node-id="6:268" data-name="Integration types">
+          <div className="content-stretch flex flex-col gap-[10px] items-start overflow-clip relative shrink-0 w-[342px]" data-node-id="6:269" data-name="RunBuoy Skill">
+            <p className="font-['Noto_Sans_SC:Bold'] font-bold relative shrink-0 text-[22px] text-[color:var(----runbuoy-ink,#101a2d)] w-[342px]" data-node-id="6:270">
+              RunBuoy Skill
+            </p>
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] w-[342px]" data-node-id="6:271">
+              任务报阶段，结果带消息。
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col gap-[10px] items-start overflow-clip relative shrink-0 w-[342px]" data-node-id="6:272" data-name="ChatGPT Plugin · 私人预览">
+            <p className="font-['Noto_Sans_SC:Bold'] font-bold relative shrink-0 text-[22px] text-[color:var(----runbuoy-ink,#101a2d)] w-[342px]" data-node-id="6:273">
+              ChatGPT Plugin · 私人预览
+            </p>
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] w-[342px]" data-node-id="6:274">
+              选中任务，接着聊。
+            </p>
+          </div>
+        </div>
+        <div className="bg-white content-stretch flex flex-col gap-[16px] items-start overflow-clip p-[20px] relative rounded-[20px] shrink-0 w-[342px]" data-node-id="6:275" data-name="ChatGPT / selected task · editable focus">
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[#101a2d] text-[22px] w-[302px]" data-node-id="8:74">
+            运行中 · 模型训练
+          </p>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.45] relative shrink-0 text-[#101a2d] text-[18px] w-[302px]" data-node-id="8:75">
+            Studio GPU
+          </p>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.45] relative shrink-0 text-[#101a2d] text-[16px] w-[302px] whitespace-pre-wrap" data-node-id="8:76">{`Epoch 34 of 50                         68%`}</p>
+          <div className="bg-[#dbe5ff] h-[12px] overflow-clip relative rounded-[6px] shrink-0 w-[302px]" data-node-id="8:77" data-name="Explicit task progress">
+            <div className="absolute bg-[#1a80ff] h-[12px] left-0 rounded-[6px] top-0 w-[205px]" data-node-id="8:78" data-name="Rectangle" />
+          </div>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.45] relative shrink-0 text-[#101a2d] text-[18px] w-[302px]" data-node-id="8:79">
+            验证损失降至 0.042，正在保存检查点。
+          </p>
+        </div>
+        <div className="content-stretch flex flex-col items-start justify-between overflow-clip relative shrink-0 w-[342px]" data-node-id="6:277" data-name="Conversation detail">
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[24px] text-[color:var(----runbuoy-ink,#101a2d)] w-[342px]" data-node-id="6:278">
+            选中任务，接着聊。
+          </p>
+          <RunBuoyButton className="bg-gradient-to-r content-stretch cursor-pointer flex from-[#0985eb] h-[56px] items-center justify-center px-[16px] relative rounded-[var(--layout\/buttonradius,14px)] shrink-0 to-[#9956fa] w-[342px]" label="用于对话" />
+        </div>
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.45] relative shrink-0 text-[18px] text-[color:var(----runbuoy-muted,#536079)] text-center w-[342px]" data-node-id="6:281">
+          只读查看，连接由 iPhone 确认。
+        </p>
+        <a className="[word-break:break-word] block cursor-pointer font-['Noto_Sans_SC:Bold'] font-bold leading-[0] relative shrink-0 text-[18px] text-[color:var(----runbuoy-blue,#0985eb)] whitespace-nowrap" href="https://www.runbuoy.cloud/guide/agent-skill" data-node-id="6:282" target="_blank">
+          <p className="leading-[1.45]">了解 Agent 集成 →</p>
+        </a>
+      </div>
+      <div className="content-stretch flex flex-col gap-[24px] items-center overflow-clip px-[24px] py-[56px] relative shrink-0 w-[390px]" data-node-id="6:283" data-name="Install / scroll target">
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[32px] text-[color:var(----runbuoy-ink,#101a2d)] text-center w-[342px]" data-node-id="6:284">
+          Agent 帮你装，
+        </p>
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[32px] text-[color:var(----runbuoy-blue,#0985eb)] text-center w-[342px]" data-node-id="6:285">
+          RunBuoy 帮你看。
+        </p>
+        <div className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[0] relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] text-center w-[342px]" data-node-id="6:286">
+          <p className="leading-[1.45] mb-0">复制提示词，接入电脑。</p>
+          <p className="leading-[1.45]">下次任务开始，状态随身带走。</p>
+        </div>
+        <div className="[word-break:break-word] content-stretch flex flex-col gap-[24px] items-start leading-[1.45] overflow-clip relative shrink-0 w-[342px]" data-node-id="6:287" data-name="Installation journey">
+          <div className="content-stretch flex flex-col gap-[10px] items-start overflow-clip relative shrink-0 w-[342px]" data-node-id="6:288" data-name="下载 App">
+            <p className="font-['Noto_Sans_SC:Bold'] font-bold relative shrink-0 text-[24px] text-[color:var(----runbuoy-blue,#0985eb)] w-[342px] whitespace-pre-wrap" data-node-id="6:289">{`1  下载 App`}</p>
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] w-[342px]" data-node-id="6:290">
+              在 iPhone 安装 RunBuoy
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col gap-[10px] items-start overflow-clip relative shrink-0 w-[342px]" data-node-id="6:291" data-name="交给 Agent">
+            <p className="font-['Noto_Sans_SC:Bold'] font-bold relative shrink-0 text-[24px] text-[color:var(----runbuoy-blue,#0985eb)] w-[342px] whitespace-pre-wrap" data-node-id="6:292">{`2  交给 Agent`}</p>
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] w-[342px]" data-node-id="6:293">
+              完成安装与验证
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col gap-[10px] items-start overflow-clip relative shrink-0 w-[342px]" data-node-id="6:294" data-name="扫码配对">
+            <p className="font-['Noto_Sans_SC:Bold'] font-bold relative shrink-0 text-[24px] text-[color:var(----runbuoy-blue,#0985eb)] w-[342px] whitespace-pre-wrap" data-node-id="6:295">{`3  扫码配对`}</p>
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] w-[342px]" data-node-id="6:296">
+              确认电脑，带走任务状态
+            </p>
+          </div>
+        </div>
+        <div className="bg-[var(----runbuoy-wash,#f4f8ff)] border border-[var(----runbuoy-line,#d9e5f3)] border-solid content-stretch flex flex-col items-start overflow-clip relative rounded-[20px] shrink-0 w-[342px]" data-node-id="6:297" data-name="Agent installer">
+          <div className="content-stretch flex flex-col items-start justify-between overflow-clip px-[20px] py-[28px] relative shrink-0 w-[342px]" data-node-id="6:298" data-name="Copy prompt action">
+            <div className="[word-break:break-word] content-stretch flex flex-col gap-[10px] items-start leading-[1.45] overflow-clip relative shrink-0 w-[302px]" data-node-id="6:299" data-name="Copy prompt text">
+              <p className="font-['Noto_Sans_SC:Bold'] font-bold relative shrink-0 text-[24px] text-[color:var(----runbuoy-ink,#101a2d)] w-[302px]" data-node-id="6:300">
+                让 Agent 完成安装
+              </p>
+              <p className="font-['Noto_Sans_SC:Regular'] font-normal relative shrink-0 text-[18px] text-[color:var(----runbuoy-muted,#536079)] w-[302px]" data-node-id="6:301">
+                支持 Codex 等具备 Skill 能力的 Agent。
+              </p>
+            </div>
+            <RunBuoyButton className="bg-gradient-to-r content-stretch cursor-pointer flex from-[#0985eb] h-[56px] items-center justify-center px-[16px] relative rounded-[var(--layout\/buttonradius,14px)] shrink-0 to-[#9956fa] w-[302px]" kind="Copy" />
+          </div>
+          <RunBuoyPromptMobile className="bg-[var(----runbuoy-surface,white)] content-stretch flex flex-col items-start relative rounded-[12px] shrink-0 w-[342px]" />
+          <RunBuoyManualMobile className="bg-[var(----runbuoy-surface,white)] content-stretch flex flex-col items-start relative rounded-[12px] shrink-0 w-[342px]" />
+        </div>
+      </div>
+      <div className="content-stretch flex flex-col items-center overflow-clip pb-[56px] pt-[20px] px-[24px] relative shrink-0 w-[390px]" data-node-id="6:312" data-name="Privacy closing">
+        <div className="content-stretch flex flex-col gap-[20px] items-center overflow-clip relative shrink-0 w-[342px]" data-node-id="6:313" data-name="Privacy and mascot">
+          <div className="[word-break:break-word] content-stretch flex flex-col gap-[20px] items-start overflow-clip relative shrink-0 w-[342px]" data-node-id="6:314" data-name="Privacy copy">
+            <div className="font-['Noto_Sans_SC:Bold'] font-bold leading-[0] relative shrink-0 text-[32px] text-[color:var(----runbuoy-ink,#101a2d)] w-[342px]" data-node-id="6:315">
+              <p className="leading-[1.45] mb-0">电脑跑任务，</p>
+              <p className="leading-[1.45]">手机看状态。</p>
+            </div>
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal leading-[1.45] relative shrink-0 text-[20px] text-[color:var(----runbuoy-muted,#536079)] w-[342px]" data-node-id="6:316">
+              源码与完整日志，默认留在本机。
+            </p>
+            <a className="block cursor-pointer font-['Noto_Sans_SC:Bold'] font-bold leading-[0] relative shrink-0 text-[18px] text-[color:var(----runbuoy-blue,#0985eb)] whitespace-nowrap" href="https://www.runbuoy.cloud/privacy" data-node-id="6:317" target="_blank">
+              <p className="leading-[1.45]">了解隐私 →</p>
+            </a>
+          </div>
+          <div className="relative shrink-0 size-[170px]" data-node-id="6:318" data-name="Mascot signoff">
+            <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={imgBrandMascot} />
+          </div>
+        </div>
+      </div>
+      <div className="[word-break:break-word] content-stretch flex items-start justify-between p-[24px] relative shrink-0 text-[18px] w-[390px] whitespace-nowrap" data-node-id="6:319" data-name="Footer">
+        <p className="font-['Noto_Sans_SC:Bold'] font-bold leading-[1.45] relative shrink-0 text-[color:var(----runbuoy-ink,#101a2d)]" data-node-id="6:320">
+          RunBuoy
+        </p>
+        <a className="block cursor-pointer font-['Noto_Sans_SC:Regular'] font-normal leading-[0] relative shrink-0 text-[color:var(----runbuoy-muted,#536079)]" href="https://www.runbuoy.cloud/privacy" data-node-id="6:321" target="_blank">
+          <p className="leading-[1.45] whitespace-pre">{`支持  ·  隐私`}</p>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+These styles are contained in the design: RunBuoy/40/Bold: Font(family: "Noto Sans SC", style: Bold, size: 40, weight: 700, lineHeight: 1.4500000476837158, letterSpacing: 0), RunBuoy/32/Bold: Font(family: "Noto Sans SC", style: Bold, size: 32, weight: 700, lineHeight: 1.4500000476837158, letterSpacing: 0), RunBuoy/18/Regular: Font(family: "Noto Sans SC", style: Regular, size: 18, weight: 400, lineHeight: 1.4500000476837158, letterSpacing: 0), RunBuoy/20/Bold: Font(family: "Noto Sans SC", style: Bold, size: 20, weight: 700, lineHeight: 1.4500000476837158, letterSpacing: 0), RunBuoy/16/Regular: Font(family: "Noto Sans SC", style: Regular, size: 16, weight: 400, lineHeight: 1.4500000476837158, letterSpacing: 0), RunBuoy/28/Bold: Font(family: "Noto Sans SC", style: Bold, size: 28, weight: 700, lineHeight: 1.4500000476837158, letterSpacing: 0), RunBuoy / Floating: Effect(type: DROP_SHADOW, color: #1F59A624, offset: (0, 14), radius: 36, spread: 0), RunBuoy/20/Regular: Font(family: "Noto Sans SC", style: Regular, size: 20, weight: 400, lineHeight: 1.4500000476837158, letterSpacing: 0), RunBuoy/22/Bold: Font(family: "Noto Sans SC", style: Bold, size: 22, weight: 700, lineHeight: 1.4500000476837158, letterSpacing: 0).
+
+Component descriptions: The following components have usage descriptions or documentation links defined in Figma. These descriptions provide important context about the intended usage, best practices, and any constraints for each component. Follow these guidelines when implementing or using these components.
+
+## RunBuoy / Button
+**Node ID:** 4:36
+
+Website primary and secondary actions. Copy states demonstrate prototype feedback only.
+
+## RunBuoy / Featured task
+**Node ID:** 4:67
+
+Editable native task data, enlarged for the website. Percentages are explicitly reported by the task.
+
+## RunBuoy / Prompt / Mobile
+**Node ID:** 6:46
+
+Expandable Prompt content for Chinese website. Default closed.
+
+## RunBuoy / Manual / Mobile
+**Node ID:** 6:67
+
+Expandable Manual content for Chinese website. Default closed.
+
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

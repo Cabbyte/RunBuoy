@@ -1,0 +1,27 @@
+{
+  "fileKey": "XeFw4ascc1qPtA3fIbcXvS",
+  "url": "https://www.figma.com/design/XeFw4ascc1qPtA3fIbcXvS",
+  "linkId": "link_6a79fd4bd3408191a50a7d2eadd73afc",
+  "account": "jax45@akademe.edu.pl",
+  "pageId": "0:1",
+  "status": "completed",
+  "fonts": {
+    "zh": "Noto Sans SC",
+    "latin": "SF Pro"
+  },
+  "discovery": {
+    "codeConnect": "none in repository",
+    "existingScreens": "new empty file",
+    "brandLibrary": "No existing RunBuoy library found; native variables and components created from source and approved references."
+  },
+  "composition": {
+    "desktop": "6:70",
+    "mobile": "6:198"
+  },
+  "prototype": {
+    "desktop": "9:84",
+    "mobile": "9:231"
+  },
+  "validation": "validation.json",
+  "websiteDeployed": false
+}

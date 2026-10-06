@@ -1,0 +1,26 @@
+[
+  {
+    "heroCardWidth": 288,
+    "privacyDirection": "column",
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "heroCardWidth": 480,
+    "privacyDirection": "row",
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "heroCardWidth": 480,
+    "privacyDirection": "row",
+    "scrollWidth": 1024,
+    "width": 1024
+  },
+  {
+    "heroCardWidth": 520,
+    "privacyDirection": "row",
+    "scrollWidth": 1440,
+    "width": 1440
+  }
+]
