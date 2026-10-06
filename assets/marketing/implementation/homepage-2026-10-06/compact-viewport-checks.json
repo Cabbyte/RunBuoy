@@ -1,0 +1,40 @@
+[
+  {
+    "cardBottom": 622.859375,
+    "height": 900,
+    "heroBottom": 806.78125,
+    "mascotTop": 507.78125,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "cardBottom": 604.640625,
+    "height": 768,
+    "heroBottom": 746.5625,
+    "mascotTop": 488.484375,
+    "overflow": false,
+    "width": 1366
+  },
+  {
+    "cardBottom": 595.265625,
+    "height": 700,
+    "heroBottom": 669.1875,
+    "mascotTop": 432.1875,
+    "overflow": false,
+    "width": 1180
+  },
+  {
+    "width": 1280,
+    "height": 720,
+    "heroBottom": 691.953125,
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "heroBottom": 801.78125,
+    "cardBottom": 647.15625,
+    "mascotTop": 651.78125,
+    "overflow": false
+  }
+]

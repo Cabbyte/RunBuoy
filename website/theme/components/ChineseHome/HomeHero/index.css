@@ -1,34 +1,41 @@
-.runbuoy-zh-home-hero { padding-top: 28px; }
-.runbuoy-zh-home-hero__copy { display: flex; align-items: center; flex-direction: column; gap: 20px; text-align: center; padding: 0 24px; }
-.runbuoy-zh-home-hero h1 { font-size: 64px; line-height: 1.45; }
+.runbuoy-zh-home-hero { padding-top: 12px; }
+.runbuoy-zh-home-hero__copy { display: flex; align-items: center; flex-direction: column; gap: 14px; text-align: center; padding: 0 24px; }
+.runbuoy-zh-home-hero h1 { font-size: clamp(42px, 6svh, 56px); line-height: 1.15; }
 .runbuoy-zh-home-hero h1 span { display: block; }
 .runbuoy-zh-home-hero h1 span:last-child { color: var(--rb-blue); }
-.runbuoy-zh-home-hero__tagline { color: var(--rb-muted); }
+.runbuoy-zh-home-hero__tagline { color: var(--rb-muted); font-size: 20px; }
 .runbuoy-zh-home-hero__actions { display: flex; gap: 12px; }
-.runbuoy-zh-home-hero__artwork { position: relative; width: min(100%,1440px); height: 610px; margin: 20px auto 0; }
-.runbuoy-zh-hero-water { position: absolute; top: 80px; left: 0; width: 100%; height: 530px; object-fit: cover; }
-.runbuoy-zh-phone { position: absolute; top: 10px; left: 51.041667%; width: 285px; height: 550px; padding: 6px; border-radius: 42px; background: var(--rb-ink); overflow: hidden; }
-.runbuoy-zh-phone img { display: block; width: 100%; height: 100%; border-radius: 36px; object-fit: cover; }
-.runbuoy-zh-hero-mascot { position: absolute; left: 27.083333%; top: 200px; width: 330px; height: 330px; object-fit: contain; }
-.runbuoy-zh-hero-task { position: absolute; top: 74px; right: 5.902778%; width: 520px; }
+.runbuoy-zh-home-surface .runbuoy-zh-home-hero__actions .runbuoy-zh-action { min-height: 48px; padding-block: 8px; }
+/* Fit the complete composition to a laptop viewport; keep the card text readable. */
+.runbuoy-zh-home-hero__artwork { position: relative; width: min(100%,1440px); height: clamp(310px, calc(100svh - 350px), 460px); margin: 8px auto 0; }
+.runbuoy-zh-hero-water { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+.runbuoy-zh-phone { position: absolute; top: 0; left: 51.041667%; height: calc(100% - 20px); aspect-ratio: 285 / 550; padding: 5px; border-radius: 32px; background: var(--rb-ink); overflow: hidden; }
+.runbuoy-zh-phone img { display: block; width: 100%; height: 100%; border-radius: 27px; object-fit: cover; }
+.runbuoy-zh-hero-mascot { position: absolute; left: 27.083333%; bottom: 20px; width: clamp(210px, 31svh, 280px); aspect-ratio: 1; height: auto; object-fit: contain; }
+.runbuoy-zh-hero-task { position: absolute; top: 28px; right: 5.902778%; width: 480px; }
+.runbuoy-zh-home-surface .runbuoy-zh-hero-task { padding: 20px; gap: 10px; font-size: 18px; }
+.runbuoy-zh-hero-task .runbuoy-zh-task__title strong { font-size: 20px; }
+.runbuoy-zh-hero-task .runbuoy-zh-task__phase strong { font-size: 28px; }
+.runbuoy-zh-hero-task .runbuoy-zh-task__count, .runbuoy-zh-hero-task .runbuoy-zh-task__times { font-size: 16px; }
 @media (min-width: 768px) and (max-width: 1100px) {
-  .runbuoy-zh-hero-mascot { left: 12%; }
-  .runbuoy-zh-hero-task { width: 480px; right: 3%; }
-  .runbuoy-zh-home-hero h1 { font-size: 56px; }
+  .runbuoy-zh-hero-mascot { left: 15%; }
+  .runbuoy-zh-hero-task { width: 440px; right: 3%; }
 }
 @media (max-width: 767px) {
-  .runbuoy-zh-home-hero { padding-top: 34px; }
-  .runbuoy-zh-home-hero h1 { font-size: 40px; }
+  .runbuoy-zh-home-hero { padding-top: 20px; }
+  .runbuoy-zh-home-hero h1 { font-size: 36px; line-height: 1.2; }
   .runbuoy-zh-home-hero h1 span:last-child { font-size: 32px; }
   .runbuoy-zh-home-hero__tagline { font-size: 18px; }
   .runbuoy-zh-home-hero__actions { flex-direction: column; width: 100%; max-width: 440px; }
   .runbuoy-zh-home-surface .runbuoy-zh-home-hero__actions .runbuoy-zh-action { width: 100%; }
-  .runbuoy-zh-home-hero__artwork { height: 550px; max-width: 500px; }
-  .runbuoy-zh-hero-water { top: 110px; height: 360px; }
-  .runbuoy-zh-phone { width: 190px; height: 367px; left: auto; right: 8.461538%; top: 15px; border-radius: 28px; }
+  .runbuoy-zh-home-hero__artwork { height: 420px; max-width: 500px; margin-top: 20px; }
+  .runbuoy-zh-hero-water { top: auto; bottom: 0; height: 290px; }
+  .runbuoy-zh-phone { width: 165px; height: 319px; left: auto; right: 8.461538%; top: 15px; border-radius: 28px; }
   .runbuoy-zh-phone img { border-radius: 23px; }
-  .runbuoy-zh-hero-mascot { width: 190px; height: 190px; left: 1.538462%; top: 310px; }
-  .runbuoy-zh-hero-task { width: calc(100% - 48px); right: 24px; top: 54px; }
+  .runbuoy-zh-hero-mascot { width: 150px; height: 150px; left: 1.538462%; top: auto; bottom: 0; }
+  .runbuoy-zh-hero-task { width: calc(100% - 48px); right: 24px; top: 34px; }
+  .runbuoy-zh-home-surface .runbuoy-zh-hero-task { padding: 18px; font-size: 16px; }
+  .runbuoy-zh-hero-task .runbuoy-zh-task__title strong { font-size: 16px; }
 }
 @media (max-width: 359px) {
   .runbuoy-zh-home-hero__copy { padding: 0 16px; }
