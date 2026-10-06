@@ -1,0 +1,75 @@
+[
+  {
+    "path": "assets/marketing/drafts/hero-mascot-2026-10-05/refinement-centered-large-card-v3.png",
+    "bytes": 1371204,
+    "sha256": "2b24a0eae07ed6d8d1b3444feb9d05c9772375d5b6fed375ae4890728809f56e",
+    "pixels": [
+      1586,
+      992
+    ]
+  },
+  {
+    "path": "assets/marketing/drafts/homepage-sections-2026-10-06/01-progress-and-messages.png",
+    "bytes": 1371917,
+    "sha256": "e64507a45139132ff654091e2fb15ad74153e19554bf04f29b2159ad533ec52b",
+    "pixels": [
+      1513,
+      1040
+    ]
+  },
+  {
+    "path": "assets/marketing/drafts/homepage-sections-2026-10-06/03-agent-setup-and-privacy.png",
+    "bytes": 1297938,
+    "sha256": "2807357db19edc9ea039a93e8c96166603c73c67df6aaa5dbd6870f6d2744f60",
+    "pixels": [
+      1513,
+      1040
+    ]
+  },
+  {
+    "path": "assets/marketing/drafts/homepage-sections-2026-10-06/02-agent-chatgpt.png",
+    "bytes": 1262876,
+    "sha256": "ecfa6780dcceda0a1de09e0cacc6b05d47d0299247604a2bb115cbed52f49fe7",
+    "pixels": [
+      1513,
+      1040
+    ]
+  },
+  {
+    "path": "website/docs/public/marketing/zh-Hans/homepage/mascot-transparent.png",
+    "bytes": 830946,
+    "sha256": "a8bc2ad82ac14a9bd1615dcffdf534979661c54e7ac87cacd26b15bade4a8548",
+    "pixels": [
+      1254,
+      1254
+    ]
+  },
+  {
+    "path": "website/docs/public/marketing/zh-Hans/homepage/water-background.png",
+    "bytes": 917710,
+    "sha256": "42d5afae5598428595c1c184eee49d87d9ac5e78a5d6be18039601c0642adfae",
+    "pixels": [
+      1891,
+      831
+    ]
+  },
+  {
+    "path": "website/docs/public/marketing/zh-Hans/active-runs.jpg",
+    "bytes": 162914,
+    "sha256": "765f1b4abc7598f34206b5896d7b52d912b8465d9ed083c88297046baae53f4b"
+  },
+  {
+    "path": "website/docs/public/marketing/zh-Hans/live-activity.png",
+    "bytes": 131153,
+    "sha256": "e538206abc9fefc98538751352fcd897d45ce06ba4c6dd554ffbba56161b8ee4",
+    "pixels": [
+      1200,
+      290
+    ]
+  },
+  {
+    "path": "website/docs/public/marketing/zh-Hans/chatgpt-workspace.jpg",
+    "bytes": 96452,
+    "sha256": "7880ee13c1256f40e88c382f6fb2809f4dde09e614d05882120d5cb631da1aec"
+  }
+]

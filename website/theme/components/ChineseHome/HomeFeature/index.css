@@ -1,19 +1,43 @@
-.runbuoy-zh-progress__story { display: grid; grid-template-columns: 560fr 528fr; gap: 72px; }
-.runbuoy-zh-progress__evidence { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
-.runbuoy-zh-task-message { background: var(--rb-wash); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px; font-size: 20px; }
-.runbuoy-zh-task-message > p:first-child { color: var(--rb-blue); font-weight: 700; }
-.runbuoy-zh-task-message h3 { font-size: 22px; }
-.runbuoy-zh-task-message > p:last-child { color: var(--rb-muted); }
-.runbuoy-zh-progress__benefits { display: flex; flex-direction: column; gap: 24px; max-width: 480px; }
-.runbuoy-zh-progress__benefits h3 { font-size: 40px; }
-.runbuoy-zh-progress__benefits dl { display: flex; flex-direction: column; gap: 24px; }
-.runbuoy-zh-progress__benefits dt { font-size: 28px; color: var(--rb-blue); font-weight: 700; margin-bottom: 24px; }
-.runbuoy-zh-progress__benefits dd { color: var(--rb-muted); }
-@media (min-width: 768px) and (max-width: 1100px) { .runbuoy-zh-progress__story { gap: 32px; } .runbuoy-zh-progress__story .runbuoy-zh-task__title { flex-wrap: wrap; } }
+.runbuoy-zh-progress__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.runbuoy-zh-overview { padding: 28px; border: 1px solid var(--rb-line); border-radius: 22px; background: linear-gradient(155deg,#f2f8ff,#fbfdff); display: flex; flex-direction: column; gap: 24px; }
+.runbuoy-zh-run-list { display: grid; gap: 16px; }
+.runbuoy-zh-run { background: #fff; border: 1px solid #e0e9f5; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 5px 16px rgb(51 90 153 / 4%); }
+.runbuoy-zh-run__heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.runbuoy-zh-run .runbuoy-zh-task__machine { font-size: 16px; }
+.runbuoy-zh-run .runbuoy-zh-task__track { height: 8px; }
+.runbuoy-zh-progress__updates { display: flex; flex-direction: column; gap: 22px; }
+.runbuoy-zh-message-panel { padding: 26px 28px; border: 1px solid var(--rb-line); border-radius: 22px; }
+.runbuoy-zh-task-message { margin: 20px 0 14px; padding: 18px 20px; border-left: 3px solid #5c8fee; border-radius: 0 12px 12px 0; background: #f4f7fe; }
+.runbuoy-zh-task-message p, .runbuoy-zh-message-panel > p { color: var(--rb-muted); }
+.runbuoy-zh-task-message p { margin-top: 5px; }
+.runbuoy-zh-message-panel > p { font-size: 16px; }
+.runbuoy-zh-lock-panel { padding: 24px 28px; background: #f3f7fd; border-radius: 22px; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
+.runbuoy-zh-lock-panel img { width: 100%; height: auto; border-radius: 22px; box-shadow: 0 14px 24px rgb(25 42 65 / 12%); }
+@media (min-width: 768px) and (max-width: 1000px) {
+  .runbuoy-zh-progress__grid { gap: 20px; }
+  .runbuoy-zh-overview, .runbuoy-zh-message-panel, .runbuoy-zh-lock-panel { padding: 22px; }
+  .runbuoy-zh-run { padding: 16px; }
+  .runbuoy-zh-run__heading { align-items: flex-start; flex-direction: column; }
+}
 @media (max-width: 767px) {
-  .runbuoy-zh-progress__story { grid-template-columns: 1fr; gap: 28px; }
-  .runbuoy-zh-task-message { font-size: 18px; }
-  .runbuoy-zh-task-message h3 { font-size: 20px; }
-  .runbuoy-zh-progress__benefits h3 { font-size: 28px; }
-  .runbuoy-zh-progress__benefits dt { font-size: 22px; }
+  .runbuoy-zh-progress__grid { grid-template-columns: 1fr; gap: 20px; }
+  .runbuoy-zh-overview, .runbuoy-zh-message-panel, .runbuoy-zh-lock-panel { padding: 20px; border-radius: 18px; }
+  .runbuoy-zh-run { padding: 16px; }
+  .runbuoy-zh-run__heading { flex-wrap: wrap; }
+  .runbuoy-zh-panel-heading h3 { font-size: 19px; }
+  .runbuoy-zh-task-message { padding: 14px; }
+  .runbuoy-zh-lock-panel { padding-inline: 16px; }
+  .runbuoy-zh-lock-panel img { border-radius: 16px; }
+}
+
+/* A readable native detail replaces the dense screenshot in narrower columns. */
+.runbuoy-zh-live-compact { display: none; }
+@media (max-width: 1000px) {
+  .runbuoy-zh-lock-panel .runbuoy-zh-live-image { display: none; }
+  .runbuoy-zh-live-compact { display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; background: #0b1018; color: #fff; font-size: 16px; box-shadow: 0 10px 24px rgb(25 42 65 / 12%); }
+  .runbuoy-zh-live-compact > div:first-child { display: flex; align-items: center; gap: 7px; }
+  .runbuoy-zh-live-compact > div:first-child span { margin-left: auto; }
+  .runbuoy-zh-live-compact svg { color: #36c8e5; }
+  .runbuoy-zh-live-compact p { color: #b9c5d7; }
+  .runbuoy-zh-live-compact .runbuoy-zh-task__track { height: 8px; background: #203746; }
 }
