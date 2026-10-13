@@ -1,6 +1,6 @@
 import { Link } from '@rspress/core/theme-original';
 import { ArrowRight, ChartBar, ChatCircle, Desktop, Note, ShieldCheck } from '@phosphor-icons/react';
-import { ProgressBar, SectionHeading, TaskStatus } from './shared';
+import { ProgressBar, SectionHeading } from './shared';
 
 export function AgentIntegration() {
   return <section className="runbuoy-zh-agents" id="agent-integration" aria-labelledby="agent-integration-heading">
@@ -13,15 +13,19 @@ export function AgentIntegration() {
       </div>
       <div className="runbuoy-zh-plugin">
         <div className="runbuoy-zh-plugin__heading"><div><ChatCircle size={24} aria-hidden="true" /><h3>ChatGPT Plugin</h3></div><span>私人预览</span></div>
-        <figure className="runbuoy-zh-agents__focus" aria-label="ChatGPT 中 RunBuoy 任务详情的关键内容">
-          <div className="runbuoy-zh-plugin__task"><h3>模型训练</h3><TaskStatus /></div>
-          <p className="runbuoy-zh-task__machine"><Desktop size={19} aria-hidden="true" />Studio GPU</p>
-          <div className="runbuoy-zh-run__phase"><span>Epoch 34 of 50</span><strong>68%</strong></div>
-          <ProgressBar value={68} label="ChatGPT 中的模型训练进度" />
-          <div className="runbuoy-zh-plugin__message"><Note size={23} aria-hidden="true" /><p>验证损失降至 0.042，正在保存检查点。</p></div>
+        <figure className="runbuoy-zh-chat-preview" aria-label="在 ChatGPT 对话中查询 RunBuoy 任务的静态演示">
+          <p className="runbuoy-zh-chat-question">现在任务进展如何？</p>
+          <div className="runbuoy-zh-chat-answer"><ChatCircle size={22} aria-hidden="true" /><p>我来查看 RunBuoy 的任务状态。</p></div>
+          <div className="runbuoy-zh-agents__focus">
+            <div className="runbuoy-zh-workspace-tabs" aria-hidden="true"><span>正在运行</span><span>历史</span><span>电脑</span><span>消息</span></div>
+            <div className="runbuoy-zh-plugin__task"><h3>模型训练</h3><strong>68%</strong></div>
+            <p className="runbuoy-zh-plugin__machine"><span><Desktop size={19} aria-hidden="true" />Studio GPU</span><span>Epoch 34 of 50</span></p>
+            <ProgressBar value={68} label="ChatGPT 中的模型训练进度" />
+            <div className="runbuoy-zh-plugin__message"><Note size={21} aria-hidden="true" /><p>验证损失降至 0.042，正在保存检查点。</p></div>
+          </div>
           <figcaption><ShieldCheck size={18} aria-hidden="true" />只读查看，连接由 iPhone 确认。</figcaption>
         </figure>
-        <div className="runbuoy-zh-plugin__links"><Link className="runbuoy-zh-text-link" href="/guide/agent-skill#chatgpt">了解 ChatGPT 接入 <ArrowRight aria-hidden="true" /></Link><a href="/marketing/zh-Hans/chatgpt-workspace.jpg" target="_blank" rel="noreferrer">查看完整界面</a></div>
+        <div className="runbuoy-zh-plugin__links"><Link className="runbuoy-zh-text-link" href="/guide/agent-skill#chatgpt">了解 ChatGPT 接入 <ArrowRight aria-hidden="true" /></Link></div>
       </div>
     </div>
   </section>;

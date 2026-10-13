@@ -1,60 +1,58 @@
 ---
-description: 使用 Agent 提示词或手动流程，在 macOS 或 Linux 上安装并验证 RunBuoy Skill 与 CLI。
+description: 让 Agent 安装 RunBuoy，配对 iPhone，并验证第一条任务动态。
 ---
+
+import { Tab, Tabs } from '@rspress/core/theme';
+import { GuidePrompt } from '../../../theme/components/GuidePrompt';
 
 # 快速开始
 
-import { Tab, Tabs } from '@rspress/core/theme';
+下载 App，交给 Agent，扫码配对。任务留在电脑，进展带到手边。
 
-先在 iPhone [从 App Store 下载 RunBuoy](https://apps.apple.com/cn/app/runbuoy/id6795591930)（iOS 18+），再在 Mac 或 Linux 安装 CLI。推荐把下面的安装提示词交给支持 Skill 的 Agent；手动安装步骤在下方折叠区。
+先在 iPhone [下载 RunBuoy](/download)（iOS 18+），准备一台 Mac 或 Linux 电脑，以及支持 Skill 的 Agent。
 
-安装交给 Agent，状态带到 iPhone。完整流程是：**下载 App → Agent 安装 → 配对电脑 → 运行任务**。安装与验证完成后，继续本文末尾的手机配对与演示。
-
-<div id="agent-install"></div>
+<div id="agent-install" />
 
 ## 使用 Agent 安装（推荐）
 
-:::tip 一条提示词安装 Skill + CLI
-Agent 会先安装 RunBuoy Skill，再读取 Skill 自带的安全规则安装和验证 CLI。涉及 `sudo`、系统包管理器或 curl 安装器时，它必须先说明命令并等待确认。
-:::
+复制提示词，交给 Agent 完成 Skill、CLI 与 PATH 验证。已经安装时会先检查现有环境；此步骤不会配对或启动任务。
 
-复制下面整段提示词并粘贴给支持 Skill 的 Agent：
+<GuidePrompt kind="install" />
 
-```text
-请帮我安装并验证 RunBuoy：
+## 配对 iPhone
 
-1. 使用你原生支持的 Skill 安装机制，从
-https://github.com/Cabbyte/RunBuoy/tree/main/skills/runbuoy
-安装或更新 RunBuoy Skill，完整保留 SKILL.md、agents/openai.yaml、references/ 和 scripts/ 目录，不要猜测安装路径。
+安装验证通过后，把配对提示词交给同一个 Agent。它会检查已有配对或待完成会话，再展示二维码或短期配对码。
 
-2. 读取该 Skill 的 references/installation.md，按其中的规则检测 CLI。先检查 command -v runbuoy；找不到命令且 uv 已可用时，用 uv tool dir --bin 检查实际目录中是否已有 runbuoy。已安装但不在 PATH 中时修复路径，不要重复安装；确实未安装且 uv 已可用时，执行：
-uv tool install --python 3.12 runbuoy
+<GuidePrompt kind="pair" />
 
-3. 如果缺少 uv、tmux，或者需要 sudo、系统包管理器或 curl 安装器，请先说明将执行的命令并等待我的确认。
+在 iPhone 打开 **RunBuoy → 设置 → 配对新电脑**，扫码并确认电脑身份，再告诉 Agent 已完成扫码。Agent 会恢复会话并检查连接；已经配对时保留现有连接。[无法扫码或连接异常？](/guide/pairing)
 
-4. 对 uv 安装的 CLI，按安装文档运行 Skill 自带的 scripts/ensure_cli_path.py --repair，验证移除临时 PATH 后，新开的交互式终端和登录终端都能找到命令。再按输出在当前执行 Shell 中启用 PATH、刷新命令缓存。后续独立工具调用也需保留该 PATH。不要把绝对路径可运行或 uv run 成功当作安装完成；若验证失败，继续检查 Shell 配置并说明未通过的项目。
+## 验证第一条动态
 
-5. 在当前 Shell 直接运行：
-command -v runbuoy
-runbuoy --version
-runbuoy doctor --json
-runbuoy capabilities --json
+配对成功后，主动在电脑运行一次演示，或明确让 Agent 执行：
 
-汇报 Skill 是否能以 $runbuoy 被发现、CLI 路径与版本、当前及新终端的 PATH 验证结果、local_ready 和 delivery 状态。不要启动配对、Demo、被监控命令，也不要上传日志。
+```bash
+runbuoy demo live-activity
 ```
 
-这个流程只负责安装与验证，不会配对手机或启动任务。[了解 Agent 安装提示词的设计与使用方式](/guide/agent-skill)。
+确认 iPhone 收到演示状态后，继续[运行自己的任务](/guide/run)。安装和配对提示词都不会自动启动演示或任务。
+
+普通命令可以报告运行状态与结果；百分比、阶段和预计完成时间需要任务显式报告，详见[进度模式](/guide/progress)。
+
+## 手动安装与进阶说明
+
+不使用 Agent，或需要检查依赖时，再展开以下说明。
 
 <details id="manual-install">
 <summary>手动安装 CLI 与可选 Python API</summary>
 
-## 手动安装 CLI
+**手动安装 CLI**
 
 :::tip 手动安装 · 当前可用
 下面的 uv 流程是公开、可执行的安装方式，支持 macOS 与 Linux。
 :::
 
-### 1. 安装系统依赖与 uv
+**1. 安装系统依赖与 uv**
 
 <Tabs>
 <Tab label="macOS">
@@ -97,7 +95,7 @@ uv tool update-shell
 
 重启终端后继续。uv 会自动下载并管理所需的 Python 3.12；`tmux` 是必须通过系统包管理器安装的依赖。
 
-### 2. 安装 CLI
+**2. 安装 CLI**
 
 ```bash
 uv tool install --python 3.12 runbuoy
@@ -135,7 +133,7 @@ runbuoy completion install fish
 </Tab>
 </Tabs>
 
-### 3. 验证安装
+**3. 验证安装**
 
 ```bash
 runbuoy --version
@@ -145,7 +143,7 @@ runbuoy capabilities --json
 
 doctor schema v2 的 `local_ready=true` 表示平台、Python、tmux 与本地存储已满足执行条件。`delivery.ready` 是独立状态；尚未配对或 Server 不可达时，本地 Run 仍完整可用。
 
-## 可选：在 Python 项目中使用 API
+**可选：在 Python 项目中使用 API**
 
 `uv tool` 创建的 CLI 环境与项目 Python 环境相互隔离。如果代码需要 `from runbuoy import progress` 等 API，请在项目根目录另行声明依赖：
 
@@ -157,41 +155,15 @@ uv sync --extra runbuoy
 
 这是正常的双环境安装，不是重复配置。SDK 调用必须发生在 RunBuoy 启动的目标进程树内；详见[进度模式](/guide/progress)。
 
-## 已经手动安装了 CLI？
+**已经手动安装了 CLI？**
 
 仍然可以在任何时候使用上面的 Agent 提示词补装 Skill。Agent 会先运行 `command -v runbuoy`，检测到现有 CLI 后不会重复安装，只会继续验证环境。
 
 </details>
 
-## 连接手机并验证第一条动态
+## 继续使用
 
-打开已安装的 App，完成引导。在电脑运行：
-
-```bash
-runbuoy device pair
-```
-
-用 App 扫描终端二维码，核对电脑身份并完成配对，然后主动运行一次演示：
-
-```bash
-runbuoy demo live-activity
-```
-
-确认 iPhone 收到演示状态后，将自己的命令放在 `runbuoy run --` 后启动。下面的脚本名需要替换为你自己的脚本：
-
-```bash
-runbuoy run -- python3 your_task.py
-```
-
-任务仍在电脑上运行，iPhone 只展示状态。普通命令提供运行状态与结果；百分比、阶段和预计完成时间需要任务显式报告。演示与真实任务都由你主动启动，安装提示词不会代你执行。
-
-## 下一步
-
-- [完整安装、升级与卸载说明](/guide/install)
-- [配对更多电脑](/guide/pairing)
-- [运行命令与发送通知](/guide/run)
+- [运行自己的任务与发送通知](/guide/run)
+- [配对更多电脑与排查连接](/guide/pairing)
 - [配置真实进度](/guide/progress)
-
-## 在 ChatGPT 里查看
-
-问一句，查进展；点一下，看全貌。已获得私人预览权限后，可连接 [ChatGPT Plugin 与交互看板](/guide/agent-skill#chatgpt)，在对话中查询任务，选中任务后继续提问。它提供只读查看，任务仍在电脑执行。
+- [ChatGPT 接入与只读看板（私人预览）](/guide/agent-skill#chatgpt)

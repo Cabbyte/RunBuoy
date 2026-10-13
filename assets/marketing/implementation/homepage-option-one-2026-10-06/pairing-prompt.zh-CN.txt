@@ -1,0 +1,13 @@
+请帮我将这台电脑与 RunBuoy iPhone App 配对：
+
+1. 先确认 command -v runbuoy 和 runbuoy --version 能直接运行。若已安装但 PATH 不可用，读取现有 RunBuoy Skill 的 references/installation.md，按原有流程修复并验证当前及新终端的 PATH，不要重复安装。尚未安装时先说明情况，不要把配对当作安装成功。
+
+2. 运行 runbuoy device status --check-server --json，分别检查 paired、pairing_pending 与 server_reachable。已经配对时报告现有连接状态，不要重新配对或解除配对；服务器不可达不代表未配对。
+
+3. 如果已有待完成会话，先询问我是否已扫码；确认后优先运行 runbuoy device pair --resume。仅在命令明确报告会话已过期时重新发起，不要删除凭证来重置会话。
+
+4. 尚未配对且没有待完成会话时，运行 runbuoy device pair --no-wait。展示命令实际输出的二维码或短期配对码，不要猜测或生成代码。提示我在 iPhone 打开 RunBuoy → 设置 → 配对新电脑，扫码并确认电脑身份；无法扫码时可选择使用配对码。不要代替我在 iPhone 上确认。
+
+5. 等我确认已扫码后，运行 runbuoy device pair --resume，然后运行 runbuoy device status --check-server --json 和 runbuoy doctor --json。分别汇报本地配对状态、服务器可达性与 delivery 状态，不要把服务器健康等同于 iPhone 已收到任务消息。
+
+不要启动 Demo、被监控任务或上传日志，不要解除现有配对。

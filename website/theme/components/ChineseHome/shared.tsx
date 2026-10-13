@@ -6,6 +6,13 @@ export const STORE_URL = 'https://apps.apple.com/cn/app/runbuoy/id6795591930';
 export const MASCOT = '/marketing/zh-Hans/homepage/mascot-transparent.png';
 export const WATER = '/marketing/zh-Hans/homepage/water-background.png';
 
+export function PhonePreview({ className, src, alt = '', eager = false }: { className: string; src: string; alt?: string; eager?: boolean }) {
+  return <div className={'runbuoy-zh-device ' + className}>
+    <img className="runbuoy-zh-device__screen" src={src} width="660" height="1434" alt={alt} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : 'auto'} />
+    <img className="runbuoy-zh-device__frame" src="/marketing/zh-Hans/homepage/phone-frame.png" width="870" height="1808" alt="" loading={eager ? 'eager' : 'lazy'} />
+  </div>;
+}
+
 export function HomeAction({ href, secondary = false, children }: { href: string; secondary?: boolean; children: ReactNode }) {
   return <Button type="a" href={href} theme={secondary ? 'alt' : 'brand'} className={`runbuoy-zh-action${secondary ? ' runbuoy-zh-action--secondary' : ''}`}>{children}</Button>;
 }

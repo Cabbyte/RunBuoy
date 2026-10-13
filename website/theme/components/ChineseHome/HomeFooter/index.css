@@ -1,5 +1,4 @@
 .runbuoy-zh-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; width: min(calc(100% - 80px),1160px); margin: auto; padding: 22px 0; border-top: 1px solid var(--rb-line); font-size: 16px; }
 .runbuoy-zh-footer nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 16px; color: var(--rb-muted); }
 .runbuoy-zh-footer nav a:hover { color: var(--rb-blue); }
-.runbuoy-zh-footer__mobile { display: none; }
-@media (max-width: 767px) { .runbuoy-zh-footer { width: calc(100% - 40px); align-items: baseline; } .runbuoy-zh-footer__mobile { display: inline; } .runbuoy-zh-footer nav { max-width: 200px; gap: 8px 14px; } }
+@media (max-width: 767px) { .runbuoy-zh-footer { width: calc(100% - 40px); align-items: baseline; } .runbuoy-zh-footer nav { max-width: 200px; gap: 8px 14px; } }

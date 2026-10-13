@@ -1,0 +1,73 @@
+{
+  "anchor": {
+    "hash": "#agent-install",
+    "installY": 87.828125
+  },
+  "installCopy": {
+    "length": 902,
+    "matches": true,
+    "nativeWriteSucceeded": true,
+    "pairStatus": "",
+    "status": "安装提示词已复制"
+  },
+  "pairCopy": {
+    "installStatus": "安装提示词已复制",
+    "length": 801,
+    "matches": true,
+    "nativeWriteSucceeded": true,
+    "openDetails": 0,
+    "status": "配对提示词已复制"
+  },
+  "installFailure": {
+    "open": true,
+    "otherOpen": false,
+    "status": "复制未成功，请在下方选择提示词并手动复制。"
+  },
+  "pairFailure": {
+    "open": true,
+    "otherOpen": false,
+    "status": "复制未成功，请在下方选择提示词并手动复制。"
+  },
+  "keyboardFocus": {
+    "outline": "rgb(8, 106, 196) solid 3px",
+    "text": "查看配对提示词"
+  },
+  "keyboardOpen": "",
+  "manual": {
+    "hasPairCommand": true,
+    "open": true
+  },
+  "pairAnchor": {
+    "hash": "#pair-after-install",
+    "y": 396.8984375
+  },
+  "storeLinks": [
+    {
+      "text": "下载 App",
+      "url": "https://apps.apple.com/cn/app/runbuoy/id6795591930"
+    },
+    {
+      "text": "App Store 下载",
+      "url": "https://apps.apple.com/cn/app/runbuoy/id6795591930"
+    },
+    {
+      "text": "1  下载 App",
+      "url": "https://apps.apple.com/cn/app/runbuoy/id6795591930"
+    }
+  ],
+  "english": {
+    "chineseHome": false,
+    "heading": "Long-running progress,always within reach",
+    "url": "/en/"
+  },
+  "docs": {
+    "chineseHome": false,
+    "heading": "#使用文档 ",
+    "url": "/docs/"
+  },
+  "chatgptGuide": {
+    "anchorFound": true,
+    "url": "/guide/agent-skill#chatgpt"
+  },
+  "console": []
+}

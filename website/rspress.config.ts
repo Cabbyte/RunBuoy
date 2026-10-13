@@ -85,6 +85,9 @@ export default defineConfig({
   ],
   languageParity: {
     enabled: true,
+    // These Chinese pages embed shared React UI; English remains Markdown.
+    // check-site.mjs verifies both generated locale routes despite the extension difference.
+    exclude: ['download.md', 'download.mdx', 'guide/pairing.md', 'guide/pairing.mdx'],
   },
   themeConfig: {
     localeRedirect: 'never',

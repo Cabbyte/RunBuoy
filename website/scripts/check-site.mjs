@@ -50,7 +50,7 @@ expect(existsSync(outputRoot), 'doc_build is missing; run npm run build first.')
 const zhPromptSource = readFileSync(path.join(websiteRoot, 'theme/components/ChineseHome/installPrompts.ts'), 'utf8');
 const zhPrompt = zhPromptSource.match(/  zh: `([\s\S]*?)`,/)?.[1];
 expect(Boolean(zhPrompt), 'Missing Chinese installation prompt.');
-for (const page of ['index.mdx', 'agent-skill.md']) {
+for (const page of ['agent-skill.md']) {
   const source = readFileSync(path.join(websiteRoot, `docs/zh/guide/${page}`), 'utf8');
   expect(zhPrompt && source.includes('```text\n' + zhPrompt + '\n```'), `${page} Chinese prompt differs from the homepage.`);
 }
@@ -76,6 +76,9 @@ if (existsSync(outputRoot)) {
   const zhInstall = html('guide/install.html');
   const enInstall = html('en/guide/install.html');
   const zhDownload = html('download.html');
+  html('guide/pairing.html');
+  html('en/guide/pairing.html');
+  expect(zhDownload.includes('app-store-qr.png'), 'Chinese download page must render the App Store QR card.');
   const enDownload = html('en/download.html');
   const zhSelfHosting = html('self-hosting.html');
   const enSelfHosting = html('en/self-hosting.html');
@@ -91,6 +94,24 @@ if (existsSync(outputRoot)) {
   const enProgress = html('en/guide/progress.html');
   const enRun = html('en/guide/run.html');
   const zhQuickStartText = textContent(zhQuickStart);
+  const pairingPrompt = zhPromptSource.match(/PAIRING_PROMPT_ZH = `([\s\S]*?)`;/)?.[1];
+  expect(Boolean(pairingPrompt), 'Missing shared pairing prompt.');
+  for (const [name, source] of [['home', zhHome], ['quick start', zhQuickStart], ['pairing guide', html('guide/pairing.html')]]) {
+    expect(pairingPrompt && textContent(source).includes(textContent(pairingPrompt)), `${name} must render the shared pairing prompt.`);
+  }
+  expect(zhPrompt && zhQuickStartText.includes(textContent(zhPrompt)), 'Quick Start must render the same installation prompt as home.');
+  for (const page of ['index.html', 'docs/index.html', 'guide/index.html', 'download.html']) {
+    const header = html(page).match(/<header[^>]*runbuoy-site-nav[\s\S]*?<\/header>/)?.[0] ?? '';
+    expect(header.includes('href="/guide/"') && header.includes('href="/docs/"') && header.includes('href="/download"'), `${page} must use canonical Chinese navigation targets.`);
+    expect(!header.includes('apps.apple.com') && !header.includes('href="#agent-install"'), `${page} header must not change the meaning of shared navigation links.`);
+  }
+  for (const page of ['docs/index.html', 'guide/index.html', 'guide/run.html', 'download.html']) {
+    const sidebar = html(page).match(/<aside[\s\S]*?<\/aside>/)?.[0] ?? '';
+    expect(['日常任务', 'Agent 集成', '进阶与支持'].every(label => textContent(sidebar).includes(label)), `${page} must retain the shared documentation directory.`);
+  }
+  expect(zhQuickStart.includes('复制配对提示词'), 'Quick Start must offer Agent pairing before manual alternatives.');
+  expect(/href="\/guide\/run(?:\.html)?"[^>]*>[\s\S]{0,700}下一页/.test(zhQuickStart), 'Quick Start next page must lead to running a task.');
+
   const enQuickStartText = textContent(enQuickStart);
   const zhProgressText = textContent(zhProgress);
   const enProgressText = textContent(enProgress);
