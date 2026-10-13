@@ -103,7 +103,8 @@ if (existsSync(outputRoot)) {
   for (const page of ['index.html', 'docs/index.html', 'guide/index.html', 'download.html']) {
     const header = html(page).match(/<header[^>]*runbuoy-site-nav[\s\S]*?<\/header>/)?.[0] ?? '';
     expect(header.includes('href="/guide/"') && header.includes('href="/docs/"') && header.includes('href="/download"'), `${page} must use canonical Chinese navigation targets.`);
-    expect(!header.includes('apps.apple.com') && !header.includes('href="#agent-install"'), `${page} header must not change the meaning of shared navigation links.`);
+    const navigationTargets = [...header.matchAll(/href="([^"]+)"/g)].map(match => match[1]);
+    expect(navigationTargets.every(target => new URL(target, 'https://www.runbuoy.cloud').origin === 'https://www.runbuoy.cloud' && !target.startsWith('#')), `${page} header must use site navigation rather than external downloads or page anchors.`);
   }
   for (const page of ['docs/index.html', 'guide/index.html', 'guide/run.html', 'download.html']) {
     const sidebar = html(page).match(/<aside[\s\S]*?<\/aside>/)?.[0] ?? '';
