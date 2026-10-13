@@ -1,0 +1,94 @@
+{
+  "checkedAt": "2026-10-13T07:38:46.244Z",
+  "origin": "https://www.runbuoy.cloud",
+  "websiteCommit": "fc4aa39096c09c31d35e0de6898c1580d00f2e66",
+  "pagesRun": "https://github.com/Cabbyte/RunBuoy/actions/runs/38363799118",
+  "routes": [
+    {
+      "route": "/",
+      "status": 200,
+      "finalUrl": "https://www.runbuoy.cloud/",
+      "sharedChineseNavigation": true
+    },
+    {
+      "route": "/guide/",
+      "status": 200,
+      "finalUrl": "https://www.runbuoy.cloud/guide/",
+      "sharedChineseNavigation": true
+    },
+    {
+      "route": "/docs/",
+      "status": 200,
+      "finalUrl": "https://www.runbuoy.cloud/docs/",
+      "sharedChineseNavigation": true
+    },
+    {
+      "route": "/download",
+      "status": 200,
+      "finalUrl": "https://www.runbuoy.cloud/download",
+      "sharedChineseNavigation": true
+    },
+    {
+      "route": "/guide/pairing",
+      "status": 200,
+      "finalUrl": "https://www.runbuoy.cloud/guide/pairing",
+      "sharedChineseNavigation": true
+    },
+    {
+      "route": "/guide/run",
+      "status": 200,
+      "finalUrl": "https://www.runbuoy.cloud/guide/run",
+      "sharedChineseNavigation": true
+    },
+    {
+      "route": "/en/",
+      "status": 200,
+      "finalUrl": "https://www.runbuoy.cloud/en/",
+      "sharedChineseNavigation": false
+    },
+    {
+      "route": "/en/download",
+      "status": 200,
+      "finalUrl": "https://www.runbuoy.cloud/en/download",
+      "sharedChineseNavigation": false
+    },
+    {
+      "route": "/en/guide/pairing",
+      "status": 200,
+      "finalUrl": "https://www.runbuoy.cloud/en/guide/pairing",
+      "sharedChineseNavigation": false
+    }
+  ],
+  "assets": [
+    {
+      "route": "/marketing/zh-Hans/app-store-qr.png",
+      "status": 200,
+      "sha256": "25ef14f8921334db336b81f60201c9ba61bb119023db3ae8c5907538a50be4bd",
+      "matchesRepository": true
+    },
+    {
+      "route": "/marketing/zh-Hans/homepage/mascot-transparent.png",
+      "status": 200,
+      "sha256": "a8bc2ad82ac14a9bd1615dcffdf534979661c54e7ac87cacd26b15bade4a8548",
+      "matchesRepository": true
+    },
+    {
+      "route": "/marketing/zh-Hans/homepage/water-background.png",
+      "status": 200,
+      "sha256": "42d5afae5598428595c1c184eee49d87d9ac5e78a5d6be18039601c0642adfae",
+      "matchesRepository": true
+    },
+    {
+      "route": "/marketing/zh-Hans/homepage/phone-frame.png",
+      "status": 200,
+      "sha256": "e48bbd90dbcf8b4017394bc3c4331cac25ba232fefcb2b4f02ac00d81bc06540",
+      "matchesRepository": true
+    },
+    {
+      "route": "/marketing/zh-Hans/homepage/lock-screen.png",
+      "status": 200,
+      "sha256": "1990576388078648539f12b96fd63f34cae845c0d6c1499c77b0267af60dd4b7",
+      "matchesRepository": true
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "quickStart": {
+    "h1": "#快速开始 ",
+    "next": "/guide/run.html",
+    "prompts": [
+      "复制安装提示词",
+      "复制配对提示词"
+    ],
+    "url": "https://www.runbuoy.cloud/guide/"
+  },
+  "copy": [
+    "",
+    "配对提示词已复制"
+  ],
+  "download": {
+    "qr": true,
+    "store": "https://apps.apple.com/cn/app/runbuoy/id6795591930",
+    "url": "https://www.runbuoy.cloud/download"
+  }
+}
