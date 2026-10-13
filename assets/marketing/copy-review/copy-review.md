@@ -2181,7 +2181,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:2](../../../website/docs/zh/download.md)，[website/docs/en/download.md:2](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:2](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:2](../../../website/docs/en/download.md)
 
 ### D02 · 标题
 
@@ -2199,7 +2199,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:5](../../../website/docs/zh/download.md)，[website/docs/en/download.md:5](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:5](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:5](../../../website/docs/en/download.md)
 
 ### D03 · 正文
 
@@ -2217,7 +2217,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:7](../../../website/docs/zh/download.md)，[website/docs/en/download.md:7](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:7](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:7](../../../website/docs/en/download.md)
 
 ### D04 · 正文
 
@@ -2235,7 +2235,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:9](../../../website/docs/zh/download.md)，[website/docs/en/download.md:9](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:9](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:9](../../../website/docs/en/download.md)
 
 ### D05 · 正文
 
@@ -2253,7 +2253,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:11](../../../website/docs/zh/download.md)，[website/docs/en/download.md:11](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:11](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:11](../../../website/docs/en/download.md)
 
 ### D06 · 标题
 
@@ -2271,7 +2271,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:13](../../../website/docs/zh/download.md)，[website/docs/en/download.md:13](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:13](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:13](../../../website/docs/en/download.md)
 
 ### D07 · 正文
 
@@ -2289,7 +2289,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:15](../../../website/docs/zh/download.md)，[website/docs/en/download.md:15](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:15](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:15](../../../website/docs/en/download.md)
 
 ### D08 · 条目
 
@@ -2307,7 +2307,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:17](../../../website/docs/zh/download.md)，[website/docs/en/download.md:17](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:17](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:17](../../../website/docs/en/download.md)
 
 ### D09 · 条目
 
@@ -2325,7 +2325,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:18](../../../website/docs/zh/download.md)，[website/docs/en/download.md:18](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:18](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:18](../../../website/docs/en/download.md)
 
 ### D10 · 条目
 
@@ -2343,7 +2343,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:19](../../../website/docs/zh/download.md)，[website/docs/en/download.md:19](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:19](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:19](../../../website/docs/en/download.md)
 
 ### D11 · 条目
 
@@ -2361,7 +2361,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:20](../../../website/docs/zh/download.md)，[website/docs/en/download.md:20](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:20](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:20](../../../website/docs/en/download.md)
 
 ### D12 · 正文
 
@@ -2379,7 +2379,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:22](../../../website/docs/zh/download.md)，[website/docs/en/download.md:22](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:22](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:22](../../../website/docs/en/download.md)
 
 ### D13 · 条目
 
@@ -2397,7 +2397,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:24](../../../website/docs/zh/download.md)，[website/docs/en/download.md:24](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:24](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:24](../../../website/docs/en/download.md)
 
 ### D14 · 正文
 
@@ -2415,7 +2415,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:25](../../../website/docs/zh/download.md)，[website/docs/en/download.md:25](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:25](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:25](../../../website/docs/en/download.md)
 
 ### D15 · 折叠入口
 
@@ -2433,7 +2433,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:29](../../../website/docs/zh/download.md)，[website/docs/en/download.md:29](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:29](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:29](../../../website/docs/en/download.md)
 
 ### D16 · 正文
 
@@ -2451,7 +2451,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:31](../../../website/docs/zh/download.md)，[website/docs/en/download.md:31](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:31](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:31](../../../website/docs/en/download.md)
 
 ### D17 · 命令或提示词
 
@@ -2473,7 +2473,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:33](../../../website/docs/zh/download.md)，[website/docs/en/download.md:33](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:33](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:33](../../../website/docs/en/download.md)
 
 ### D18 · 正文
 
@@ -2491,7 +2491,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:37](../../../website/docs/zh/download.md)，[website/docs/en/download.md:37](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:37](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:37](../../../website/docs/en/download.md)
 
 ### D19 · 标题
 
@@ -2509,7 +2509,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:41](../../../website/docs/zh/download.md)，[website/docs/en/download.md:41](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:41](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:41](../../../website/docs/en/download.md)
 
 ### D20 · 条目
 
@@ -2527,7 +2527,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:43](../../../website/docs/zh/download.md)，[website/docs/en/download.md:43](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:43](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:43](../../../website/docs/en/download.md)
 
 ### D21 · 条目
 
@@ -2545,7 +2545,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:44](../../../website/docs/zh/download.md)，[website/docs/en/download.md:44](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:44](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:44](../../../website/docs/en/download.md)
 
 ### D22 · 条目
 
@@ -2563,7 +2563,7 @@ App 截图内的原生界面文本来自 main，不是本轮改写的宣传文�
 
 状态：待用户审阅。
 
-来源：[website/docs/zh/download.md:45](../../../website/docs/zh/download.md)，[website/docs/en/download.md:45](../../../website/docs/en/download.md)
+来源：[website/docs/zh/download.md:45](../../../website/docs/zh/download.mdx)，[website/docs/en/download.md:45](../../../website/docs/en/download.md)
 
 ## 快速开始全文
 
