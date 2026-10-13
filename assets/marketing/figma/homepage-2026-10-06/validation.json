@@ -1,0 +1,220 @@
+{
+  "mutatedNodeIds": [
+    "4:36",
+    "4:67",
+    "6:12",
+    "6:33",
+    "6:46",
+    "6:67"
+  ],
+  "flowStartingPoints": [
+    {
+      "nodeId": "9:84",
+      "name": "桌面 · 安装引导"
+    },
+    {
+      "nodeId": "9:231",
+      "name": "手机 · 安装引导"
+    }
+  ],
+  "transitionCount": 30,
+  "brokenDestinations": [],
+  "fontViolations": [],
+  "graphs": [
+    {
+      "source": "4:32",
+      "destination": "4:34",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "4:34",
+      "destination": "4:32",
+      "navigation": "CHANGE_TO",
+      "trigger": "AFTER_TIMEOUT"
+    },
+    {
+      "source": "6:3",
+      "destination": "6:6",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:7",
+      "destination": "6:2",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:16",
+      "destination": "6:19",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:20",
+      "destination": "6:15",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:37",
+      "destination": "6:40",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:41",
+      "destination": "6:36",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:50",
+      "destination": "6:53",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:54",
+      "destination": "6:49",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:77",
+      "destination": "6:159",
+      "navigation": "SCROLL_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:88",
+      "destination": "6:159",
+      "navigation": "SCROLL_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:178",
+      "destination": "4:34",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "I6:180;6:3",
+      "destination": "6:6",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "I6:184;6:16",
+      "destination": "6:19",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:203",
+      "destination": "6:283",
+      "navigation": "SCROLL_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:212",
+      "destination": "6:283",
+      "navigation": "SCROLL_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "6:302",
+      "destination": "4:34",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "I6:304;6:37",
+      "destination": "6:40",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "I6:308;6:50",
+      "destination": "6:53",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "9:92",
+      "destination": "9:145",
+      "navigation": "SCROLL_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "9:102",
+      "destination": "9:145",
+      "navigation": "SCROLL_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "9:164",
+      "destination": "4:34",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "I9:165;6:3",
+      "destination": "6:6",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "I9:166;6:16",
+      "destination": "6:19",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "9:237",
+      "destination": "9:293",
+      "navigation": "SCROLL_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "9:245",
+      "destination": "9:293",
+      "navigation": "SCROLL_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "9:312",
+      "destination": "4:34",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "I9:313;6:37",
+      "destination": "6:40",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    },
+    {
+      "source": "I9:314;6:50",
+      "destination": "6:53",
+      "navigation": "CHANGE_TO",
+      "trigger": "ON_CLICK"
+    }
+  ],
+  "liveVerification": {
+    "desktop": [
+      "connect-scroll",
+      "prompt-expand-collapse",
+      "copy-feedback",
+      "manual-expand"
+    ],
+    "mobile": [
+      "connect-scroll",
+      "prompt-expand-collapse",
+      "copy-feedback",
+      "manual-expand-collapse"
+    ]
+  },
+  "clipboard": "Visual feedback only; no clipboard write in Figma."
+}

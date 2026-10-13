@@ -1,0 +1,83 @@
+[
+  {
+    "type": "section-header",
+    "label": "开始使用"
+  },
+  {
+    "type": "custom-link",
+    "label": "使用文档",
+    "link": "/docs/"
+  },
+  {
+    "type": "custom-link",
+    "label": "快速开始",
+    "link": "/guide/"
+  },
+  {
+    "type": "section-header",
+    "label": "日常任务"
+  },
+  {
+    "type": "custom-link",
+    "label": "运行任务与通知",
+    "link": "/guide/run"
+  },
+  {
+    "type": "custom-link",
+    "label": "进度模式",
+    "link": "/guide/progress"
+  },
+  {
+    "type": "custom-link",
+    "label": "配对与多台电脑",
+    "link": "/guide/pairing"
+  },
+  {
+    "type": "section-header",
+    "label": "Agent 集成"
+  },
+  {
+    "type": "custom-link",
+    "label": "RunBuoy Skill 与 ChatGPT",
+    "link": "/guide/agent-skill"
+  },
+  {
+    "type": "section-header",
+    "label": "进阶与支持"
+  },
+  {
+    "type": "custom-link",
+    "label": "手动安装、升级与排错",
+    "link": "/guide/install"
+  },
+  {
+    "type": "custom-link",
+    "label": "下载 App",
+    "link": "/download"
+  },
+  {
+    "type": "custom-link",
+    "label": "安全边界",
+    "link": "/security"
+  },
+  {
+    "type": "custom-link",
+    "label": "隐私",
+    "link": "/privacy"
+  },
+  {
+    "type": "custom-link",
+    "label": "自托管",
+    "link": "/self-hosting"
+  },
+  {
+    "type": "custom-link",
+    "label": "服务状态",
+    "link": "/status"
+  },
+  {
+    "type": "custom-link",
+    "label": "支持",
+    "link": "/support"
+  }
+]

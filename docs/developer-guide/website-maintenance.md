@@ -23,7 +23,7 @@ RunBuoy 官网是位于 [`website`](../../website) 的 Rspress 2 静态站点，
 | `/download` | 中文下载页链接已上架的 App Store 版本，并引导 Agent 安装 |
 
 语言切换由 `rspress.config.ts` 的 `zh`、`en` locales 提供。两种语言拥有对应 `_nav.json`
-和 `guide/_meta.json`，分别控制顶部导航和指南侧栏排序。配置启用了 `languageParity`，新增或删除路径应保持两侧存在对应页面。
+；中文使用根 `_meta.json` 统一文档侧栏，英文保留 `guide/_meta.json`。中文导航由 `theme/components/Nav` 统一渲染。配置启用了 `languageParity`，新增或删除路由应保持两侧存在对应页面。中文下载与配对页使用 MDX 共享组件，英文对应页保留 Markdown；这两组扩展名差异由 `check:site` 显式验证输出路由。
 
 2026-10-05 用户明确选择先发布中文文案。中文首页独立使用 `theme/components/ChineseHome`，样式使用
 `runbuoy-zh-` 前缀；英文继续使用原有组件和文档，勿将本轮中文发布扩展为英文改稿。根地址不按浏览器语言
@@ -35,8 +35,8 @@ RunBuoy 官网是位于 [`website`](../../website) 的 Rspress 2 静态站点，
 「Agent 集成」包含两个子项：Skill 负责安装与任务上报，ChatGPT Plugin 提供只读查询与交互看板，当前标注私人预览。
 
 - 首页文案：`website/docs/zh/index.mdx` 与 `website/theme/components/ChineseHome`。
-- 安装提示词：`ChineseHome/installPrompts.ts` 的 `zh`，并同步中文快速开始与 Agent 文档；`check:site` 校验一致性。
-- 图片：`website/docs/public/marketing/zh-Hans`。它们来自实际产品界面与展示数据，页面明确标注新版预览。
+- 安装与配对提示词：`ChineseHome/installPrompts.ts`，通过 `SetupPrompts` 和 `GuidePrompt` 在首页、快速开始与配对指南复用；`check:site` 校验文本一致性。
+- 图片：`website/docs/public/marketing/zh-Hans`。包括真实产品截图、任务演示以及独立的浮标和水面装饰；网页文案、按钮与任务卡保持原生组件。
 - 可复用原图、审阅稿、脚本与发布检查：`assets/marketing`。旧双语文案清单属于历史讨论，不代表英文已发布改稿。
 - 中文分享图：`swift assets/marketing/scripts/render-website-zh.swift`，仅更新中文卡片。
 
@@ -74,7 +74,7 @@ npm run preview
 
 1. 在 `website/docs/zh` 和 `website/docs/en` 下创建相同相对路径的 `.md` 或 `.mdx` 文件。
 2. 默认双语维护；用户明确限定语言时遵循该范围，保持另一语言的文案与显示不变，并记录差异。
-3. 如果页面属于 Guide，更新两侧 `guide/_meta.json`；如果需要顶栏入口，更新两侧 `_nav.json`。
+3. 中文目录更新 `zh/_meta.json`，英文指南目录更新 `en/guide/_meta.json`；顶栏变更同时核对 `_nav.json` 与中文共享 Nav 组件。
 4. 页面之间使用站内绝对路由，例如 `/guide/run`，不要引用构建产物目录。
 5. 图片放在 `website/docs/public`，页面以根路径引用，例如 `/brand/runbuoy-icon-light.png`。
 6. 运行 `npm run build`，检查语言对等、MDX、内部路由和静态资源错误。

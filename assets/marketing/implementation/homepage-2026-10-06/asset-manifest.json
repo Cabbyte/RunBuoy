@@ -1,0 +1,34 @@
+[
+  {
+    "file": "website/docs/public/marketing/zh-Hans/homepage/mascot-transparent.png",
+    "bytes": 830946,
+    "width": 1254,
+    "height": 1254,
+    "sha256": "a8bc2ad82ac14a9bd1615dcffdf534979661c54e7ac87cacd26b15bade4a8548",
+    "matchesFigmaSource": true
+  },
+  {
+    "file": "website/docs/public/marketing/zh-Hans/homepage/water-background.png",
+    "bytes": 917710,
+    "width": 1891,
+    "height": 831,
+    "sha256": "42d5afae5598428595c1c184eee49d87d9ac5e78a5d6be18039601c0642adfae",
+    "matchesFigmaSource": true
+  },
+  {
+    "file": "website/docs/public/marketing/zh-Hans/active-runs.jpg",
+    "bytes": 162914,
+    "width": 660,
+    "height": 1434,
+    "sha256": "765f1b4abc7598f34206b5896d7b52d912b8465d9ed083c88297046baae53f4b",
+    "source": "existing product screenshot used in Figma"
+  },
+  {
+    "file": "website/docs/public/marketing/zh-Hans/chatgpt-workspace.jpg",
+    "bytes": 96452,
+    "width": 1280,
+    "height": 1337,
+    "sha256": "7880ee13c1256f40e88c382f6fb2809f4dde09e614d05882120d5cb631da1aec",
+    "source": "existing product screenshot used in Figma"
+  }
+]

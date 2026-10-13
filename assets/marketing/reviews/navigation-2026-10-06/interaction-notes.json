@@ -1,0 +1,140 @@
+{
+  "desktop": {
+    "header": {
+      "bottom": -650.2799072265625,
+      "height": 66.38671875,
+      "left": 0,
+      "right": 1200,
+      "top": -716.6666259765625,
+      "width": 1200,
+      "x": 0,
+      "y": -716.6666259765625
+    },
+    "items": [
+      {
+        "color": "rgb(16, 26, 45)",
+        "font": "17px",
+        "href": "https://apps.apple.com/cn/app/runbuoy/id6795591930",
+        "outline": "rgb(16, 26, 45) none 2.91667px",
+        "padding": "0px",
+        "rect": {
+          "bottom": -669.8763027191162,
+          "height": 27.19400978088379,
+          "left": 780.5078125,
+          "right": 849.7721328735352,
+          "top": -697.0703125,
+          "width": 69.26432037353516,
+          "x": 780.5078125,
+          "y": -697.0703125
+        },
+        "text": "下载 App"
+      },
+      {
+        "color": "rgb(16, 26, 45)",
+        "font": "17px",
+        "href": "#agent-install",
+        "outline": "rgb(16, 26, 45) none 2.91667px",
+        "padding": "0px",
+        "rect": {
+          "bottom": -669.8763027191162,
+          "height": 27.19400978088379,
+          "left": 877.7669067382812,
+          "right": 945.7682037353516,
+          "top": -697.0703125,
+          "width": 68.00129699707031,
+          "x": 877.7669067382812,
+          "y": -697.0703125
+        },
+        "text": "快速开始"
+      },
+      {
+        "color": "rgb(16, 26, 45)",
+        "font": "17px",
+        "href": "/docs/",
+        "outline": "rgb(16, 26, 45) none 2.91667px",
+        "padding": "0px",
+        "rect": {
+          "bottom": -669.8763027191162,
+          "height": 27.19400978088379,
+          "left": 973.7630004882812,
+          "right": 1041.7642974853516,
+          "top": -697.0703125,
+          "width": 68.00129699707031,
+          "x": 973.7630004882812,
+          "y": -697.0703125
+        },
+        "text": "使用文档"
+      },
+      {
+        "color": "rgb(16, 26, 45)",
+        "font": "17px",
+        "href": null,
+        "outline": "rgb(16, 26, 45) none 2.91667px",
+        "padding": "0px",
+        "rect": {
+          "bottom": -669.8763027191162,
+          "height": 27.19400978088379,
+          "left": 1069.759033203125,
+          "right": 1159.9999160766602,
+          "top": -697.0703125,
+          "width": 90.24088287353516,
+          "x": 1069.759033203125,
+          "y": -697.0703125
+        },
+        "text": "简体中文⌄"
+      }
+    ],
+    "viewport": {
+      "height": 750,
+      "width": 1200
+    }
+  },
+  "language": {
+    "escapeOpen": "",
+    "outsideClickOpen": "",
+    "keyboard": {
+      "outline": "rgb(8, 106, 196) solid 2.91667px",
+      "text": "English"
+    }
+  },
+  "mobile": {
+    "footer": [
+      {
+        "href": "/docs/",
+        "text": "使用文档"
+      },
+      {
+        "href": "/support",
+        "text": "支持"
+      },
+      {
+        "href": "/privacy",
+        "text": "隐私"
+      },
+      {
+        "href": "/en/",
+        "text": "English"
+      }
+    ],
+    "headerItems": [
+      {
+        "display": "none",
+        "text": "下载 App"
+      },
+      {
+        "display": "block",
+        "text": "快速开始"
+      },
+      {
+        "display": "none",
+        "text": "使用文档"
+      },
+      {
+        "display": "none",
+        "text": "简体中文⌄English"
+      }
+    ],
+    "height": 703,
+    "width": 325
+  }
+}

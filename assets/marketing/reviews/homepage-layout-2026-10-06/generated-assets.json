@@ -1,0 +1,29 @@
+[
+  {
+    "display_order": 1,
+    "source": "/Users/timli/.codex/generated_images/01a0fd00-8441-77d2-a9b7-838465f14241/exec-d16853cb-16a6-4642-8723-5e3b877b10c0.png",
+    "file": "option-1-centered.png",
+    "width": 1039,
+    "height": 1514,
+    "sha256": "d7e410db8f3ef9097b889b28c0baae21d34c61239b54de0ef3338bb3294ac3b9",
+    "usage": "Image-generated layout reference; not implemented UI"
+  },
+  {
+    "display_order": 2,
+    "source": "/Users/timli/.codex/generated_images/01a0fd00-8441-77d2-a9b7-838465f14241/exec-d4b6f06f-53c5-474c-86a3-948fe018f411.png",
+    "file": "option-2-split.png",
+    "width": 1038,
+    "height": 1515,
+    "sha256": "68c27d42cd01d3b5460a5a5c1568fe5dcc6b0ed280a919534e69f9559da14085",
+    "usage": "Image-generated layout reference; not implemented UI"
+  },
+  {
+    "display_order": 3,
+    "source": "/Users/timli/.codex/generated_images/01a0fd00-8441-77d2-a9b7-838465f14241/exec-a894fc57-d2ef-4e82-b022-bf7538c692a1.png",
+    "file": "option-3-product-stage.png",
+    "width": 869,
+    "height": 1810,
+    "sha256": "813c6235ef30b3f82e49b9a8d7d04561e61cd854d750f0d7eda60664b08f449a",
+    "usage": "Image-generated layout reference; not implemented UI"
+  }
+]

@@ -1,3 +1,4 @@
+export { Nav } from './components/Nav';
 export { HomeHero } from './components/HomeHero';
 export { HomeFeature } from './components/HomeFeature';
 export { HomeLayout } from './components/HomeLayout';

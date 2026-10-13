@@ -50,7 +50,7 @@ expect(existsSync(outputRoot), 'doc_build is missing; run npm run build first.')
 const zhPromptSource = readFileSync(path.join(websiteRoot, 'theme/components/ChineseHome/installPrompts.ts'), 'utf8');
 const zhPrompt = zhPromptSource.match(/  zh: `([\s\S]*?)`,/)?.[1];
 expect(Boolean(zhPrompt), 'Missing Chinese installation prompt.');
-for (const page of ['index.mdx', 'agent-skill.md']) {
+for (const page of ['agent-skill.md']) {
   const source = readFileSync(path.join(websiteRoot, `docs/zh/guide/${page}`), 'utf8');
   expect(zhPrompt && source.includes('```text\n' + zhPrompt + '\n```'), `${page} Chinese prompt differs from the homepage.`);
 }
@@ -59,9 +59,15 @@ if (existsSync(outputRoot)) {
   const zhHome = html('index.html').replaceAll('runbuoy-zh-', 'runbuoy-');
   const enHome = html('en/index.html');
   expect(textContent(zhHome).includes('扫一眼，掌握任务的进展。'), 'Chinese hero must match approved copy.');
-  expect(zhHome.includes('Agent 报状态，ChatGPT 看全貌。') && zhHome.includes('私人预览'), 'Chinese Agent integration must include Skill and private-preview ChatGPT UI.');
+  expect(textContent(zhHome).includes('Agent 报状态，ChatGPT 看全貌。') && zhHome.includes('私人预览'), 'Chinese Agent integration must include Skill and private-preview ChatGPT UI.');
   expect(/<details[^>]*id="manual-install"[^>]*>/.test(zhHome) && !/<details[^>]*id="manual-install"[^>]*\bopen\b/.test(zhHome), 'Chinese manual installation must remain collapsed.');
   expect(!enHome.includes('runbuoy-zh-'), 'Chinese homepage must not render on English routes.');
+
+  expect(textContent(zhHome).includes('只读查看，连接由 iPhone 确认。'), 'Chinese plugin must retain its read-only connection boundary.');
+  expect(zhHome.includes('href="/guide/progress"') && zhHome.includes('href="/guide/agent-skill"') && zhHome.includes('href="/privacy"'), 'Chinese homepage must link to progress, integration and privacy details.');
+  expect(!textContent(zhHome).includes('示例数据') && !textContent(zhHome).includes('新版预览'), 'Chinese homepage must omit retired marketing footnotes.');
+  expect(zhHome.includes('role="progressbar"') && zhHome.includes('aria-valuenow="78"'), 'Featured task progress must be accessible native content.');
+  expect(/<details[^>]*class="runbuoy-disclosure"[^>]*>/.test(zhHome), 'Chinese install prompt must be expandable.');
 
   const zhQuickStart = html('guide/index.html');
   const enQuickStart = html('en/guide/index.html');
@@ -70,6 +76,9 @@ if (existsSync(outputRoot)) {
   const zhInstall = html('guide/install.html');
   const enInstall = html('en/guide/install.html');
   const zhDownload = html('download.html');
+  html('guide/pairing.html');
+  html('en/guide/pairing.html');
+  expect(zhDownload.includes('app-store-qr.png'), 'Chinese download page must render the App Store QR card.');
   const enDownload = html('en/download.html');
   const zhSelfHosting = html('self-hosting.html');
   const enSelfHosting = html('en/self-hosting.html');
@@ -85,6 +94,25 @@ if (existsSync(outputRoot)) {
   const enProgress = html('en/guide/progress.html');
   const enRun = html('en/guide/run.html');
   const zhQuickStartText = textContent(zhQuickStart);
+  const pairingPrompt = zhPromptSource.match(/PAIRING_PROMPT_ZH = `([\s\S]*?)`;/)?.[1];
+  expect(Boolean(pairingPrompt), 'Missing shared pairing prompt.');
+  for (const [name, source] of [['home', zhHome], ['quick start', zhQuickStart], ['pairing guide', html('guide/pairing.html')]]) {
+    expect(pairingPrompt && textContent(source).includes(textContent(pairingPrompt)), `${name} must render the shared pairing prompt.`);
+  }
+  expect(zhPrompt && zhQuickStartText.includes(textContent(zhPrompt)), 'Quick Start must render the same installation prompt as home.');
+  for (const page of ['index.html', 'docs/index.html', 'guide/index.html', 'download.html']) {
+    const header = html(page).match(/<header[^>]*runbuoy-site-nav[\s\S]*?<\/header>/)?.[0] ?? '';
+    expect(header.includes('href="/guide/"') && header.includes('href="/docs/"') && header.includes('href="/download"'), `${page} must use canonical Chinese navigation targets.`);
+    const navigationTargets = [...header.matchAll(/href="([^"]+)"/g)].map(match => match[1]);
+    expect(navigationTargets.every(target => new URL(target, 'https://www.runbuoy.cloud').origin === 'https://www.runbuoy.cloud' && !target.startsWith('#')), `${page} header must use site navigation rather than external downloads or page anchors.`);
+  }
+  for (const page of ['docs/index.html', 'guide/index.html', 'guide/run.html', 'download.html']) {
+    const sidebar = html(page).match(/<aside[\s\S]*?<\/aside>/)?.[0] ?? '';
+    expect(['日常任务', 'Agent 集成', '进阶与支持'].every(label => textContent(sidebar).includes(label)), `${page} must retain the shared documentation directory.`);
+  }
+  expect(zhQuickStart.includes('复制配对提示词'), 'Quick Start must offer Agent pairing before manual alternatives.');
+  expect(/href="\/guide\/run(?:\.html)?"[^>]*>[\s\S]{0,700}下一页/.test(zhQuickStart), 'Quick Start next page must lead to running a task.');
+
   const enQuickStartText = textContent(enQuickStart);
   const zhProgressText = textContent(zhProgress);
   const enProgressText = textContent(enProgress);
@@ -96,8 +124,11 @@ if (existsSync(outputRoot)) {
     expect(source.includes('id="manual-install"'), `${name} is missing the manual installation fallback.`);
     expect(source.includes('runbuoy-agent-prompt'), `${name} is missing the copyable agent prompt.`);
     expect(source.includes('runbuoy-flow'), `${name} is missing the three-step content.`);
-    expect(source.includes('runbuoy-boundary__flow'), `${name} is missing the read-only architecture.`);
-    expect(source.includes('runbuoy-home-feature-link'), `${name} feature cards are not real links.`);
+    if (name === 'English home') {
+      expect(source.includes('runbuoy-boundary__flow'), `${name} is missing the read-only architecture.`);
+      expect(source.includes('runbuoy-home-feature-link'), `${name} feature cards are not real links.`);
+    }
+
   }
 
   expect(zhHome.includes('href="#agent-install"'), 'Chinese home does not prioritize the agent installation prompt.');

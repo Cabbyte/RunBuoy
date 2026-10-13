@@ -1,0 +1,36 @@
+{
+  "build": "npm run check passed; TypeScript, build, language parity, content and internal links",
+  "clipboard": {
+    "characters": 902,
+    "exact_match_to_rendered_prompt": true,
+    "ensure_cli_path_repair_present": true,
+    "readback": "navigator.clipboard.readText via browser CDP; session clipboard API returned empty and was not used as success evidence"
+  },
+  "copy_failure": {
+    "simulated_write_failure": true,
+    "manual_copy_prompt_expanded": true,
+    "error_announced": true,
+    "temporary_overrides_cleared_by_reload": true
+  },
+  "keyboard": {
+    "prompt_enter_toggle": true,
+    "manual_enter_toggle": true,
+    "tab_focus_visible": true
+  },
+  "navigation": {
+    "connect_anchor": "#agent-install",
+    "app_store_href": "https://apps.apple.com/cn/app/runbuoy/id6795591930",
+    "docs_route": "/docs/",
+    "docs_custom_marketing_nav_count": 0,
+    "english_route": "/en/",
+    "english_custom_marketing_nav_count": 0,
+    "chatgpt_anchor_found": true
+  },
+  "console_warnings_errors": [],
+  "not_performed": [
+    "production deployment",
+    "Figma sync",
+    "physical device / Safari acceptance",
+    "live agent installation"
+  ]
+}

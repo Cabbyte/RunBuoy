@@ -1,0 +1,227 @@
+[
+  {
+    "card": {
+      "bottom": 665.1484375,
+      "height": 270.78125,
+      "left": 611.1953125,
+      "right": 1081.1953125,
+      "top": 394.3671875,
+      "width": 470,
+      "x": 611.1953125,
+      "y": 394.3671875
+    },
+    "heroBottom": 699.3671875,
+    "images": [
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/water-background.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/active-runs.jpg"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/live-activity.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      }
+    ],
+    "pageHeight": 2945,
+    "scrollWidth": 1280,
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  {
+    "card": {
+      "bottom": 682.0703125,
+      "height": 270.78125,
+      "left": 691.1953125,
+      "right": 1161.1953125,
+      "top": 411.2890625,
+      "width": 470,
+      "x": 691.1953125,
+      "y": 411.2890625
+    },
+    "heroBottom": 776.2890625,
+    "images": [
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/water-background.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/active-runs.jpg"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/live-activity.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      }
+    ],
+    "pageHeight": 3022,
+    "scrollWidth": 1440,
+    "viewport": [
+      1440,
+      900
+    ]
+  },
+  {
+    "card": {
+      "bottom": 692.9765625,
+      "height": 270.78125,
+      "left": 304,
+      "right": 744,
+      "top": 422.1953125,
+      "width": 440,
+      "x": 304,
+      "y": 422.1953125
+    },
+    "heroBottom": 787.1953125,
+    "images": [
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/water-background.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/active-runs.jpg"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/live-activity.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      }
+    ],
+    "pageHeight": 3123,
+    "scrollWidth": 768,
+    "viewport": [
+      768,
+      1024
+    ]
+  },
+  {
+    "card": {
+      "bottom": 580.9296875,
+      "height": 239.5859375,
+      "left": 20,
+      "right": 370,
+      "top": 341.34375,
+      "width": 350,
+      "x": 20,
+      "y": 341.34375
+    },
+    "heroBottom": 749.34375,
+    "images": [
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/water-background.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/active-runs.jpg"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/live-activity.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      }
+    ],
+    "pageHeight": 3937,
+    "scrollWidth": 390,
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  {
+    "card": {
+      "bottom": 685.7421875,
+      "height": 268.5859375,
+      "left": 16,
+      "right": 304,
+      "top": 417.15625,
+      "width": 288,
+      "x": 16,
+      "y": 417.15625
+    },
+    "heroBottom": 845.15625,
+    "images": [
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/water-background.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/active-runs.jpg"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/live-activity.png"
+      },
+      {
+        "loaded": true,
+        "src": "/marketing/zh-Hans/homepage/mascot-transparent.png"
+      }
+    ],
+    "pageHeight": 4267,
+    "scrollWidth": 320,
+    "viewport": [
+      320,
+      740
+    ]
+  }
+]
