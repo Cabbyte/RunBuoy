@@ -28,3 +28,12 @@ because they violate ADR 0001.
 If future work copies an implementation from the upstream history or another
 project, update this file with repository URL, exact commit, source and
 destination file paths, license, and modifications before merging.
+
+## Agent connection icon
+
+- Source: [Lobe Icons](https://github.com/lobehub/lobe-icons), npm package
+  `@lobehub/icons-static-svg` 1.95.1 (commit `49a2130df7bfa5eb1b088261bff20a37e2967789`).
+- Source asset: `icons/openai.svg`; MIT, copyright 2023 LobeHub.
+- Destination: `apps/ios/RunBuoyApp/Assets.xcassets/AgentChatGPT.imageset/chatgpt.svg`.
+- Modifications: white mark at 34 × 34 points, exported as editable vectors from
+  approved Figma node `631:10779`. No runtime dependency or remote asset URL.

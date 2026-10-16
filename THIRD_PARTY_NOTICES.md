@@ -16,3 +16,10 @@ retains its license and Git history. See
 
 Python and Apple platform dependencies retain their own licenses in their
 published distributions and SDKs. RunBuoy does not vendor their source.
+
+## Lobe Icons / OpenAI mark
+
+The ChatGPT connection icon is based on the OpenAI SVG in
+`@lobehub/icons-static-svg` 1.95.1, exported from the approved RunBuoy Figma frame.
+Copyright (c) 2023 LobeHub. The [MIT license](docs/licenses/lobe-icons-MIT.txt)
+is included. The OpenAI mark remains the property of its respective owner.
