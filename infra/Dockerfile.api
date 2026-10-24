@@ -1,4 +1,4 @@
-FROM node:24-bookworm-slim AS chatgpt-ui
+FROM node:25-bookworm-slim AS chatgpt-ui
 WORKDIR /build
 COPY apps/chatgpt/package.json apps/chatgpt/package-lock.json ./
 RUN npm ci
